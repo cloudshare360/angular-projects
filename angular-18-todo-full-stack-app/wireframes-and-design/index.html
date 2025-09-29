@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo App - Wireframes & Design Documentation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 40px;
+            background-color: #f5f5f5;
+            line-height: 1.6;
+        }
+        .header {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            border: 2px solid #333;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .header h1 {
+            color: #333;
+            margin: 0 0 10px 0;
+        }
+        .header p {
+            color: #666;
+            margin: 0;
+            font-size: 18px;
+        }
+        .section {
+            background: white;
+            margin: 20px 0;
+            padding: 25px;
+            border-radius: 8px;
+            border: 2px solid #ddd;
+        }
+        .section h2 {
+            color: #333;
+            margin-top: 0;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eee;
+        }
+        .wireframe-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .wireframe-card {
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 20px;
+            background: #fafafa;
+            transition: all 0.3s ease;
+        }
+        .wireframe-card:hover {
+            border-color: #007bff;
+            box-shadow: 0 4px 8px rgba(0,123,255,0.1);
+        }
+        .wireframe-card h3 {
+            color: #007bff;
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+        .wireframe-card p {
+            color: #666;
+            margin-bottom: 15px;
+        }
+        .wireframe-card a {
+            display: inline-block;
+            background: #007bff;
+            color: white;
+            padding: 8px 16px;
+            text-decoration: none;
+            border-radius: 4px;
+            font-size: 14px;
+            transition: background 0.3s ease;
+        }
+        .wireframe-card a:hover {
+            background: #0056b3;
+        }
+        .doc-link {
+            display: inline-block;
+            background: #28a745;
+            color: white;
+            padding: 12px 24px;
+            text-decoration: none;
+            border-radius: 4px;
+            margin: 10px 10px 10px 0;
+            font-weight: bold;
+            transition: background 0.3s ease;
+        }
+        .doc-link:hover {
+            background: #1e7e34;
+        }
+        .features-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .feature-item {
+            background: #e9ecef;
+            padding: 15px;
+            border-radius: 4px;
+            border-left: 4px solid #007bff;
+        }
+        .feature-item h4 {
+            margin: 0 0 8px 0;
+            color: #333;
+        }
+        .feature-item p {
+            margin: 0;
+            color: #666;
+            font-size: 14px;
+        }
+        .flow-diagram {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 4px;
+            border: 1px solid #dee2e6;
+            font-family: monospace;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+        .status-complete {
+            color: #28a745;
+            font-weight: bold;
+        }
+        .status-pending {
+            color: #ffc107;
+            font-weight: bold;
+        }
+        .footer {
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            border: 2px solid #333;
+            margin-top: 30px;
+            text-align: center;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🎯 Todo App - Wireframes & Design Documentation</h1>
+        <p>Comprehensive UI/UX wireframes and design specifications for Angular 18 Todo Full-Stack Application</p>
+        <p><strong>Created:</strong> September 24, 2024 | <strong>Version:</strong> 1.0</p>
+        <div style="margin-top: 20px;">
+            <a href="wireframes/desktop/01-authentication.html" class="doc-link" style="background: #28a745; font-size: 18px;">🚀 Start Interactive Demo</a>
+            <a href="../README.md" class="doc-link" style="background: #17a2b8;">📚 Complete Project Guide</a>
+            <a href="../angular-18-front-end/" class="doc-link" style="background: #dc3545;">🅰️ Angular Application</a>
+        </div>
+    </div>
+
+    <!-- Overview Section -->
+    <div class="section">
+        <h2>📋 Project Overview</h2>
+        <p>This wireframe collection provides a complete visual blueprint for developing a full-stack todo application with Angular 18. The design covers both user and administrative interfaces, ensuring a comprehensive solution for task management.</p>
+        
+        <div class="features-list">
+            <div class="feature-item">
+                <h4>User Management</h4>
+                <p>Authentication, registration, and profile management</p>
+            </div>
+            <div class="feature-item">
+                <h4>Todo Management</h4>
+                <p>Create, edit, organize todos with advanced features</p>
+            </div>
+            <div class="feature-item">
+                <h4>Admin Panel</h4>
+                <p>System monitoring and user administration</p>
+            </div>
+            <div class="feature-item">
+                <h4>Responsive Design</h4>
+                <p>Mobile-first approach for all device types</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Documentation Section -->
+    <div class="section">
+        <h2>📚 Documentation</h2>
+        <p>Comprehensive design specifications, user flows, and technical considerations:</p>
+        
+        <a href="documentation/design-specification.md" class="doc-link">📄 Complete Design Specification</a>
+        
+        <h3>Key Documentation Includes:</h3>
+        <ul>
+            <li><strong>User Personas & Roles</strong> - Detailed user profiles and use cases</li>
+            <li><strong>User & Admin Flows</strong> - Step-by-step interaction flows</li>
+            <li><strong>UI/UX Design Principles</strong> - Design philosophy and guidelines</li>
+            <li><strong>Feature Specifications</strong> - Detailed functionality requirements</li>
+            <li><strong>Technical Considerations</strong> - Implementation guidelines</li>
+            <li><strong>Implementation Phases</strong> - Development roadmap</li>
+        </ul>
+    </div>
+
+    <!-- Desktop Wireframes Section -->
+    <div class="section">
+        <h2>🖥️ Desktop Wireframes</h2>
+        <p>Complete set of desktop wireframes covering all major user and admin workflows:</p>
+        
+        <div class="wireframe-grid">
+            <div class="wireframe-card">
+                <h3>🔐 Authentication</h3>
+                <p>Login, registration, password recovery, and role selection interfaces.</p>
+                <p><span class="status-complete">✅ Complete</span></p>
+                <a href="wireframes/desktop/01-authentication.html">View Wireframes</a>
+            </div>
+            
+            <div class="wireframe-card">
+                <h3>👤 User Dashboard</h3>
+                <p>Main todo interface with sidebar navigation, statistics, and task management.</p>
+                <p><span class="status-complete">✅ Complete</span></p>
+                <a href="wireframes/desktop/02-user-dashboard.html">View Wireframes</a>
+            </div>
+            
+            <div class="wireframe-card">
+                <h3>🔧 Admin Dashboard</h3>
+                <p>Administrative interface with system monitoring and user management.</p>
+                <p><span class="status-complete">✅ Complete</span></p>
+                <a href="wireframes/desktop/03-admin-dashboard.html">View Wireframes</a>
+            </div>
+            
+            <div class="wireframe-card">
+                <h3>📝 Task Management</h3>
+                <p>Todo creation, editing, bulk operations, and advanced filtering interfaces.</p>
+                <p><span class="status-complete">✅ Complete</span></p>
+                <a href="wireframes/desktop/04-task-management.html">View Wireframes</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation Guide Section -->
+    <div class="section">
+        <h2>🎯 Navigation Guide</h2>
+        
+        <h3>🚀 Quick Start</h3>
+        <ol>
+            <li><strong>Click "Start Interactive Demo"</strong> above to begin</li>
+            <li><strong>Choose your role:</strong> User Login or Admin Login</li>
+            <li><strong>Explore features:</strong> Navigate using buttons and links</li>
+            <li><strong>Use navigation header:</strong> Jump between any wireframe</li>
+        </ol>
+        
+        <h3>🎆 Demo Features</h3>
+        <div class="features-list">
+            <div class="feature-item">
+                <h4>Role Selection</h4>
+                <p>Click User/Admin tabs in login - buttons automatically route to correct dashboard</p>
+            </div>
+            <div class="feature-item">
+                <h4>Form Validation</h4>
+                <p>Try submitting empty forms - see realistic error messages</p>
+            </div>
+            <div class="feature-item">
+                <h4>Task Flow</h4>
+                <p>Add Todo → Task Management → Auto-return to Dashboard</p>
+            </div>
+            <div class="feature-item">
+                <h4>Admin Actions</h4>
+                <p>Admin dashboard quick actions show interactive alerts</p>
+            </div>
+        </div>
+        
+        <h3>🗺️ Interactive Flow Map</h3>
+        <div style="background: #f8f9fa; padding: 20px; border-radius: 4px; border: 1px solid #dee2e6; font-family: monospace; margin: 15px 0; line-height: 1.8;">
+            <span style="color: #666;">🏠 Main Index</span> → <a href="wireframes/desktop/01-authentication.html" style="color: #007bff; text-decoration: none; padding: 2px 4px; border-radius: 2px; background: rgba(0,123,255,0.1);" onmouseover="this.style.background='rgba(0,123,255,0.2)'" onmouseout="this.style.background='rgba(0,123,255,0.1)'">🚀 Start Demo</a> → <a href="wireframes/desktop/01-authentication.html" style="color: #007bff; text-decoration: none; padding: 2px 4px; border-radius: 2px; background: rgba(0,123,255,0.1);" onmouseover="this.style.background='rgba(0,123,255,0.2)'" onmouseout="this.style.background='rgba(0,123,255,0.1)'">🔐 Authentication</a><br>
+            │<br>
+            ├── <a href="wireframes/desktop/01-authentication.html" style="color: #28a745; text-decoration: none; padding: 2px 4px; border-radius: 2px; background: rgba(40,167,69,0.1);" onmouseover="this.style.background='rgba(40,167,69,0.2)'" onmouseout="this.style.background='rgba(40,167,69,0.1)'">👤 User Login</a> → <a href="wireframes/desktop/02-user-dashboard.html" style="color: #28a745; text-decoration: none; padding: 2px 4px; border-radius: 2px; background: rgba(40,167,69,0.1);" onmouseover="this.style.background='rgba(40,167,69,0.2)'" onmouseout="this.style.background='rgba(40,167,69,0.1)'">📋 User Dashboard</a> → <a href="wireframes/desktop/04-task-management.html" style="color: #28a745; text-decoration: none; padding: 2px 4px; border-radius: 2px; background: rgba(40,167,69,0.1);" onmouseover="this.style.background='rgba(40,167,69,0.2)'" onmouseout="this.style.background='rgba(40,167,69,0.1)'">📝 Add/Edit Todo</a><br>
+            │&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│<br>
+            │&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── <a href="wireframes/desktop/04-task-management.html" style="color: #6f42c1; text-decoration: none; padding: 2px 4px; border-radius: 2px; background: rgba(111,66,193,0.1);" onmouseover="this.style.background='rgba(111,66,193,0.2)'" onmouseout="this.style.background='rgba(111,66,193,0.1)'">📋 Task Management</a><br>
+            │<br>
+            └── <a href="wireframes/desktop/01-authentication.html" style="color: #dc3545; text-decoration: none; padding: 2px 4px; border-radius: 2px; background: rgba(220,53,69,0.1);" onmouseover="this.style.background='rgba(220,53,69,0.2)'" onmouseout="this.style.background='rgba(220,53,69,0.1)'">🔧 Admin Login</a> → <a href="wireframes/desktop/03-admin-dashboard.html" style="color: #dc3545; text-decoration: none; padding: 2px 4px; border-radius: 2px; background: rgba(220,53,69,0.1);" onmouseover="this.style.background='rgba(220,53,69,0.2)'" onmouseout="this.style.background='rgba(220,53,69,0.1)'">🛠️ Admin Dashboard</a> → <a href="wireframes/desktop/02-user-dashboard.html" style="color: #dc3545; text-decoration: none; padding: 2px 4px; border-radius: 2px; background: rgba(220,53,69,0.1);" onmouseover="this.style.background='rgba(220,53,69,0.2)'" onmouseout="this.style.background='rgba(220,53,69,0.1)'">🔀 Switch to User</a><br>
+            <br>
+            <span style="color: #17a2b8;">ℹ️ Navigation available from any page via header links</span>
+        </div>
+        
+        <h3>🧭 Dual Navigation System</h3>
+        <div style="background: #fff3cd; border: 1px solid #ffeaa7; padding: 15px; border-radius: 4px; margin: 15px 0;">
+            <strong>💡 Two Ways to Navigate:</strong>
+            <ol>
+                <li><strong>Top Header Navigation:</strong> Jump directly to any page from anywhere</li>
+                <li><strong>Functional Flow Navigation:</strong> Follow the realistic user journey with buttons</li>
+            </ol>
+            <p style="margin: 10px 0 0 0;"><strong>Example:</strong> Click header "User Dashboard" to jump directly, or use "Login" button to follow the user flow</p>
+        </div>
+        
+        <h3>🔗 Direct Links</h3>
+        <div class="wireframe-grid">
+            <div class="wireframe-card">
+                <h4>🔐 Authentication</h4>
+                <p>Role-based login system</p>
+                <a href="wireframes/desktop/01-authentication.html">Access Login</a>
+            </div>
+            <div class="wireframe-card">
+                <h4>👤 User Dashboard</h4>
+                <p>Personal todo management</p>
+                <a href="wireframes/desktop/02-user-dashboard.html">View Dashboard</a>
+            </div>
+            <div class="wireframe-card">
+                <h4>🔧 Admin Panel</h4>
+                <p>System administration</p>
+                <a href="wireframes/desktop/03-admin-dashboard.html">Admin Access</a>
+            </div>
+            <div class="wireframe-card">
+                <h4>📝 Task Management</h4>
+                <p>Advanced todo features</p>
+                <a href="wireframes/desktop/04-task-management.html">Manage Tasks</a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- User Flows Section -->
+    <div class="section">
+        <h2>🔄 User Flows</h2>
+        
+        <h3>Authentication Flow</h3>
+        <div class="flow-diagram">
+Start → Login Page
+├── New User → Registration → Email Verification → Login
+├── Existing User → Enter Credentials → Dashboard  
+├── Forgot Password → Reset Link → New Password → Login
+└── Admin Access → Role Selection → Admin Dashboard
+        </div>
+
+        <h3>Todo Management Flow</h3>
+        <div class="flow-diagram">
+Dashboard → Create Todo
+├── Quick Add → Simple Form → Save
+└── Advanced Add → Detailed Form
+    ├── Basic Info (Title, Description)
+    ├── Metadata (Category, Priority, Due Date)
+    ├── Advanced (Subtasks, Attachments, Tags)
+    └── Settings (Reminders, Sharing)
+        </div>
+
+        <h3>Admin Management Flow</h3>
+        <div class="flow-diagram">
+Admin Dashboard → User Management
+├── View All Users → User List → User Details/Edit/Block/Delete
+├── Create New User → User Form → Send Invite
+└── System Management → Settings/Database/Analytics/Monitoring
+        </div>
+    </div>
+
+    <!-- Features Section -->
+    <div class="section">
+        <h2>⭐ Key Features Covered</h2>
+        
+        <div class="features-list">
+            <div class="feature-item">
+                <h4>Role-Based Authentication</h4>
+                <p>User and admin login with distinct interfaces and permissions</p>
+            </div>
+            <div class="feature-item">
+                <h4>Advanced Todo Management</h4>
+                <p>Categories, priorities, due dates, subtasks, attachments, and tags</p>
+            </div>
+            <div class="feature-item">
+                <h4>Bulk Operations</h4>
+                <p>Multi-select functionality for efficient task management</p>
+            </div>
+            <div class="feature-item">
+                <h4>Advanced Filtering</h4>
+                <p>Multi-criteria filtering, search, and sorting capabilities</p>
+            </div>
+            <div class="feature-item">
+                <h4>User Management</h4>
+                <p>Admin tools for user creation, editing, blocking, and monitoring</p>
+            </div>
+            <div class="feature-item">
+                <h4>System Monitoring</h4>
+                <p>Real-time system health, alerts, and performance metrics</p>
+            </div>
+            <div class="feature-item">
+                <h4>Activity Tracking</h4>
+                <p>Audit logs and user activity monitoring for administrators</p>
+            </div>
+            <div class="feature-item">
+                <h4>Responsive Design</h4>
+                <p>Mobile-optimized layouts for all device types</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Demo Environment Section -->
+    <div class="section">
+        <h2>🖥️ Demo Environment</h2>
+        
+        <h3>🚀 Server Setup</h3>
+        <p>This interactive demo requires a web server to function properly. Use the provided scripts:</p>
+        
+        <div style="background: #2d3748; color: #e2e8f0; padding: 20px; border-radius: 8px; font-family: monospace; margin: 15px 0;">
+            <div style="color: #68d391;"># Start the demo server</div>
+            <div>./start-wireframes-demo.sh</div>
+            <div style="margin-top: 10px; color: #68d391;"># Stop the demo server</div>
+            <div>./stop-wireframes-demo.sh</div>
+        </div>
+        
+        <div class="features-list">
+            <div class="feature-item">
+                <h4>ℹ️ Current Status</h4>
+                <p id="server-status">Checking server status...</p>
+            </div>
+            <div class="feature-item">
+                <h4>🌐 Demo URL</h4>
+                <p><a href="http://localhost:8080" target="_blank">http://localhost:8080</a></p>
+            </div>
+            <div class="feature-item">
+                <h4>📊 Server Port</h4>
+                <p>8080 (Python HTTP Server)</p>
+            </div>
+            <div class="feature-item">
+                <h4>📁 Server Logs</h4>
+                <p>wireframes-server.log</p>
+            </div>
+        </div>
+        
+        <h3>🛠️ Requirements</h3>
+        <ul>
+            <li><strong>Python 3:</strong> Required for demo server</li>
+            <li><strong>Modern Browser:</strong> Chrome, Firefox, Safari, or Edge</li>
+            <li><strong>Network Access:</strong> localhost:8080</li>
+            <li><strong>JavaScript:</strong> Must be enabled</li>
+        </ul>
+        
+        <h3>🔧 Troubleshooting</h3>
+        <div style="background: #fff3cd; border: 1px solid #ffeaa7; padding: 15px; border-radius: 4px; margin: 15px 0;">
+            <strong>⚠️ Common Issues:</strong>
+            <ul style="margin: 10px 0;">
+                <li><strong>Blank pages:</strong> Ensure you're using http://localhost:8080 (not file:// URLs)</li>
+                <li><strong>Port in use:</strong> Run ./stop-wireframes-demo.sh first</li>
+                <li><strong>Permission denied:</strong> Run chmod +x *.sh to make scripts executable</li>
+                <li><strong>Python not found:</strong> Install Python 3 or use python instead of python3</li>
+            </ul>
+        </div>
+    </div>
+    
+    <!-- Implementation Notes -->
+    <div class="section">
+        <h2>🛠️ Implementation Guidelines</h2>
+        
+        <h3>Technology Stack</h3>
+        <ul>
+            <li><strong>Frontend:</strong> Angular 18, TypeScript, RxJS, Angular Material (optional)</li>
+            <li><strong>Styling:</strong> CSS Grid, Flexbox, Responsive Design</li>
+            <li><strong>State Management:</strong> RxJS Observables, Angular Services</li>
+            <li><strong>Forms:</strong> Angular Reactive Forms with validation</li>
+        </ul>
+
+        <h3>Development Phases</h3>
+        <ol>
+            <li><strong>Phase 1:</strong> Authentication and basic todo CRUD</li>
+            <li><strong>Phase 2:</strong> Advanced features and admin panel</li>
+            <li><strong>Phase 3:</strong> Real-time features and optimization</li>
+            <li><strong>Phase 4:</strong> Testing, accessibility, and deployment</li>
+        </ol>
+
+        <h3>Design Principles</h3>
+        <ul>
+            <li><strong>Mobile-First:</strong> Responsive design starting with mobile layouts</li>
+            <li><strong>Accessibility:</strong> WCAG 2.1 compliance and keyboard navigation</li>
+            <li><strong>Performance:</strong> Lazy loading and efficient data handling</li>
+            <li><strong>User Experience:</strong> Intuitive flows and clear feedback</li>
+        </ul>
+    </div>
+
+    <!-- Status Summary -->
+    <div class="section">
+        <h2>📊 Wireframe Status Summary</h2>
+        
+        <div class="wireframe-grid">
+            <div class="wireframe-card">
+                <h3>✅ Completed Wireframes</h3>
+                <ul>
+                    <li>Authentication flows</li>
+                    <li>User dashboard and navigation</li>
+                    <li>Admin dashboard and controls</li>
+                    <li>Task management interfaces</li>
+                    <li>Design documentation</li>
+                </ul>
+            </div>
+            
+            <div class="wireframe-card">
+                <h3>📋 Ready for Development</h3>
+                <p>All major wireframes and documentation are complete and ready for implementation.</p>
+                <ul>
+                    <li>Complete user flows mapped</li>
+                    <li>Admin functionality defined</li>
+                    <li>Responsive considerations included</li>
+                    <li>Technical specifications provided</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p><strong>Todo App Wireframes</strong> | Created for Angular 18 Full-Stack Development</p>
+        <p>📧 Contact: Developer | 🗺️ Last Updated: September 29, 2024</p>
+    </div>
+    
+    <script>
+        // Check server status
+        function checkServerStatus() {
+            const statusElement = document.getElementById('server-status');
+            
+            // Simple check - if this page loaded, server is running
+            if (window.location.protocol === 'http:' && window.location.hostname === 'localhost' && window.location.port === '8080') {
+                statusElement.innerHTML = '<span style="color: #28a745;">✅ Server Running (Port 8080)</span>';
+                statusElement.style.fontWeight = 'bold';
+            } else if (window.location.protocol === 'file:') {
+                statusElement.innerHTML = '<span style="color: #dc3545;">❌ File Mode - Server Required</span><br><small>Run ./start-wireframes-demo.sh to start server</small>';
+            } else {
+                statusElement.innerHTML = '<span style="color: #ffc107;">⚠️ Unknown Status</span>';
+            }
+        }
+        
+        // Enhanced link tracking
+        function trackLinkClick(linkType, destination) {
+            console.log(`Navigation: ${linkType} -> ${destination}`);
+        }
+        
+        // Message system for user feedback
+        function showMessage(text, type) {
+            // Remove existing messages
+            const existingMessages = document.querySelectorAll('.demo-message');
+            existingMessages.forEach(msg => msg.remove());
+            
+            // Create new message
+            const message = document.createElement('div');
+            message.className = 'demo-message';
+            message.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 12px 20px;
+                border-radius: 4px;
+                z-index: 1000;
+                font-weight: bold;
+                max-width: 300px;
+                box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+                ${type === 'error' ? 'background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb;' : ''}
+                ${type === 'success' ? 'background: #d4edda; color: #155724; border: 1px solid #c3e6cb;' : ''}
+                ${type === 'info' ? 'background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb;' : ''}
+            `;
+            message.textContent = text;
+            
+            document.body.appendChild(message);
+            
+            // Auto-remove after 3 seconds
+            setTimeout(() => {
+                if (message.parentNode) {
+                    message.remove();
+                }
+            }, 3000);
+        }
+        
+        // Add click tracking to demo start button
+        function enhanceDemoButton() {
+            const demoButton = document.querySelector('a[href="wireframes/desktop/01-authentication.html"]');
+            if (demoButton && demoButton.textContent.includes('Start Interactive Demo')) {
+                demoButton.addEventListener('click', function() {
+                    trackLinkClick('Demo Start', 'Authentication');
+                });
+            }
+        }
+        
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            checkServerStatus();
+            enhanceDemoButton();
+            setupFlowMapTracking();
+            
+            // Add hover effects to wireframe cards
+            const wireframeCards = document.querySelectorAll('.wireframe-card');
+            wireframeCards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-2px)';
+                    this.style.transition = 'transform 0.2s ease';
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                });
+            });
+            
+            // Add click tracking to wireframe links
+            const wireframeLinks = document.querySelectorAll('.wireframe-card a');
+            wireframeLinks.forEach(link => {
+                link.addEventListener('click', function() {
+                    const cardTitle = this.parentElement.querySelector('h3, h4').textContent;
+                    trackLinkClick('Wireframe Link', cardTitle);
+                });
+            });
+        });
+        
+        // Flow map navigation tracking
+        function setupFlowMapTracking() {
+            // Track clicks on flow map links
+            const flowMapLinks = document.querySelectorAll('div[style*="font-family: monospace"] a');
+            flowMapLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    const linkText = this.textContent;
+                    console.log(`Flow Map Navigation: ${linkText}`);
+                    
+                    // Add visual feedback
+                    this.style.transform = 'scale(1.05)';
+                    setTimeout(() => {
+                        this.style.transform = 'scale(1)';
+                    }, 150);
+                });
+            });
+        }
+        
+        // Enhanced keyboard shortcuts
+        document.addEventListener('keydown', function(event) {
+            // Alt + S = Start Demo
+            if (event.altKey && event.key === 's') {
+                event.preventDefault();
+                showMessage('🚀 Starting Interactive Demo...', 'info');
+                setTimeout(() => {
+                    window.location.href = 'wireframes/desktop/01-authentication.html';
+                }, 500);
+            }
+            
+            // Alt + H = Back to top
+            if (event.altKey && event.key === 'h') {
+                event.preventDefault();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+            
+            // Alt + U = User Dashboard
+            if (event.altKey && event.key === 'u') {
+                event.preventDefault();
+                window.location.href = 'wireframes/desktop/02-user-dashboard.html';
+            }
+            
+            // Alt + A = Admin Dashboard
+            if (event.altKey && event.key === 'a') {
+                event.preventDefault();
+                window.location.href = 'wireframes/desktop/03-admin-dashboard.html';
+            }
+        });
+        
+        console.log('🎯 Todo App Wireframes - Interactive Demo Ready!');
+        console.log('💡 Keyboard Shortcuts:');
+        console.log('   Alt + S: Start Demo');
+        console.log('   Alt + H: Back to top');
+        console.log('   Alt + U: User Dashboard');
+        console.log('   Alt + A: Admin Dashboard');
+        console.log('🗺️ Flow Map: Click any step to navigate directly!');
+        console.log('🧭 Dual Navigation: Header links OR button flow');
+    </script>
+</body>
+</html>

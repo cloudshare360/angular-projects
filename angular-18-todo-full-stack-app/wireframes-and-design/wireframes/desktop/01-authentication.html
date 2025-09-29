@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Authentication Wireframes - Todo App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .wireframe-container {
+            background: white;
+            border: 2px solid #333;
+            margin: 20px 0;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        .wireframe-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-align: center;
+            background: #333;
+            color: white;
+            padding: 10px;
+            margin: -20px -20px 20px -20px;
+        }
+        .form-container {
+            max-width: 400px;
+            margin: 0 auto;
+            border: 2px solid #ddd;
+            padding: 30px;
+            background: #fafafa;
+        }
+        .form-field {
+            margin: 15px 0;
+        }
+        .form-field label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .form-field input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            background: white;
+            box-sizing: border-box;
+        }
+        .btn {
+            padding: 12px 24px;
+            border: 2px solid #333;
+            background: #007bff;
+            color: white;
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
+            margin: 10px 0;
+        }
+        .btn-secondary {
+            background: white;
+            color: #333;
+            border: 1px solid #ccc;
+        }
+        .link {
+            text-align: center;
+            margin: 10px 0;
+            color: #007bff;
+            text-decoration: underline;
+        }
+        .logo-area {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 2px dashed #ccc;
+        }
+        .role-selector {
+            display: flex;
+            gap: 10px;
+            margin: 15px 0;
+        }
+        .role-option {
+            flex: 1;
+            padding: 10px;
+            border: 2px solid #ddd;
+            text-align: center;
+            cursor: pointer;
+            background: #f9f9f9;
+        }
+        .role-option.selected {
+            border-color: #007bff;
+            background: #e7f3ff;
+        }
+        .error-message {
+            color: #dc3545;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+        .success-message {
+            color: #28a745;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+        .nav-header {
+            background: #f8f9fa;
+            padding: 10px 20px;
+            border-bottom: 1px solid #ddd;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .nav-links a {
+            margin: 0 10px;
+            color: #007bff;
+            text-decoration: none;
+            padding: 5px 10px;
+            border-radius: 3px;
+        }
+        .nav-links a:hover {
+            background: #e9ecef;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Header -->
+    <div class="nav-header">
+        <div>
+            <a href="../../index.html">← Back to Overview</a>
+        </div>
+        <div class="nav-links">
+            <a href="01-authentication.html"><strong>Authentication</strong></a>
+            <a href="02-user-dashboard.html">User Dashboard</a>
+            <a href="03-admin-dashboard.html">Admin Dashboard</a>
+            <a href="04-task-management.html">Task Management</a>
+        </div>
+    </div>
+    <!-- Login Page -->
+    <div class="wireframe-container">
+        <div class="wireframe-title">LOGIN PAGE</div>
+        <div class="form-container">
+            <div class="logo-area">
+                <h2>[LOGO] Todo App</h2>
+                <p>Manage your tasks efficiently</p>
+            </div>
+            
+            <form>
+                <div class="form-field">
+                    <label>Email Address</label>
+                    <input type="email" placeholder="Enter your email">
+                </div>
+                
+                <div class="form-field">
+                    <label>Password</label>
+                    <input type="password" placeholder="Enter your password">
+                </div>
+                
+                <div class="role-selector">
+                    <div class="role-option selected">
+                        <strong>User Login</strong>
+                        <br><small>Access personal todos</small>
+                    </div>
+                    <div class="role-option">
+                        <strong>Admin Login</strong>
+                        <br><small>System administration</small>
+                    </div>
+                </div>
+                
+                <button type="button" class="btn" onclick="handleLogin()">Login</button>
+                
+                <div class="link" onclick="showPasswordRecovery()" style="cursor: pointer;">Forgot Password?</div>
+                
+                <hr style="margin: 20px 0;">
+                
+                <div style="text-align: center;">
+                    <p>Don't have an account?</p>
+                    <button type="button" class="btn btn-secondary" onclick="showRegistration()">Create Account</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Registration Page -->
+    <div class="wireframe-container">
+        <div class="wireframe-title">REGISTRATION PAGE</div>
+        <div class="form-container">
+            <div class="logo-area">
+                <h2>[LOGO] Todo App</h2>
+                <p>Create your account</p>
+            </div>
+            
+            <form>
+                <div class="form-field">
+                    <label>Full Name</label>
+                    <input type="text" placeholder="Enter your full name">
+                </div>
+                
+                <div class="form-field">
+                    <label>Email Address</label>
+                    <input type="email" placeholder="Enter your email">
+                    <div class="error-message">[Error: Email already exists]</div>
+                </div>
+                
+                <div class="form-field">
+                    <label>Password</label>
+                    <input type="password" placeholder="Create a strong password">
+                </div>
+                
+                <div class="form-field">
+                    <label>Confirm Password</label>
+                    <input type="password" placeholder="Confirm your password">
+                </div>
+                
+                <div class="role-selector">
+                    <div class="role-option selected">
+                        <strong>User Account</strong>
+                        <br><small>Personal task management</small>
+                    </div>
+                    <div class="role-option">
+                        <strong>Request Admin</strong>
+                        <br><small>Requires approval</small>
+                    </div>
+                </div>
+                
+                <div style="margin: 15px 0;">
+                    <label>
+                        <input type="checkbox"> I agree to the Terms of Service and Privacy Policy
+                    </label>
+                </div>
+                
+                <button type="button" class="btn" onclick="handleRegistration()">Create Account</button>
+                
+                <hr style="margin: 20px 0;">
+                
+                <div style="text-align: center;">
+                    <p>Already have an account?</p>
+                    <button type="button" class="btn btn-secondary" onclick="showLogin()">Login</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Password Recovery -->
+    <div class="wireframe-container">
+        <div class="wireframe-title">PASSWORD RECOVERY</div>
+        <div class="form-container">
+            <div class="logo-area">
+                <h2>[LOGO] Todo App</h2>
+                <p>Reset your password</p>
+            </div>
+            
+            <form>
+                <div class="form-field">
+                    <label>Email Address</label>
+                    <input type="email" placeholder="Enter your registered email">
+                    <div class="success-message">[Success: Reset link sent to your email]</div>
+                </div>
+                
+                <button type="button" class="btn" onclick="handlePasswordRecovery()">Send Reset Link</button>
+                
+                <div style="text-align: center; margin-top: 20px;">
+                    <div class="link" onclick="showLogin()" style="cursor: pointer;">Back to Login</div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Reset Password Form -->
+    <div class="wireframe-container">
+        <div class="wireframe-title">RESET PASSWORD FORM</div>
+        <div class="form-container">
+            <div class="logo-area">
+                <h2>[LOGO] Todo App</h2>
+                <p>Create a new password</p>
+            </div>
+            
+            <form>
+                <div class="form-field">
+                    <label>New Password</label>
+                    <input type="password" placeholder="Enter new password">
+                </div>
+                
+                <div class="form-field">
+                    <label>Confirm New Password</label>
+                    <input type="password" placeholder="Confirm new password">
+                </div>
+                
+                <button type="button" class="btn" onclick="handlePasswordReset()">Update Password</button>
+                
+                <div style="text-align: center; margin-top: 20px;">
+                    <div class="link" onclick="showLogin()" style="cursor: pointer;">Back to Login</div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script>
+        // Global state management
+        let currentView = 'login';
+        let selectedRole = 'user';
+        
+        // Enhanced navigation functions
+        function handleLogin() {
+            // Get email and password values for simulation
+            const email = document.querySelector('input[type="email"]').value;
+            const password = document.querySelector('input[type="password"]').value;
+            
+            // Simple validation for demo purposes
+            if (!email || !password) {
+                showMessage('Please enter both email and password', 'error');
+                return;
+            }
+            
+            // Show loading state
+            showMessage('Logging in...', 'info');
+            
+            // Simulate login delay
+            setTimeout(() => {
+                // Navigate based on selected role
+                if (selectedRole === 'user') {
+                    showMessage('Login successful! Redirecting to User Dashboard...', 'success');
+                    setTimeout(() => {
+                        window.location.href = '02-user-dashboard.html';
+                    }, 1500);
+                } else {
+                    showMessage('Admin login successful! Redirecting to Admin Dashboard...', 'success');
+                    setTimeout(() => {
+                        window.location.href = '03-admin-dashboard.html';
+                    }, 1500);
+                }
+            }, 1000);
+        }
+        
+        function handleRegistration() {
+            const fullName = document.querySelector('input[type="text"]').value;
+            const email = document.querySelectorAll('input[type="email"]')[1].value;
+            const password = document.querySelectorAll('input[type="password"]')[0].value;
+            const confirmPassword = document.querySelectorAll('input[type="password"]')[1].value;
+            const agreeTerms = document.querySelector('input[type="checkbox"]').checked;
+            
+            // Validation
+            if (!fullName || !email || !password || !confirmPassword) {
+                showMessage('Please fill in all required fields', 'error');
+                return;
+            }
+            
+            if (password !== confirmPassword) {
+                showMessage('Passwords do not match', 'error');
+                return;
+            }
+            
+            if (!agreeTerms) {
+                showMessage('Please agree to the Terms of Service', 'error');
+                return;
+            }
+            
+            // Show success message
+            showMessage('Account created successfully! Please check your email for verification.', 'success');
+            
+            // Return to login after delay
+            setTimeout(() => {
+                showLogin();
+                showMessage('Please login with your new account', 'info');
+            }, 3000);
+        }
+        
+        function showMessage(text, type) {
+            // Remove existing messages
+            const existingMessages = document.querySelectorAll('.dynamic-message');
+            existingMessages.forEach(msg => msg.remove());
+            
+            // Create new message
+            const message = document.createElement('div');
+            message.className = 'dynamic-message';
+            message.style.cssText = `
+                padding: 10px 15px;
+                margin: 10px 0;
+                border-radius: 4px;
+                text-align: center;
+                font-weight: bold;
+                ${type === 'error' ? 'background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb;' : ''}
+                ${type === 'success' ? 'background: #d4edda; color: #155724; border: 1px solid #c3e6cb;' : ''}
+                ${type === 'info' ? 'background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb;' : ''}
+            `;
+            message.textContent = text;
+            
+            // Insert message into current form
+            const currentForm = document.querySelector('.wireframe-container:not([style*="display: none"])');
+            if (currentForm) {
+                const formContainer = currentForm.querySelector('.form-container form');
+                formContainer.insertBefore(message, formContainer.firstChild);
+                
+                // Auto-remove after 5 seconds for info messages
+                if (type === 'info' && !text.includes('Logging in') && !text.includes('Redirecting')) {
+                    setTimeout(() => message.remove(), 5000);
+                }
+            }
+        }
+        
+        function showLogin() {
+            currentView = 'login';
+            const forms = document.querySelectorAll('.wireframe-container');
+            forms.forEach((form, index) => {
+                form.style.display = index === 0 ? 'block' : 'none';
+            });
+            clearMessages();
+        }
+        
+        function showRegistration() {
+            currentView = 'registration';
+            const forms = document.querySelectorAll('.wireframe-container');
+            forms.forEach((form, index) => {
+                form.style.display = index === 1 ? 'block' : 'none';
+            });
+            clearMessages();
+        }
+        
+        function showPasswordRecovery() {
+            currentView = 'password-recovery';
+            const forms = document.querySelectorAll('.wireframe-container');
+            forms.forEach((form, index) => {
+                form.style.display = index === 2 ? 'block' : 'none';
+            });
+            clearMessages();
+        }
+        
+        function showResetPassword() {
+            currentView = 'reset-password';
+            const forms = document.querySelectorAll('.wireframe-container');
+            forms.forEach((form, index) => {
+                form.style.display = index === 3 ? 'block' : 'none';
+            });
+            clearMessages();
+        }
+        
+        function clearMessages() {
+            const messages = document.querySelectorAll('.dynamic-message');
+            messages.forEach(msg => msg.remove());
+        }
+        
+        // Enhanced role selection functionality
+        function setupRoleSelection() {
+            const allRoleOptions = document.querySelectorAll('.role-option');
+            allRoleOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    // Remove selection from siblings only
+                    const siblings = this.parentElement.querySelectorAll('.role-option');
+                    siblings.forEach(opt => opt.classList.remove('selected'));
+                    
+                    // Add selection to clicked option
+                    this.classList.add('selected');
+                    
+                    // Update global role for login form
+                    if (currentView === 'login') {
+                        selectedRole = this.textContent.includes('User Login') ? 'user' : 'admin';
+                        console.log('Selected role:', selectedRole);
+                    }
+                });
+            });
+        }
+        
+        // Form submission handlers
+        function handlePasswordRecovery() {
+            const email = document.querySelectorAll('input[type="email"]')[2].value;
+            if (!email) {
+                showMessage('Please enter your email address', 'error');
+                return;
+            }
+            
+            showMessage('Password reset link sent! Check your email.', 'success');
+            setTimeout(() => {
+                showLogin();
+            }, 3000);
+        }
+        
+        function handlePasswordReset() {
+            const newPassword = document.querySelectorAll('input[type="password"]')[4].value;
+            const confirmPassword = document.querySelectorAll('input[type="password"]')[5].value;
+            
+            if (!newPassword || !confirmPassword) {
+                showMessage('Please fill in both password fields', 'error');
+                return;
+            }
+            
+            if (newPassword !== confirmPassword) {
+                showMessage('Passwords do not match', 'error');
+                return;
+            }
+            
+            showMessage('Password updated successfully!', 'success');
+            setTimeout(() => {
+                showLogin();
+                showMessage('Please login with your new password', 'info');
+            }, 2000);
+        }
+        
+        // Navigation helpers
+        function goToUserDashboard() {
+            window.location.href = '02-user-dashboard.html';
+        }
+        
+        function goToAdminDashboard() {
+            window.location.href = '03-admin-dashboard.html';
+        }
+        
+        function goToTaskManagement() {
+            window.location.href = '04-task-management.html';
+        }
+        
+        function goHome() {
+            window.location.href = '../../index.html';
+        }
+        
+        // Initialize everything when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set up role selection
+            setupRoleSelection();
+            
+            // Initially show login form
+            showLogin();
+            
+            // Set initial role
+            selectedRole = 'user';
+            
+            // Add enter key support for forms
+            document.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    if (currentView === 'login') {
+                        handleLogin();
+                    } else if (currentView === 'registration') {
+                        handleRegistration();
+                    } else if (currentView === 'password-recovery') {
+                        handlePasswordRecovery();
+                    } else if (currentView === 'reset-password') {
+                        handlePasswordReset();
+                    }
+                }
+            });
+            
+            // Simulate some demo data for quick testing
+            if (window.location.search.includes('demo=true')) {
+                setTimeout(() => {
+                    document.querySelector('input[type="email"]').value = 'demo@todoapp.com';
+                    document.querySelector('input[type="password"]').value = 'demo123';
+                    showMessage('Demo credentials loaded! Click Login to proceed.', 'info');
+                }, 1000);
+            }
+            
+            console.log('🔐 Authentication page loaded with enhanced navigation');
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1042 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard Wireframes - Todo App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+        }
+        .wireframe-container {
+            background: white;
+            border: 2px solid #333;
+            margin: 20px;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .wireframe-title {
+            font-size: 18px;
+            font-weight: bold;
+            text-align: center;
+            background: #333;
+            color: white;
+            padding: 10px;
+            margin: 0;
+        }
+        .header {
+            background: #007bff;
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #333;
+        }
+        .logo {
+            font-size: 20px;
+            font-weight: bold;
+        }
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border: 2px solid white;
+            border-radius: 50%;
+            background: #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .main-content {
+            display: flex;
+            min-height: 600px;
+        }
+        .sidebar {
+            width: 250px;
+            background: #f8f9fa;
+            border-right: 2px solid #ddd;
+            padding: 20px;
+        }
+        .content-area {
+            flex: 1;
+            padding: 20px;
+        }
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+        }
+        .sidebar-menu li {
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #ddd;
+            background: white;
+            cursor: pointer;
+        }
+        .sidebar-menu li.active {
+            background: #007bff;
+            color: white;
+            border-color: #333;
+        }
+        .stats-cards {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        .stat-card {
+            background: white;
+            border: 2px solid #ddd;
+            padding: 20px;
+            text-align: center;
+            border-radius: 4px;
+        }
+        .stat-number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #007bff;
+        }
+        .todo-section {
+            background: white;
+            border: 2px solid #333;
+            border-radius: 4px;
+            padding: 20px;
+        }
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #ddd;
+        }
+        .add-todo {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border: 1px solid #ddd;
+        }
+        .add-todo input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+        }
+        .btn {
+            padding: 10px 20px;
+            border: 2px solid #333;
+            background: #007bff;
+            color: white;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        .btn-secondary {
+            background: white;
+            color: #333;
+            border: 1px solid #ccc;
+        }
+        .todo-filters {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .filter-btn {
+            padding: 8px 16px;
+            border: 1px solid #ddd;
+            background: white;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        .filter-btn.active {
+            background: #007bff;
+            color: white;
+            border-color: #333;
+        }
+        .todo-list {
+            space: 10px;
+        }
+        .todo-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            margin: 10px 0;
+            background: white;
+            border-radius: 4px;
+        }
+        .todo-item.completed {
+            background: #f8f9fa;
+            opacity: 0.7;
+        }
+        .todo-checkbox {
+            width: 20px;
+            height: 20px;
+        }
+        .todo-content {
+            flex: 1;
+        }
+        .todo-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .todo-meta {
+            font-size: 14px;
+            color: #666;
+        }
+        .todo-actions {
+            display: flex;
+            gap: 10px;
+        }
+        .priority-high {
+            border-left: 4px solid #dc3545;
+        }
+        .priority-medium {
+            border-left: 4px solid #ffc107;
+        }
+        .priority-low {
+            border-left: 4px solid #28a745;
+        }
+        .category-tag {
+            display: inline-block;
+            padding: 2px 8px;
+            background: #e9ecef;
+            border-radius: 12px;
+            font-size: 12px;
+            margin-right: 5px;
+        }
+        .nav-header {
+            background: #f8f9fa;
+            padding: 10px 20px;
+            border-bottom: 1px solid #ddd;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .nav-links a {
+            margin: 0 10px;
+            color: #007bff;
+            text-decoration: none;
+            padding: 5px 10px;
+            border-radius: 3px;
+        }
+        .nav-links a:hover {
+            background: #e9ecef;
+        }
+        .persistent-todo-form {
+            background: #ffffff;
+            border: 2px solid #007bff;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 8px rgba(0,123,255,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        .persistent-todo-form.editing {
+            border-color: #ffc107;
+            background: #fffbf0;
+            box-shadow: 0 4px 8px rgba(255,193,7,0.2);
+        }
+        .form-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e9ecef;
+        }
+        .form-header h3 {
+            margin: 0;
+            color: #007bff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .form-header h3.editing {
+            color: #ffc107;
+        }
+        .form-mode-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        .btn-outline {
+            background: white;
+            border: 1px solid #007bff;
+            color: #007bff;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .btn-outline:hover {
+            background: #007bff;
+            color: white;
+        }
+        .btn-outline.active {
+            background: #007bff;
+            color: white;
+        }
+        .form-content {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .form-row {
+            display: flex;
+            gap: 15px;
+        }
+        .form-group {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .form-group label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #333;
+        }
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            padding: 10px 12px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+            transition: border-color 0.2s;
+        }
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 0 2px rgba(0,123,255,0.25);
+        }
+        .form-group textarea {
+            resize: vertical;
+            font-family: inherit;
+        }
+        .form-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid #e9ecef;
+        }
+        .form-status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .form-status span {
+            color: #666;
+            font-style: italic;
+        }
+        .form-status.editing span {
+            color: #ffc107;
+            font-weight: bold;
+        }
+        .form-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        .editing-row {
+            background: #fff3cd !important;
+            border: 2px solid #ffc107 !important;
+            box-shadow: 0 2px 4px rgba(255,193,7,0.2);
+        }
+        .btn-success {
+            background: #28a745;
+            border-color: #28a745;
+        }
+        .btn-success:hover {
+            background: #218838;
+            border-color: #1e7e34;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Header -->
+    <div class="nav-header">
+        <div>
+            <a href="../../index.html">← Back to Overview</a>
+        </div>
+        <div class="nav-links">
+            <a href="01-authentication.html">Authentication</a>
+            <a href="02-user-dashboard.html"><strong>User Dashboard</strong></a>
+            <a href="03-admin-dashboard.html">Admin Dashboard</a>
+            <a href="04-task-management.html">Task Management</a>
+        </div>
+    </div>
+    <div class="wireframe-container">
+        <div class="wireframe-title">USER DASHBOARD - MAIN VIEW</div>
+        
+        <!-- Header -->
+        <div class="header">
+            <div class="logo">[LOGO] Todo App</div>
+            <div class="user-menu">
+                <span>🔔 [3]</span>
+                <span>Welcome, John Doe</span>
+                <div class="user-avatar">JD</div>
+                <button class="btn btn-secondary" onclick="logout()">Logout</button>
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <h3>Navigation</h3>
+                <ul class="sidebar-menu">
+                    <li class="active">📋 My Todos</li>
+                    <li>📅 Calendar View</li>
+                    <li>📈 Progress</li>
+                    <li>🏷️ Categories</li>
+                    <li>⭐ Important</li>
+                    <li>✅ Completed</li>
+                    <li>🗑️ Trash</li>
+                </ul>
+                
+                <h3 style="margin-top: 30px;">Categories</h3>
+                <ul class="sidebar-menu">
+                    <li>💼 Work <span style="float: right;">(12)</span></li>
+                    <li>🏠 Personal <span style="float: right;">(8)</span></li>
+                    <li>🛒 Shopping <span style="float: right;">(3)</span></li>
+                    <li>💡 Ideas <span style="float: right;">(5)</span></li>
+                    <li>+ Add Category</li>
+                </ul>
+            </div>
+            
+            <!-- Main Content -->
+            <div class="content-area">
+                <!-- Stats Cards -->
+                <div class="stats-cards">
+                    <div class="stat-card">
+                        <div class="stat-number">28</div>
+                        <div>Total Tasks</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">15</div>
+                        <div>Pending</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">13</div>
+                        <div>Completed</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">5</div>
+                        <div>Overdue</div>
+                    </div>
+                </div>
+                
+                <!-- Todo Section -->
+                <div class="todo-section">
+                    <div class="section-header">
+                        <h2>My Todo List</h2>
+                        <div>
+                            <button class="btn btn-secondary">⚙️ Settings</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Persistent Add/Edit Todo Component -->
+                    <div class="persistent-todo-form" id="todo-form">
+                        <div class="form-header">
+                            <h3 id="form-title">Add New Todo</h3>
+                            <div class="form-mode-buttons">
+                                <button type="button" class="btn btn-outline" onclick="newTodoMode()" id="new-btn">+ New</button>
+                                <button type="button" class="btn btn-outline" onclick="clearForm()" id="clear-btn">Clear</button>
+                            </div>
+                        </div>
+                        
+                        <div class="form-content">
+                            <div class="form-row">
+                                <div class="form-group" style="flex: 2;">
+                                    <label>Title *</label>
+                                    <input type="text" id="todo-title" placeholder="Enter todo title..." />
+                                </div>
+                                <div class="form-group">
+                                    <label>Priority</label>
+                                    <select id="todo-priority">
+                                        <option value="medium">Medium</option>
+                                        <option value="high">High</option>
+                                        <option value="low">Low</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Category</label>
+                                    <select id="todo-category">
+                                        <option value="work">Work</option>
+                                        <option value="personal">Personal</option>
+                                        <option value="shopping">Shopping</option>
+                                        <option value="ideas">Ideas</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Due Date</label>
+                                    <input type="datetime-local" id="todo-due-date" />
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Description</label>
+                                <textarea id="todo-description" placeholder="Add description (optional)..." rows="2"></textarea>
+                            </div>
+                            
+                            <div class="form-actions">
+                                <div class="form-status">
+                                    <span id="form-status-text">Ready to add new todo</span>
+                                </div>
+                                <div class="form-buttons">
+                                    <button type="button" class="btn btn-success" onclick="saveTodo()" id="save-btn">Add Todo</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Filters -->
+                    <div class="todo-filters">
+                        <button class="filter-btn active">All</button>
+                        <button class="filter-btn">Pending</button>
+                        <button class="filter-btn">Completed</button>
+                        <button class="filter-btn">High Priority</button>
+                        <button class="filter-btn">Due Today</button>
+                        <button class="filter-btn">Overdue</button>
+                    </div>
+                    
+                    <!-- Todo List -->
+                    <div class="todo-list">
+                        <div class="todo-item priority-high">
+                            <input type="checkbox" class="todo-checkbox" />
+                            <div class="todo-content">
+                                <div class="todo-title">Complete project proposal</div>
+                                <div class="todo-meta">
+                                    <span class="category-tag">Work</span>
+                                    <span>Due: Today, 5:00 PM</span>
+                                    <span>Priority: High</span>
+                                </div>
+                            </div>
+                            <div class="todo-actions">
+                                <button>✏️</button>
+                                <button>🗑️</button>
+                                <button>⭐</button>
+                            </div>
+                        </div>
+                        
+                        <div class="todo-item priority-medium">
+                            <input type="checkbox" class="todo-checkbox" />
+                            <div class="todo-content">
+                                <div class="todo-title">Buy groceries for dinner</div>
+                                <div class="todo-meta">
+                                    <span class="category-tag">Shopping</span>
+                                    <span>Due: Tomorrow</span>
+                                    <span>Priority: Medium</span>
+                                </div>
+                            </div>
+                            <div class="todo-actions">
+                                <button>✏️</button>
+                                <button>🗑️</button>
+                                <button>⭐</button>
+                            </div>
+                        </div>
+                        
+                        <div class="todo-item priority-low completed">
+                            <input type="checkbox" class="todo-checkbox" checked />
+                            <div class="todo-content">
+                                <div class="todo-title" style="text-decoration: line-through;">Review team meeting notes</div>
+                                <div class="todo-meta">
+                                    <span class="category-tag">Work</span>
+                                    <span>Completed: Yesterday</span>
+                                    <span>Priority: Low</span>
+                                </div>
+                            </div>
+                            <div class="todo-actions">
+                                <button>↺</button>
+                                <button>🗑️</button>
+                            </div>
+                        </div>
+                        
+                        <div class="todo-item priority-high">
+                            <input type="checkbox" class="todo-checkbox" />
+                            <div class="todo-content">
+                                <div class="todo-title">Call insurance company</div>
+                                <div class="todo-meta">
+                                    <span class="category-tag">Personal</span>
+                                    <span>Due: Overdue (2 days)</span>
+                                    <span>Priority: High</span>
+                                </div>
+                            </div>
+                            <div class="todo-actions">
+                                <button>✏️</button>
+                                <button>🗑️</button>
+                                <button>⭐</button>
+                            </div>
+                        </div>
+                        
+                        <div class="todo-item priority-low">
+                            <input type="checkbox" class="todo-checkbox" />
+                            <div class="todo-content">
+                                <div class="todo-title">Research vacation destinations</div>
+                                <div class="todo-meta">
+                                    <span class="category-tag">Ideas</span>
+                                    <span>No due date</span>
+                                    <span>Priority: Low</span>
+                                </div>
+                            </div>
+                            <div class="todo-actions">
+                                <button>✏️</button>
+                                <button>🗑️</button>
+                                <button>⭐</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Pagination -->
+                    <div style="text-align: center; margin-top: 20px; padding: 15px; border-top: 1px solid #ddd;">
+                        <button class="btn btn-secondary">← Previous</button>
+                        <span style="margin: 0 20px;">Page 1 of 3 (15 items)</span>
+                        <button class="btn btn-secondary">Next →</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Global state
+        let isEditing = false;
+        let editingTodoId = null;
+        let currentEditingRow = null;
+        let todoIdCounter = 6; // Start from 6 since we have 5 existing todos
+        
+        // New Todo Mode - Clear form for new todo
+        function newTodoMode() {
+            if (isEditing) {
+                // Clear editing state
+                if (currentEditingRow) {
+                    currentEditingRow.classList.remove('editing-row');
+                    currentEditingRow = null;
+                }
+                isEditing = false;
+                editingTodoId = null;
+            }
+            
+            // Clear form and update UI
+            clearForm();
+            updateFormUI('add');
+            updateFormStatus('Ready to add new todo');
+            
+            // Focus on title field
+            document.getElementById('todo-title').focus();
+        }
+        
+        // Update Form UI based on mode
+        function updateFormUI(mode) {
+            const form = document.getElementById('todo-form');
+            const formTitle = document.getElementById('form-title');
+            const formHeader = form.querySelector('h3');
+            const saveBtn = document.getElementById('save-btn');
+            const formStatus = document.querySelector('.form-status');
+            
+            if (mode === 'add') {
+                // Add mode styling
+                form.classList.remove('editing');
+                formTitle.textContent = '📝 Add New Todo';
+                formTitle.classList.remove('editing');
+                saveBtn.textContent = 'Add Todo';
+                saveBtn.className = 'btn btn-success';
+                formStatus.classList.remove('editing');
+            } else if (mode === 'edit') {
+                // Edit mode styling
+                form.classList.add('editing');
+                formTitle.textContent = '✏️ Edit Todo';
+                formTitle.classList.add('editing');
+                saveBtn.textContent = 'Save Changes';
+                saveBtn.className = 'btn btn-success';
+                formStatus.classList.add('editing');
+            }
+        }
+        
+        // Update Form Status Text
+        function updateFormStatus(text) {
+            const statusText = document.getElementById('form-status-text');
+            statusText.textContent = text;
+        }
+        
+        // Quick Add Todo
+        function quickAddTodo() {
+            const title = document.getElementById('quick-todo-title').value.trim();
+            const priority = document.getElementById('quick-priority').value;
+            const category = document.getElementById('quick-category').value;
+            
+            if (!title) {
+                showMessage('Please enter a todo title', 'error');
+                document.getElementById('quick-todo-title').focus();
+                return;
+            }
+            
+            const newTodo = {
+                id: todoIdCounter++,
+                title: title,
+                priority: priority,
+                category: category,
+                completed: false,
+                dueDate: null,
+                description: ''
+            };
+            
+            addTodoToList(newTodo);
+            
+            // Clear quick add form
+            document.getElementById('quick-todo-title').value = '';
+            document.getElementById('quick-priority').selectedIndex = 0;
+            document.getElementById('quick-category').selectedIndex = 0;
+            
+            showMessage(`Todo "${title}" added successfully!`, 'success');
+            updateStats();
+        }
+        
+        // Save Todo (Add or Update)
+        function saveTodo() {
+            const title = document.getElementById('todo-title').value.trim();
+            const priority = document.getElementById('todo-priority').value;
+            const category = document.getElementById('todo-category').value;
+            const dueDate = document.getElementById('todo-due-date').value;
+            const description = document.getElementById('todo-description').value.trim();
+            
+            if (!title) {
+                showMessage('Please enter a todo title', 'error');
+                document.getElementById('todo-title').focus();
+                return;
+            }
+            
+            if (isEditing) {
+                // Update existing todo
+                updateTodoInList({
+                    id: editingTodoId,
+                    title: title,
+                    priority: priority,
+                    category: category,
+                    dueDate: dueDate,
+                    description: description
+                });
+                
+                showMessage(`Todo "${title}" updated successfully!`, 'success');
+                updateFormStatus(`Todo updated: ${title}`);
+                
+                // Keep the form in edit mode showing the updated todo
+            } else {
+                // Add new todo
+                const newTodo = {
+                    id: todoIdCounter++,
+                    title: title,
+                    priority: priority,
+                    category: category,
+                    completed: false,
+                    dueDate: dueDate,
+                    description: description
+                };
+                
+                const newTodoElement = addTodoToList(newTodo);
+                showMessage(`Todo "${title}" added successfully!`, 'success');
+                
+                // Switch to edit mode for the newly created todo
+                setTimeout(() => {
+                    editTodo(newTodoElement);
+                    updateFormStatus(`New todo created: ${title}`);
+                }, 100);
+            }
+            
+            updateStats();
+        }
+        
+        // Cancel Form
+        function cancelTodoForm() {
+            const form = document.getElementById('todo-form');
+            const quickAdd = document.getElementById('quick-add');
+            
+            // Hide form, show quick add
+            form.style.display = 'none';
+            quickAdd.style.display = 'flex';
+            
+            // Reset editing state
+            if (currentEditingRow) {
+                currentEditingRow.classList.remove('editing-row');
+                currentEditingRow = null;
+            }
+            
+            isEditing = false;
+            editingTodoId = null;
+            
+            clearForm();
+        }
+        
+        // Edit Todo - Populate persistent form with todo data
+        function editTodo(todoElement) {
+            // Clear previous editing state
+            if (currentEditingRow && currentEditingRow !== todoElement) {
+                currentEditingRow.classList.remove('editing-row');
+            }
+            
+            const todoId = todoElement.dataset.todoId;
+            const title = todoElement.querySelector('.todo-title').textContent;
+            const priority = todoElement.classList.contains('priority-high') ? 'high' : 
+                           todoElement.classList.contains('priority-medium') ? 'medium' : 'low';
+            const categoryTag = todoElement.querySelector('.category-tag').textContent;
+            const category = categoryTag.toLowerCase();
+            
+            // Set editing state
+            isEditing = true;
+            editingTodoId = parseInt(todoId);
+            currentEditingRow = todoElement;
+            
+            // Highlight the row being edited
+            todoElement.classList.add('editing-row');
+            
+            // Fill form with existing data
+            document.getElementById('todo-title').value = title;
+            document.getElementById('todo-priority').value = priority;
+            document.getElementById('todo-category').value = category;
+            document.getElementById('todo-description').value = ''; // We don't store description in the demo
+            
+            // Update form UI to edit mode
+            updateFormUI('edit');
+            updateFormStatus(`Editing: ${title}`);
+            
+            // Focus on title field
+            document.getElementById('todo-title').focus();
+            
+            showMessage(`Now editing: ${title}`, 'info');
+        }
+        
+        // Delete Todo
+        function deleteTodo(todoElement) {
+            const title = todoElement.querySelector('.todo-title').textContent;
+            
+            if (confirm(`Are you sure you want to delete "${title}"?`)) {
+                todoElement.remove();
+                showMessage(`Todo "${title}" deleted successfully!`, 'success');
+                updateStats();
+            }
+        }
+        
+        // Toggle Todo Complete
+        function toggleTodoComplete(checkbox, todoElement) {
+            const title = todoElement.querySelector('.todo-title');
+            const todoItem = todoElement;
+            
+            if (checkbox.checked) {
+                todoItem.classList.add('completed');
+                title.style.textDecoration = 'line-through';
+                showMessage('Todo marked as completed!', 'success');
+            } else {
+                todoItem.classList.remove('completed');
+                title.style.textDecoration = 'none';
+                showMessage('Todo marked as pending', 'info');
+            }
+            
+            updateStats();
+        }
+        
+        // Add Todo to List
+        function addTodoToList(todo) {
+            const todoList = document.querySelector('.todo-list');
+            const todoElement = createTodoElement(todo);
+            
+            // Insert at the top of the list
+            todoList.insertBefore(todoElement, todoList.firstChild);
+            
+            return todoElement;
+        }
+        
+        // Update Todo in List
+        function updateTodoInList(todo) {
+            if (currentEditingRow) {
+                const titleElement = currentEditingRow.querySelector('.todo-title');
+                const categoryTag = currentEditingRow.querySelector('.category-tag');
+                
+                titleElement.textContent = todo.title;
+                categoryTag.textContent = todo.category.charAt(0).toUpperCase() + todo.category.slice(1);
+                
+                // Update priority class
+                currentEditingRow.classList.remove('priority-high', 'priority-medium', 'priority-low');
+                currentEditingRow.classList.add(`priority-${todo.priority}`);
+                
+                // Update meta info
+                const metaSpans = currentEditingRow.querySelectorAll('.todo-meta span');
+                if (metaSpans.length >= 3) {
+                    metaSpans[2].textContent = `Priority: ${todo.priority.charAt(0).toUpperCase() + todo.priority.slice(1)}`;
+                }
+            }
+        }
+        
+        // Create Todo Element
+        function createTodoElement(todo) {
+            const todoDiv = document.createElement('div');
+            todoDiv.className = `todo-item priority-${todo.priority}`;
+            todoDiv.dataset.todoId = todo.id;
+            
+            todoDiv.innerHTML = `
+                <input type="checkbox" class="todo-checkbox" ${todo.completed ? 'checked' : ''} />
+                <div class="todo-content">
+                    <div class="todo-title" ${todo.completed ? 'style="text-decoration: line-through;"' : ''}>${todo.title}</div>
+                    <div class="todo-meta">
+                        <span class="category-tag">${todo.category.charAt(0).toUpperCase() + todo.category.slice(1)}</span>
+                        <span>${todo.dueDate ? `Due: ${new Date(todo.dueDate).toLocaleDateString()}` : 'No due date'}</span>
+                        <span>Priority: ${todo.priority.charAt(0).toUpperCase() + todo.priority.slice(1)}</span>
+                    </div>
+                </div>
+                <div class="todo-actions">
+                    <button onclick="editTodo(this.closest('.todo-item'))">✏️</button>
+                    <button onclick="deleteTodo(this.closest('.todo-item'))">🗑️</button>
+                    <button>⭐</button>
+                </div>
+            `;
+            
+            // Add checkbox event listener
+            const checkbox = todoDiv.querySelector('.todo-checkbox');
+            checkbox.addEventListener('change', () => toggleTodoComplete(checkbox, todoDiv));
+            
+            return todoDiv;
+        }
+        
+        // Clear Form
+        function clearForm() {
+            document.getElementById('todo-title').value = '';
+            document.getElementById('todo-priority').selectedIndex = 0;
+            document.getElementById('todo-category').selectedIndex = 0;
+            document.getElementById('todo-due-date').value = '';
+            document.getElementById('todo-description').value = '';
+        }
+        
+        // Update Statistics
+        function updateStats() {
+            const allTodos = document.querySelectorAll('.todo-item');
+            const completedTodos = document.querySelectorAll('.todo-item.completed');
+            const pendingTodos = allTodos.length - completedTodos.length;
+            
+            // Update stat cards
+            const statCards = document.querySelectorAll('.stat-number');
+            if (statCards.length >= 3) {
+                statCards[0].textContent = allTodos.length; // Total
+                statCards[1].textContent = pendingTodos; // Pending
+                statCards[2].textContent = completedTodos.length; // Completed
+            }
+        }
+        
+        // Show Message
+        function showMessage(text, type) {
+            // Remove existing messages
+            const existingMessages = document.querySelectorAll('.dashboard-message');
+            existingMessages.forEach(msg => msg.remove());
+            
+            // Create new message
+            const message = document.createElement('div');
+            message.className = 'dashboard-message';
+            message.style.cssText = `
+                position: fixed;
+                top: 80px;
+                right: 20px;
+                padding: 12px 20px;
+                border-radius: 4px;
+                z-index: 1000;
+                font-weight: bold;
+                max-width: 300px;
+                box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+                ${type === 'error' ? 'background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb;' : ''}
+                ${type === 'success' ? 'background: #d4edda; color: #155724; border: 1px solid #c3e6cb;' : ''}
+                ${type === 'info' ? 'background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb;' : ''}
+            `;
+            message.textContent = text;
+            
+            document.body.appendChild(message);
+            
+            // Auto-remove after 3 seconds
+            setTimeout(() => {
+                if (message.parentNode) {
+                    message.remove();
+                }
+            }, 3000);
+        }
+        
+        // Logout
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                window.location.href = '01-authentication.html';
+            }
+        }
+        
+        // Navigation helpers
+        function goToTaskManagement() {
+            window.location.href = '04-task-management.html';
+        }
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add todo IDs to existing todos for demo
+            const existingTodos = document.querySelectorAll('.todo-item');
+            existingTodos.forEach((todo, index) => {
+                todo.dataset.todoId = index + 1;
+                
+                // Add event listeners to existing checkboxes
+                const checkbox = todo.querySelector('.todo-checkbox');
+                checkbox.addEventListener('change', () => toggleTodoComplete(checkbox, todo));
+                
+                // Update existing edit buttons
+                const editBtn = todo.querySelector('.todo-actions button');
+                if (editBtn && editBtn.textContent === '✏️') {
+                    editBtn.onclick = () => editTodo(todo);
+                }
+                
+                // Update existing delete buttons
+                const deleteBtn = todo.querySelectorAll('.todo-actions button')[1];
+                if (deleteBtn && deleteBtn.textContent === '🗑️') {
+                    deleteBtn.onclick = () => deleteTodo(todo);
+                }
+            });
+            
+            // Add Enter key support for quick add
+            document.getElementById('quick-todo-title').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    quickAddTodo();
+                }
+            });
+            
+            // Add Enter key support for detailed form
+            document.getElementById('todo-title').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    saveTodo();
+                }
+            });
+            
+            console.log('📋 User Dashboard loaded with inline todo management');
+        });
+        
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(event) {
+            // Escape key - cancel editing
+            if (event.key === 'Escape' && isEditing) {
+                event.preventDefault();
+                cancelTodoForm();
+            }
+            
+            // Ctrl+N - new todo
+            if (event.ctrlKey && event.key === 'n') {
+                event.preventDefault();
+                showAddTodoForm();
+            }
+        });
+    </script>
+</body>
+</html>

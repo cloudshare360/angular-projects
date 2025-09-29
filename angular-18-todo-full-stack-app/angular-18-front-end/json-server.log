@@ -1,0 +1,29 @@
+nohup: ignoring input
+
+> angular-18-front-end@0.0.0 start:json-server
+> json-server --watch db.json --port 3000
+
+
+  \{^_^}/ hi!
+
+  Loading db.json
+  Done
+
+  Resources
+  http://localhost:3000/users
+  http://localhost:3000/todos
+  http://localhost:3000/categories
+  http://localhost:3000/activityLogs
+  http://localhost:3000/systemMetrics
+  http://localhost:3000/notifications
+
+  Home
+  http://localhost:3000
+
+  Type s + enter at any time to create a snapshot of the database
+  Watching...
+
+  Error, can't read from stdin
+  Creating a snapshot from the CLI won't be possible
+[0mGET /users [32m200[0m 7.155 ms - 2026[0m
+[0mGET /users [32m200[0m 3.909 ms - 2026[0m
