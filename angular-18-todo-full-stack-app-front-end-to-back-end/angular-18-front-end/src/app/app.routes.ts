@@ -69,6 +69,11 @@ export const routes: Routes = [
     canActivate: [authGuard]
   },
   {
+    path: 'progress',
+    loadComponent: () => import('./features/progress/progress-view.component').then(m => m.ProgressViewComponent),
+    canActivate: [authGuard]
+  },
+  {
     path: 'admin',
     loadComponent: () => import('./layouts/admin-layout/admin-layout.component').then(m => m.AdminLayoutComponent),
     canActivate: [adminGuard],
