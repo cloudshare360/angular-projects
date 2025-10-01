@@ -17,11 +17,11 @@
 
 | Category | Tokens Used | Estimated Cost | Actual Cost* | Status |
 |----------|-------------|----------------|--------------|--------|
-| **Frontend Development** | 21.2M | $63.60 | **[PENDING USER INPUT]** | 🟢 In Progress |
+| **Frontend Development** | 22.2M | $66.60 | **[PENDING USER INPUT]** | 🟢 In Progress |
 | **Backend Development** | 0 | $0.00 | $0.00 | ⏳ Not Started |
 | **Database Setup** | 0 | $0.00 | $0.00 | ⏳ Not Started |
 | **Testing & QA** | 0 | $0.00 | $0.00 | ⏳ Not Started |
-| **TOTAL PROJECT** | **21.2M** | **$63.60** | **[USER TO VERIFY]** | |
+| **TOTAL PROJECT** | **22.2M** | **$66.60** | **[USER TO VERIFY]** | |
 
 **Billing Account:** Claude Subscription / Anthropic API *(User to specify)*
 
@@ -40,10 +40,10 @@
 #### Summary
 | Metric | Value |
 |--------|-------|
-| **Total Tasks Completed** | 19 |
-| **Total Hours Invested** | 55 hours |
-| **Total Tokens Used** | 21.2M tokens |
-| **Estimated Cost** | $63.60 |
+| **Total Tasks Completed** | 20 |
+| **Total Hours Invested** | 58 hours |
+| **Total Tokens Used** | 22.2M tokens |
+| **Estimated Cost** | $66.60 |
 | **Actual Cost** | **[USER TO VERIFY]** |
 | **Account Type** | Claude Subscription / Anthropic API |
 
@@ -80,14 +80,15 @@
 | 17 | **Attachments Upload** | 4h | 1.4M | $4.20 | [VERIFY] | ✅ |
 | 18 | **User Profile Page** | 3h | 1.0M | $3.00 | [VERIFY] | ✅ |
 | 19 | **Settings Page** | 2h | 800K | $2.40 | [VERIFY] | ✅ |
-| | **Week 2 Subtotal** | **33h** | **11.5M** | **$34.50** | **[VERIFY]** | |
+| 20 | **Forgot Password Flow** | 3h | 1.0M | $3.00 | [VERIFY] | ✅ |
+| | **Week 2 Subtotal** | **36h** | **12.5M** | **$37.50** | **[VERIFY]** | |
 
 ### **Frontend Development - Total**
 | Metric | Value |
 |--------|-------|
-| **Total Hours** | 55h |
-| **Total Tokens** | 21.2M |
-| **Estimated Cost** | $63.60 |
+| **Total Hours** | 58h |
+| **Total Tokens** | 22.2M |
+| **Estimated Cost** | $66.60 |
 | **Actual Cost** | **[USER TO VERIFY FROM BILLING]** |
 | **Account Used** | ☐ Claude Subscription ☐ Anthropic API |
 
@@ -173,13 +174,13 @@
 
 | Phase | Tasks | Hours | Tokens | Est. Cost | Actual Cost* | Progress |
 |-------|-------|-------|--------|-----------|--------------|----------|
-| **Frontend App** | 19 | 55h | 21.2M | $63.60 | [VERIFY] | 91% |
+| **Frontend App** | 20 | 58h | 22.2M | $66.60 | [VERIFY] | 93% |
 | **Frontend Testing** | 0 | 0h | 0 | $0.00 | - | 0% |
 | **Backend App** | 0 | 0h | 0 | $0.00 | - | 0% |
 | **Backend Testing** | 0 | 0h | 0 | $0.00 | - | 0% |
 | **Database** | 0 | 0h | 0 | $0.00 | - | 0% |
 | **Documentation** | 3 | 4h | 1.5M | $4.50 | [VERIFY] | ✅ |
-| **GRAND TOTAL** | **22** | **59h** | **22.7M** | **$68.10** | **[USER VERIFY]** | **42%** |
+| **GRAND TOTAL** | **23** | **62h** | **23.7M** | **$71.10** | **[USER VERIFY]** | **43%** |
 
 ---
 
@@ -226,10 +227,9 @@
 
 | Task | Est. Hours | Est. Tokens | Est. Cost |
 |------|-----------|-------------|-----------|
-| Forgot Password Flow | 3h | 1.0M | $3.00 |
 | Calendar View (Optional) | 5h | 1.8M | $5.40 |
 | Progress View (Optional) | 3h | 1.0M | $3.00 |
-| **Remaining Frontend** | **11h** | **3.8M** | **$11.40** |
+| **Remaining Frontend** | **8h** | **2.8M** | **$8.40** |
 
 ---
 
