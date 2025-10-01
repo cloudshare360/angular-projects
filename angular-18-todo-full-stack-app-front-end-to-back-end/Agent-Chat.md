@@ -8,6 +8,8 @@ analyse the current project, check the requirements, update the current agent tr
 after analysis, update the agent traker.
 execute the task one after other
 
+
+
 points to remember
 1. every time a new task is added, requirements document will be updated
 2. after every task, update the agent traker

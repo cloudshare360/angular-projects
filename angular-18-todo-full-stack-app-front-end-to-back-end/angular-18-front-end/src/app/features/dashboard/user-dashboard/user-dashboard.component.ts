@@ -126,6 +126,9 @@ import { Todo } from '../../../core/models/todo.model';
                 </span>
                 <span class="priority">Priority: {{ todo.priority }}</span>
               </div>
+              <div class="todo-tags" *ngIf="todo.tags && todo.tags.length > 0">
+                <span class="tag-pill" *ngFor="let tag of todo.tags">🏷️ {{ tag }}</span>
+              </div>
             </div>
             
             <div class="todo-actions">
@@ -178,20 +181,47 @@ import { Todo } from '../../../core/models/todo.model';
             <div class="form-group">
               <label>Priority</label>
               <div class="priority-selector">
-                <button type="button" 
+                <button type="button"
                   class="priority-btn"
                   [class.selected]="createForm.get('priority')?.value === 'high'"
                   (click)="setPriority('high')">High</button>
-                <button type="button" 
+                <button type="button"
                   class="priority-btn"
                   [class.selected]="createForm.get('priority')?.value === 'medium'"
                   (click)="setPriority('medium')">Medium</button>
-                <button type="button" 
+                <button type="button"
                   class="priority-btn"
                   [class.selected]="createForm.get('priority')?.value === 'low'"
                   (click)="setPriority('low')">Low</button>
               </div>
             </div>
+
+            <!-- Tags Section -->
+            <div class="form-group tags-section">
+              <div class="tags-header">
+                <label>Tags</label>
+              </div>
+              <div class="tag-input-container">
+                <input
+                  type="text"
+                  [(ngModel)]="newTag"
+                  [ngModelOptions]="{standalone: true}"
+                  (keyup.enter)="addTag(newTag, 'create')"
+                  placeholder="Type tag and press Enter..."
+                  class="tag-input">
+                <button type="button" class="btn-icon" (click)="addTag(newTag, 'create')">+ Add</button>
+              </div>
+              <div class="tags-list" *ngIf="createTags.length > 0">
+                <span class="tag-badge" *ngFor="let tag of createTags; let i = index">
+                  {{ tag }}
+                  <button type="button" class="tag-remove" (click)="removeTag(i, 'create')">×</button>
+                </span>
+              </div>
+              <div class="tags-empty" *ngIf="createTags.length === 0">
+                <small class="empty-message">No tags added yet</small>
+              </div>
+            </div>
+
             <div class="form-actions">
               <button type="button" class="btn btn-secondary" (click)="showCreateModal = false">Cancel</button>
               <button type="submit" class="btn btn-primary" [disabled]="!createForm.get('title')?.value">Create Todo</button>
@@ -300,6 +330,32 @@ import { Todo } from '../../../core/models/todo.model';
               </div>
               <div class="subtasks-progress" *ngIf="editingTodo?.subtasks && editingTodo.subtasks.length > 0">
                 <small>{{ getCompletedSubtasksCount() }} of {{ editingTodo.subtasks.length }} completed</small>
+              </div>
+            </div>
+
+            <!-- Tags Section -->
+            <div class="form-group tags-section">
+              <div class="tags-header">
+                <label>Tags</label>
+              </div>
+              <div class="tag-input-container">
+                <input
+                  type="text"
+                  [(ngModel)]="newTag"
+                  [ngModelOptions]="{standalone: true}"
+                  (keyup.enter)="addTag(newTag, 'edit')"
+                  placeholder="Type tag and press Enter..."
+                  class="tag-input">
+                <button type="button" class="btn-icon" (click)="addTag(newTag, 'edit')">+ Add</button>
+              </div>
+              <div class="tags-list" *ngIf="editingTodo?.tags && editingTodo.tags.length > 0">
+                <span class="tag-badge" *ngFor="let tag of editingTodo.tags; let i = index">
+                  {{ tag }}
+                  <button type="button" class="tag-remove" (click)="removeTag(i, 'edit')">×</button>
+                </span>
+              </div>
+              <div class="tags-empty" *ngIf="!editingTodo?.tags || editingTodo.tags.length === 0">
+                <small class="empty-message">No tags added yet</small>
               </div>
             </div>
 
@@ -877,6 +933,105 @@ import { Todo } from '../../../core/models/todo.model';
       color: #666;
       font-size: 12px;
     }
+
+    /* Tags Styles */
+    .tags-section {
+      margin-top: 16px;
+      padding: 16px;
+      background: #f8f9fa;
+      border-radius: 8px;
+      border: 1px solid #e0e0e0;
+    }
+
+    .tags-header {
+      margin-bottom: 12px;
+    }
+
+    .tags-header label {
+      margin: 0;
+      font-weight: 600;
+      color: #333;
+    }
+
+    .tag-input-container {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .tag-input {
+      flex: 1;
+      padding: 8px 12px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+
+    .tags-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .tag-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border-radius: 16px;
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .tag-remove {
+      background: rgba(255,255,255,0.3);
+      border: none;
+      color: white;
+      cursor: pointer;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      line-height: 1;
+      transition: background 0.2s;
+    }
+
+    .tag-remove:hover {
+      background: rgba(255,255,255,0.5);
+    }
+
+    .todo-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 8px;
+    }
+
+    .tag-pill {
+      display: inline-block;
+      padding: 3px 10px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 500;
+    }
+
+    .tags-empty {
+      text-align: center;
+      padding: 12px;
+    }
+
+    .tags-empty .empty-message {
+      color: #999;
+      font-size: 13px;
+    }
   `]
 })
 export class UserDashboardComponent implements OnInit, OnDestroy {
@@ -888,6 +1043,10 @@ export class UserDashboardComponent implements OnInit, OnDestroy {
   showEditModal = false;
   editingTodo: Todo | null = null;
   Math = Math;
+
+  // Tags management
+  newTag = '';
+  createTags: string[] = [];
 
   quickAddForm: FormGroup;
   createForm: FormGroup;
@@ -1019,12 +1178,17 @@ export class UserDashboardComponent implements OnInit, OnDestroy {
 
   createTodo(): void {
     if (this.createForm.get('title')?.value) {
-      const todoData = this.createForm.value;
-      
+      const todoData = {
+        ...this.createForm.value,
+        tags: this.createTags
+      };
+
       this.subscription.add(
         this.todoService.createTodo(todoData).subscribe({
           next: () => {
             this.createForm.reset({ priority: 'medium', category: 'general' });
+            this.createTags = [];
+            this.newTag = '';
             this.showCreateModal = false;
             this.loadTodos();
             this.loadStats();
@@ -1059,7 +1223,11 @@ export class UserDashboardComponent implements OnInit, OnDestroy {
   }
 
   editTodo(todo: Todo): void {
-    this.editingTodo = { ...todo, subtasks: todo.subtasks || [] };
+    this.editingTodo = {
+      ...todo,
+      subtasks: todo.subtasks || [],
+      tags: todo.tags || []
+    };
     this.editForm.patchValue({
       title: todo.title,
       description: todo.description,
@@ -1070,6 +1238,7 @@ export class UserDashboardComponent implements OnInit, OnDestroy {
       progress: todo.progress || 0,
       subtasks: this.editingTodo.subtasks
     });
+    this.newTag = '';
     this.showEditModal = true;
   }
 
@@ -1086,7 +1255,8 @@ export class UserDashboardComponent implements OnInit, OnDestroy {
       priority: this.editForm.get('priority')?.value,
       status: this.editForm.get('status')?.value,
       progress: this.editForm.get('progress')?.value,
-      subtasks: this.editingTodo.subtasks || []
+      subtasks: this.editingTodo.subtasks || [],
+      tags: this.editingTodo.tags || []
     };
 
     this.subscription.add(
@@ -1095,6 +1265,7 @@ export class UserDashboardComponent implements OnInit, OnDestroy {
           this.showEditModal = false;
           this.editingTodo = null;
           this.editForm.reset();
+          this.newTag = '';
           this.loadTodos();
           this.loadStats();
         },
@@ -1210,5 +1381,43 @@ export class UserDashboardComponent implements OnInit, OnDestroy {
 
   generateSubtaskId(): string {
     return 'subtask_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+  }
+
+  // Tag Management Methods
+  addTag(tag: string, mode: 'create' | 'edit'): void {
+    const trimmedTag = tag?.trim().toLowerCase();
+
+    if (!trimmedTag) return;
+
+    if (mode === 'create') {
+      // Check for duplicates
+      if (!this.createTags.includes(trimmedTag)) {
+        this.createTags.push(trimmedTag);
+      }
+    } else if (mode === 'edit' && this.editingTodo) {
+      if (!this.editingTodo.tags) {
+        this.editingTodo.tags = [];
+      }
+      // Check for duplicates
+      if (!this.editingTodo.tags.includes(trimmedTag)) {
+        this.editingTodo.tags.push(trimmedTag);
+      }
+    }
+
+    this.newTag = '';
+  }
+
+  removeTag(index: number, mode: 'create' | 'edit'): void {
+    if (mode === 'create') {
+      this.createTags.splice(index, 1);
+    } else if (mode === 'edit' && this.editingTodo?.tags) {
+      this.editingTodo.tags.splice(index, 1);
+    }
+  }
+
+  filterByTag(tag: string): void {
+    this.filteredTodos = this.todos.filter(todo =>
+      todo.tags && todo.tags.includes(tag)
+    );
   }
 }
