@@ -35,3 +35,9 @@
 {"level":"\u001b[32minfo\u001b[39m","message":"\u001b[32m🏥 Health Check: http://localhost:3000/health\u001b[39m","timestamp":"2025-09-29 18:32:51:3251"}
 {"level":"\u001b[32minfo\u001b[39m","message":"\u001b[32m🌍 Environment: development\u001b[39m","timestamp":"2025-09-29 18:32:51:3251"}
 {"level":"\u001b[32minfo\u001b[39m","message":"\u001b[32mConnected to MongoDB\u001b[39m","timestamp":"2025-09-29 18:32:51:3251"}
+{"level":"\u001b[32minfo\u001b[39m","message":"\u001b[32m🚀 Todo API Server running on port 3000\u001b[39m","timestamp":"2025-10-01 16:40:56:4056"}
+{"level":"\u001b[32minfo\u001b[39m","message":"\u001b[32m📚 API Documentation: http://localhost:3000/api-docs\u001b[39m","timestamp":"2025-10-01 16:40:56:4056"}
+{"level":"\u001b[32minfo\u001b[39m","message":"\u001b[32m🏥 Health Check: http://localhost:3000/health\u001b[39m","timestamp":"2025-10-01 16:40:56:4056"}
+{"level":"\u001b[32minfo\u001b[39m","message":"\u001b[32m🌍 Environment: development\u001b[39m","timestamp":"2025-10-01 16:40:56:4056"}
+{"level":"\u001b[32minfo\u001b[39m","message":"\u001b[32mConnected to MongoDB\u001b[39m","timestamp":"2025-10-01 16:40:57:4057"}
+{"level":"\u001b[32minfo\u001b[39m","message":"\u001b[32m::ffff:127.0.0.1 - - [01/Oct/2025:21:40:58 +0000] \"GET /health HTTP/1.1\" 200 169 \"-\" \"curl/7.88.1\"\u001b[39m","timestamp":"2025-10-01 16:40:58:4058"}

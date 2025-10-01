@@ -1,0 +1,155 @@
+<div class="profile-container">
+  <!-- Header -->
+  <div class="profile-header">
+    <button class="btn-back" (click)="goBack()">
+      ← Back to Dashboard
+    </button>
+    <h1>User Profile</h1>
+  </div>
+
+  <div class="profile-content" *ngIf="user">
+    <!-- Profile Picture Section -->
+    <div class="profile-picture-section">
+      <div class="picture-wrapper">
+        <img [src]="previewUrl || user.profilePicture" [alt]="user.fullName" class="profile-picture">
+        <div class="picture-overlay" *ngIf="isEditing">
+          <label for="profile-pic-upload" class="upload-label">
+            📷 Change Photo
+            <input type="file" id="profile-pic-upload" (change)="onFileSelected($event)" accept="image/*" hidden>
+          </label>
+        </div>
+      </div>
+      <div class="user-basic-info">
+        <h2>{{ user.fullName }}</h2>
+        <p class="username">@{{ user.username }}</p>
+        <span class="role-badge" [class.admin]="user.role === 'admin'">
+          {{ user.role === 'admin' ? '👑 Admin' : '👤 User' }}
+        </span>
+      </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon">📝</div>
+        <div class="stat-value">{{ stats.totalTodos }}</div>
+        <div class="stat-label">Total Todos</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">✅</div>
+        <div class="stat-value">{{ stats.completedTodos }}</div>
+        <div class="stat-label">Completed</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">🔥</div>
+        <div class="stat-value">{{ stats.activeDays }}</div>
+        <div class="stat-label">Active Days</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">📊</div>
+        <div class="stat-value">{{ stats.completionRate }}%</div>
+        <div class="stat-label">Completion Rate</div>
+      </div>
+    </div>
+
+    <!-- Profile Information -->
+    <div class="profile-info-section">
+      <div class="section-header">
+        <h3>Profile Information</h3>
+        <button class="btn-edit" (click)="toggleEdit()">
+          {{ isEditing ? '❌ Cancel' : '✏️ Edit Profile' }}
+        </button>
+      </div>
+
+      <div class="info-grid">
+        <!-- Full Name -->
+        <div class="info-field">
+          <label>Full Name</label>
+          <input type="text" [(ngModel)]="editedUser.fullName" [disabled]="!isEditing" class="info-input">
+        </div>
+
+        <!-- Email -->
+        <div class="info-field">
+          <label>Email</label>
+          <input type="email" [(ngModel)]="editedUser.email" [disabled]="!isEditing" class="info-input">
+        </div>
+
+        <!-- Phone -->
+        <div class="info-field">
+          <label>Phone</label>
+          <input type="tel" [(ngModel)]="editedUser.phone" [disabled]="!isEditing" class="info-input">
+        </div>
+
+        <!-- Location -->
+        <div class="info-field">
+          <label>Location</label>
+          <input type="text" [(ngModel)]="editedUser.location" [disabled]="!isEditing" class="info-input">
+        </div>
+
+        <!-- Website -->
+        <div class="info-field">
+          <label>Website</label>
+          <input type="url" [(ngModel)]="editedUser.website" [disabled]="!isEditing" class="info-input">
+        </div>
+
+        <!-- Joined Date (Read-only) -->
+        <div class="info-field">
+          <label>Member Since</label>
+          <input type="text" [value]="user.joinedDate | date:'MMM d, y'" disabled class="info-input">
+        </div>
+
+        <!-- Bio (Full Width) -->
+        <div class="info-field full-width">
+          <label>Bio</label>
+          <textarea [(ngModel)]="editedUser.bio" [disabled]="!isEditing" class="info-textarea" rows="3"></textarea>
+        </div>
+      </div>
+
+      <!-- Save Button -->
+      <div class="action-buttons" *ngIf="isEditing">
+        <button class="btn-save" (click)="saveProfile()">💾 Save Changes</button>
+      </div>
+    </div>
+
+    <!-- Password Change Section -->
+    <div class="password-section">
+      <div class="section-header">
+        <h3>Security</h3>
+        <button class="btn-password" (click)="togglePasswordChange()">
+          {{ showPasswordChange ? '❌ Cancel' : '🔒 Change Password' }}
+        </button>
+      </div>
+
+      <div class="password-form" *ngIf="showPasswordChange">
+        <div class="info-field">
+          <label>Current Password</label>
+          <input type="password" [(ngModel)]="currentPassword" placeholder="Enter current password" class="info-input">
+        </div>
+        <div class="info-field">
+          <label>New Password</label>
+          <input type="password" [(ngModel)]="newPassword" placeholder="Enter new password (min 6 chars)" class="info-input">
+        </div>
+        <div class="info-field">
+          <label>Confirm New Password</label>
+          <input type="password" [(ngModel)]="confirmPassword" placeholder="Confirm new password" class="info-input">
+        </div>
+        <button class="btn-change-password" (click)="changePassword()">🔑 Update Password</button>
+      </div>
+    </div>
+
+    <!-- Account Actions -->
+    <div class="account-actions">
+      <h3>Account Actions</h3>
+      <div class="danger-zone">
+        <p>⚠️ Danger Zone - These actions are irreversible</p>
+        <button class="btn-danger">🗑️ Delete Account</button>
+        <button class="btn-warning">📦 Export Data</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div class="loading" *ngIf="!user">
+    <p>Loading profile...</p>
+  </div>
+</div>

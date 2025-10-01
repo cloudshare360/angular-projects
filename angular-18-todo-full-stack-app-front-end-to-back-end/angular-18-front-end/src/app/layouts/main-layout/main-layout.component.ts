@@ -44,6 +44,12 @@ import { User } from '../../core/models/user.model';
               <li><a routerLink="/dashboard/trash" routerLinkActive="active">🗑️ Trash</a></li>
             </ul>
 
+            <h3>Account</h3>
+            <ul class="nav-menu">
+              <li><a routerLink="/profile" routerLinkActive="active">👤 Profile</a></li>
+              <li><a routerLink="/settings" routerLinkActive="active">⚙️ Settings</a></li>
+            </ul>
+
             <h3>Categories</h3>
             <ul class="nav-menu categories">
               <li><a routerLink="/dashboard/category/work">💼 Work <span class="count">12</span></a></li>

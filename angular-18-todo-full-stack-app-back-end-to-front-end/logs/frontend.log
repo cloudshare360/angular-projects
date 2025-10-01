@@ -48,61 +48,35 @@ chunk-6TYUEMYP.mjs      | -                   |   1.90 kB |
 chunk-V6AWMZHL.mjs      | auth-routes         | 645 bytes | 
 chunk-K3AAPYCB.mjs      | dashboard-routes    | 441 bytes | 
 
-Application bundle generation complete. [4.573 seconds]
+Application bundle generation complete. [7.155 seconds]
 
 Watch mode enabled. Watching for file changes...
 NOTE: Raw file sizes do not reflect development server per-request transformations.
   ➜  Local:   http://localhost:4200/
-  ➜  Network: http://192.168.68.64:4200/
-  ➜  Network: http://192.168.1.176:4200/
-  ➜  Network: http://172.21.0.1:4200/
-  ➜  Network: http://172.20.0.1:4200/
+  ➜  Network: http://192.168.68.50:4200/
+  ➜  Network: http://172.18.0.1:4200/
 NG02801: Angular detected that `HttpClient` is not configured to use `fetch` APIs. It's strongly recommended to enable `fetch` for applications that use Server-Side Rendering for better performance and compatibility. To enable `fetch`, add the `withFetch()` to the `provideHttpClient()` call at the root of the application.
 ERROR ReferenceError: localStorage is not defined
-    at _AuthService.initializeAuth (/home/sri/Documents/angular/angular-todo-application/Front-End/angular-18-todo-app/src/app/core/services/auth.service.ts:25:19)
-    at new _AuthService (/home/sri/Documents/angular/angular-todo-application/Front-End/angular-18-todo-app/src/app/core/services/auth.service.ts:21:10)
-    at Object.AuthService_Factory (/home/sri/Documents/angular/angular-todo-application/Front-End/angular-18-todo-app/src/app/core/services/auth.service.ts:145:3)
-    at eval (/home/sri/Documents/angular/angular-todo-application/Front-End/angular-18-todo-app/.angular/cache/18.2.21/angular-18-todo-app/vite/deps_ssr/chunk-LHUX4DB4.js:3460:35)
-    at runInInjectorProfilerContext (/home/sri/Documents/angular/angular-todo-application/Front-End/angular-18-todo-app/.angular/cache/18.2.21/angular-18-todo-app/vite/deps_ssr/chunk-LHUX4DB4.js:2076:5)
-    at R3Injector.hydrate (/home/sri/Documents/angular/angular-todo-application/Front-End/angular-18-todo-app/.angular/cache/18.2.21/angular-18-todo-app/vite/deps_ssr/chunk-LHUX4DB4.js:3459:11)
-    at R3Injector.get (/home/sri/Documents/angular/angular-todo-application/Front-End/angular-18-todo-app/.angular/cache/18.2.21/angular-18-todo-app/vite/deps_ssr/chunk-LHUX4DB4.js:3349:23)
-    at injectInjectorOnly (/home/sri/Documents/angular/angular-todo-application/Front-End/angular-18-todo-app/.angular/cache/18.2.21/angular-18-todo-app/vite/deps_ssr/chunk-LHUX4DB4.js:2194:36)
-    at Module.ɵɵinject (/home/sri/Documents/angular/angular-todo-application/Front-End/angular-18-todo-app/.angular/cache/18.2.21/angular-18-todo-app/vite/deps_ssr/chunk-LHUX4DB4.js:2200:59)
-    at Object.AuthGuard_Factory (/home/sri/Documents/angular/angular-todo-application/Front-End/angular-18-todo-app/src/app/core/guards/auth.guard.ts:9:23)
+    at _AuthService.initializeAuth (/home/sri/Documents/angular-projects/angular-18-todo-full-stack-app-back-end-to-front-end/Front-End/angular-18-todo-app/src/app/core/services/auth.service.ts:25:19)
+    at new _AuthService (/home/sri/Documents/angular-projects/angular-18-todo-full-stack-app-back-end-to-front-end/Front-End/angular-18-todo-app/src/app/core/services/auth.service.ts:21:10)
+    at Object.AuthService_Factory (/home/sri/Documents/angular-projects/angular-18-todo-full-stack-app-back-end-to-front-end/Front-End/angular-18-todo-app/src/app/core/services/auth.service.ts:145:3)
+    at eval (/home/sri/Documents/angular-projects/angular-18-todo-full-stack-app-back-end-to-front-end/Front-End/angular-18-todo-app/.angular/cache/18.2.21/angular-18-todo-app/vite/deps_ssr/chunk-LHUX4DB4.js:3460:35)
+    at runInInjectorProfilerContext (/home/sri/Documents/angular-projects/angular-18-todo-full-stack-app-back-end-to-front-end/Front-End/angular-18-todo-app/.angular/cache/18.2.21/angular-18-todo-app/vite/deps_ssr/chunk-LHUX4DB4.js:2076:5)
+    at R3Injector.hydrate (/home/sri/Documents/angular-projects/angular-18-todo-full-stack-app-back-end-to-front-end/Front-End/angular-18-todo-app/.angular/cache/18.2.21/angular-18-todo-app/vite/deps_ssr/chunk-LHUX4DB4.js:3459:11)
+    at R3Injector.get (/home/sri/Documents/angular-projects/angular-18-todo-full-stack-app-back-end-to-front-end/Front-End/angular-18-todo-app/.angular/cache/18.2.21/angular-18-todo-app/vite/deps_ssr/chunk-LHUX4DB4.js:3349:23)
+    at injectInjectorOnly (/home/sri/Documents/angular-projects/angular-18-todo-full-stack-app-back-end-to-front-end/Front-End/angular-18-todo-app/.angular/cache/18.2.21/angular-18-todo-app/vite/deps_ssr/chunk-LHUX4DB4.js:2194:36)
+    at Module.ɵɵinject (/home/sri/Documents/angular-projects/angular-18-todo-full-stack-app-back-end-to-front-end/Front-End/angular-18-todo-app/.angular/cache/18.2.21/angular-18-todo-app/vite/deps_ssr/chunk-LHUX4DB4.js:2200:59)
+    at Object.AuthGuard_Factory (/home/sri/Documents/angular-projects/angular-18-todo-full-stack-app-back-end-to-front-end/Front-End/angular-18-todo-app/src/app/core/guards/auth.guard.ts:9:23)
 ERROR ReferenceError: localStorage is not defined
-    at _AuthService.initializeAuth (/home/sri/Documents/angular/angular-todo-application/Front-End/angular-18-todo-app/src/app/core/services/auth.service.ts:25:19)
-    at new _AuthService (/home/sri/Documents/angular/angular-todo-application/Front-End/angular-18-todo-app/src/app/core/services/auth.service.ts:21:10)
-    at Object.AuthService_Factory (/home/sri/Documents/angular/angular-todo-application/Front-End/angular-18-todo-app/src/app/core/services/auth.service.ts:145:3)
-    at eval (/home/sri/Documents/angular/angular-todo-application/Front-End/angular-18-todo-app/.angular/cache/18.2.21/angular-18-todo-app/vite/deps_ssr/chunk-LHUX4DB4.js:3460:35)
-    at runInInjectorProfilerContext (/home/sri/Documents/angular/angular-todo-application/Front-End/angular-18-todo-app/.angular/cache/18.2.21/angular-18-todo-app/vite/deps_ssr/chunk-LHUX4DB4.js:2076:5)
-    at R3Injector.hydrate (/home/sri/Documents/angular/angular-todo-application/Front-End/angular-18-todo-app/.angular/cache/18.2.21/angular-18-todo-app/vite/deps_ssr/chunk-LHUX4DB4.js:3459:11)
-    at R3Injector.get (/home/sri/Documents/angular/angular-todo-application/Front-End/angular-18-todo-app/.angular/cache/18.2.21/angular-18-todo-app/vite/deps_ssr/chunk-LHUX4DB4.js:3349:23)
-    at injectInjectorOnly (/home/sri/Documents/angular/angular-todo-application/Front-End/angular-18-todo-app/.angular/cache/18.2.21/angular-18-todo-app/vite/deps_ssr/chunk-LHUX4DB4.js:2194:36)
-    at Module.ɵɵinject (/home/sri/Documents/angular/angular-todo-application/Front-End/angular-18-todo-app/.angular/cache/18.2.21/angular-18-todo-app/vite/deps_ssr/chunk-LHUX4DB4.js:2200:59)
-    at Object.AuthGuard_Factory (/home/sri/Documents/angular/angular-todo-application/Front-End/angular-18-todo-app/src/app/core/guards/auth.guard.ts:9:23)
-18:33:58 [vite] Pre-transform error: Failed to load url /api/auth/polyfills.js (resolved id: /api/auth/polyfills.js). Does the file exist?
-18:33:58 [vite] Pre-transform error: Failed to load url /api/auth/main.js (resolved id: /api/auth/main.js). Does the file exist?
-ERROR ReferenceError: localStorage is not defined
-    at _AuthService.initializeAuth (/home/sri/Documents/angular/angular-todo-application/Front-End/angular-18-todo-app/src/app/core/services/auth.service.ts:25:19)
-    at new _AuthService (/home/sri/Documents/angular/angular-todo-application/Front-End/angular-18-todo-app/src/app/core/services/auth.service.ts:21:10)
-    at Object.AuthService_Factory (/home/sri/Documents/angular/angular-todo-application/Front-End/angular-18-todo-app/src/app/core/services/auth.service.ts:145:3)
-    at eval (/home/sri/Documents/angular/angular-todo-application/Front-End/angular-18-todo-app/.angular/cache/18.2.21/angular-18-todo-app/vite/deps_ssr/chunk-LHUX4DB4.js:3460:35)
-    at runInInjectorProfilerContext (/home/sri/Documents/angular/angular-todo-application/Front-End/angular-18-todo-app/.angular/cache/18.2.21/angular-18-todo-app/vite/deps_ssr/chunk-LHUX4DB4.js:2076:5)
-    at R3Injector.hydrate (/home/sri/Documents/angular/angular-todo-application/Front-End/angular-18-todo-app/.angular/cache/18.2.21/angular-18-todo-app/vite/deps_ssr/chunk-LHUX4DB4.js:3459:11)
-    at R3Injector.get (/home/sri/Documents/angular/angular-todo-application/Front-End/angular-18-todo-app/.angular/cache/18.2.21/angular-18-todo-app/vite/deps_ssr/chunk-LHUX4DB4.js:3349:23)
-    at injectInjectorOnly (/home/sri/Documents/angular/angular-todo-application/Front-End/angular-18-todo-app/.angular/cache/18.2.21/angular-18-todo-app/vite/deps_ssr/chunk-LHUX4DB4.js:2194:36)
-    at Module.ɵɵinject (/home/sri/Documents/angular/angular-todo-application/Front-End/angular-18-todo-app/.angular/cache/18.2.21/angular-18-todo-app/vite/deps_ssr/chunk-LHUX4DB4.js:2200:59)
-    at Object.AuthGuard_Factory (/home/sri/Documents/angular/angular-todo-application/Front-End/angular-18-todo-app/src/app/core/guards/auth.guard.ts:9:23)
-ERROR ReferenceError: localStorage is not defined
-    at _AuthService.initializeAuth (/home/sri/Documents/angular/angular-todo-application/Front-End/angular-18-todo-app/src/app/core/services/auth.service.ts:25:19)
-    at new _AuthService (/home/sri/Documents/angular/angular-todo-application/Front-End/angular-18-todo-app/src/app/core/services/auth.service.ts:21:10)
-    at Object.AuthService_Factory (/home/sri/Documents/angular/angular-todo-application/Front-End/angular-18-todo-app/src/app/core/services/auth.service.ts:145:3)
-    at eval (/home/sri/Documents/angular/angular-todo-application/Front-End/angular-18-todo-app/.angular/cache/18.2.21/angular-18-todo-app/vite/deps_ssr/chunk-LHUX4DB4.js:3460:35)
-    at runInInjectorProfilerContext (/home/sri/Documents/angular/angular-todo-application/Front-End/angular-18-todo-app/.angular/cache/18.2.21/angular-18-todo-app/vite/deps_ssr/chunk-LHUX4DB4.js:2076:5)
-    at R3Injector.hydrate (/home/sri/Documents/angular/angular-todo-application/Front-End/angular-18-todo-app/.angular/cache/18.2.21/angular-18-todo-app/vite/deps_ssr/chunk-LHUX4DB4.js:3459:11)
-    at R3Injector.get (/home/sri/Documents/angular/angular-todo-application/Front-End/angular-18-todo-app/.angular/cache/18.2.21/angular-18-todo-app/vite/deps_ssr/chunk-LHUX4DB4.js:3349:23)
-    at injectInjectorOnly (/home/sri/Documents/angular/angular-todo-application/Front-End/angular-18-todo-app/.angular/cache/18.2.21/angular-18-todo-app/vite/deps_ssr/chunk-LHUX4DB4.js:2194:36)
-    at Module.ɵɵinject (/home/sri/Documents/angular/angular-todo-application/Front-End/angular-18-todo-app/.angular/cache/18.2.21/angular-18-todo-app/vite/deps_ssr/chunk-LHUX4DB4.js:2200:59)
-    at Object.AuthGuard_Factory (/home/sri/Documents/angular/angular-todo-application/Front-End/angular-18-todo-app/src/app/core/guards/auth.guard.ts:9:23)
-18:35:00 [vite] Pre-transform error: Failed to load url /api/auth/polyfills.js (resolved id: /api/auth/polyfills.js). Does the file exist?
-18:35:00 [vite] Pre-transform error: Failed to load url /api/auth/main.js (resolved id: /api/auth/main.js). Does the file exist?
+    at _AuthService.initializeAuth (/home/sri/Documents/angular-projects/angular-18-todo-full-stack-app-back-end-to-front-end/Front-End/angular-18-todo-app/src/app/core/services/auth.service.ts:25:19)
+    at new _AuthService (/home/sri/Documents/angular-projects/angular-18-todo-full-stack-app-back-end-to-front-end/Front-End/angular-18-todo-app/src/app/core/services/auth.service.ts:21:10)
+    at Object.AuthService_Factory (/home/sri/Documents/angular-projects/angular-18-todo-full-stack-app-back-end-to-front-end/Front-End/angular-18-todo-app/src/app/core/services/auth.service.ts:145:3)
+    at eval (/home/sri/Documents/angular-projects/angular-18-todo-full-stack-app-back-end-to-front-end/Front-End/angular-18-todo-app/.angular/cache/18.2.21/angular-18-todo-app/vite/deps_ssr/chunk-LHUX4DB4.js:3460:35)
+    at runInInjectorProfilerContext (/home/sri/Documents/angular-projects/angular-18-todo-full-stack-app-back-end-to-front-end/Front-End/angular-18-todo-app/.angular/cache/18.2.21/angular-18-todo-app/vite/deps_ssr/chunk-LHUX4DB4.js:2076:5)
+    at R3Injector.hydrate (/home/sri/Documents/angular-projects/angular-18-todo-full-stack-app-back-end-to-front-end/Front-End/angular-18-todo-app/.angular/cache/18.2.21/angular-18-todo-app/vite/deps_ssr/chunk-LHUX4DB4.js:3459:11)
+    at R3Injector.get (/home/sri/Documents/angular-projects/angular-18-todo-full-stack-app-back-end-to-front-end/Front-End/angular-18-todo-app/.angular/cache/18.2.21/angular-18-todo-app/vite/deps_ssr/chunk-LHUX4DB4.js:3349:23)
+    at injectInjectorOnly (/home/sri/Documents/angular-projects/angular-18-todo-full-stack-app-back-end-to-front-end/Front-End/angular-18-todo-app/.angular/cache/18.2.21/angular-18-todo-app/vite/deps_ssr/chunk-LHUX4DB4.js:2194:36)
+    at Module.ɵɵinject (/home/sri/Documents/angular-projects/angular-18-todo-full-stack-app-back-end-to-front-end/Front-End/angular-18-todo-app/.angular/cache/18.2.21/angular-18-todo-app/vite/deps_ssr/chunk-LHUX4DB4.js:2200:59)
+    at Object.AuthGuard_Factory (/home/sri/Documents/angular-projects/angular-18-todo-full-stack-app-back-end-to-front-end/Front-End/angular-18-todo-app/src/app/core/guards/auth.guard.ts:9:23)
+16:45:48 [vite] Pre-transform error: Failed to load url /api/auth/polyfills.js (resolved id: /api/auth/polyfills.js). Does the file exist?
+16:45:48 [vite] Pre-transform error: Failed to load url /api/auth/main.js (resolved id: /api/auth/main.js). Does the file exist?
