@@ -6,28 +6,30 @@ This guide will help you set up the Express.js backend API on Windows for the An
 - Windows 10/11
 - Administrator privileges
 - Internet connection
+- **Node.js and NVM installed** (see [0-nodejs-nvm-setup.md](../0-nodejs-nvm-setup.md))
 
-## 1. Install Node.js
+## 1. Verify Node.js Installation
 
-### Step 1: Download Node.js
-1. Visit [Node.js Official Website](https://nodejs.org/)
-2. Download the Windows Installer (.msi) - LTS version recommended
-3. Choose 64-bit version for modern systems
-
-### Step 2: Install Node.js
-1. Run the downloaded `.msi` file as administrator
-2. Follow the installation wizard
-3. Check "Automatically install the necessary tools" option
-4. Complete the installation
-
-### Step 3: Verify Installation
+### Step 1: Check Node.js and npm
 ```powershell
 # Open PowerShell and verify installation
 node --version
 npm --version
 ```
 
-## 2. Install NVM (Node Version Manager)
+**Expected Output:**
+```
+v18.17.0 (or later)
+9.6.7 (or later)
+```
+
+### Step 2: If Node.js is not installed
+**Please complete the Node.js setup first:**
+1. Go to [0-nodejs-nvm-setup.md](../0-nodejs-nvm-setup.md)
+2. Follow the Windows installation instructions
+3. Return to this guide after Node.js is installed
+
+## 2. Navigate to Express.js Project Directory
 
 ### Step 1: Download NVM for Windows
 1. Visit [nvm-windows releases](https://github.com/coreybutler/nvm-windows/releases)

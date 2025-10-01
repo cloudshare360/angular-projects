@@ -30,6 +30,11 @@ Thumbs.db
 *.swp
 *.swo
 
+# Git credentials and sensitive files
+.git-credentials
+git-credentials
+credentials.txt
+
 # Temporary files
 *.tmp
 *.temp

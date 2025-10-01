@@ -1,51 +1,37 @@
-# Angular Frontend Setup for Mac ARM (Apple Silicon)
+# Angular Frontend Setup for Mac### Step 1: Install Angular CLI Globally
+```bash (Apple Silicon)
 
 This guide will help you set up the Angular frontend application on Mac with Apple Silicon (M1/M2/M3) for the Todo Application.
 
 ## Prerequisites
-- macOS 11.0 or later with Apple Silicon
-- Node.js installed (see Express.js setup guide)
+- macOS with Apple Silicon (M1/M2/M3)
+- Xcode command line tools
 - Express.js API running
 - MongoDB running
-- Xcode Command Line Tools
+- **Node.js and NVM installed** (see [0-nodejs-nvm-setup.md](../0-nodejs-nvm-setup.md))
 
-## 1. Install Node.js (if not already installed)
+## 1. Verify Node.js Installation
 
-### If Node.js is not installed, follow these steps:
+### Step 1: Check Node.js and npm
 ```bash
-# Using Homebrew (recommended for Apple Silicon)
-brew install node
-
-# Or using NVM for version management
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
-source ~/.zshrc
-nvm install 18.17.0
-nvm use 18.17.0
-
-# Verify installation
+# Check Node.js and npm versions
 node --version
 npm --version
 ```
 
-## 2. Install NVM (if not already installed)
-
-### If NVM is not installed:
-```bash
-# Install NVM
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
-
-# Add to shell profile
-echo 'export NVM_DIR="$HOME/.nvm"' >> ~/.zshrc
-echo '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"' >> ~/.zshrc
-source ~/.zshrc
-
-# Install and use Node.js 18.x for Angular 18
-nvm install 18.17.0
-nvm use 18.17.0
-nvm alias default 18.17.0
+**Expected Output:**
+```
+v18.17.0 (or later)
+9.6.7 (or later)
 ```
 
-## 3. Install Angular Dependencies
+### Step 2: If Node.js is not installed
+**Please complete the Node.js setup first:**
+1. Go to [0-nodejs-nvm-setup.md](../0-nodejs-nvm-setup.md)
+2. Follow the Mac ARM installation instructions
+3. Return to this guide after Node.js is installed
+
+## 2. Install Angular Dependencies
 
 ### Step 1: Install Angular CLI Globally
 ```bash

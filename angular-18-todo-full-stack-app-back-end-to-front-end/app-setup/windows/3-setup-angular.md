@@ -7,32 +7,30 @@ This guide will help you set up the Angular frontend application on Windows for 
 - Node.js installed (see Express.js setup guide)
 - Express.js API running
 - MongoDB running
+- **Node.js and NVM installed** (see [0-nodejs-nvm-setup.md](../0-nodejs-nvm-setup.md))
 
-## 1. Install Node.js (if not already installed)
+## 1. Verify Node.js Installation
 
-### If Node.js is not installed, follow these steps:
+### Step 1: Check Node.js and npm
 ```powershell
-# Download from https://nodejs.org/
-# Install the LTS version
-# Verify installation
+# Open PowerShell and verify installation
 node --version
 npm --version
 ```
 
-## 2. Install NVM (if not already installed)
-
-### If NVM is not installed:
-```powershell
-# Download nvm-windows from: https://github.com/coreybutler/nvm-windows/releases
-# Install and verify
-nvm version
-
-# Use Node.js 18.x for Angular 18
-nvm install 18.17.0
-nvm use 18.17.0
+**Expected Output:**
+```
+v18.17.0 (or later)
+9.6.7 (or later)
 ```
 
-## 3. Install Angular Dependencies
+### Step 2: If Node.js is not installed
+**Please complete the Node.js setup first:**
+1. Go to [0-nodejs-nvm-setup.md](../0-nodejs-nvm-setup.md)
+2. Follow the Windows installation instructions
+3. Return to this guide after Node.js is installed
+
+## 2. Install Angular Dependencies
 
 ### Step 1: Install Angular CLI Globally
 ```powershell

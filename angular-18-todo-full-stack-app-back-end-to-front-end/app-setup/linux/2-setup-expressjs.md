@@ -1,10 +1,10 @@
-# Express.js API Setup for Mac ARM (Apple Silicon)
+# Express.js API Setup for Linux
 
-This guide will help you set up the Express.js backend API on Mac with Apple Silicon (M1/M2/M3) for the Angular Todo Application.
+This guide will help you set up the Express.js backend API on Linux for the Angular Todo Application.
 
 ## Prerequisites
-- macOS with Apple Silicon (M1/M2/M3)
-- Xcode command line tools
+- Linux distribution (Ubuntu 20.04+, Debian 11+, CentOS 8+, or RHEL 8+)
+- sudo privileges
 - Internet connection
 - **Node.js and NVM installed** (see [0-nodejs-nvm-setup.md](../0-nodejs-nvm-setup.md))
 
@@ -26,32 +26,16 @@ v18.17.0 (or later)
 ### Step 2: If Node.js is not installed
 **Please complete the Node.js setup first:**
 1. Go to [0-nodejs-nvm-setup.md](../0-nodejs-nvm-setup.md)
-2. Follow the Mac ARM installation instructions
+2. Follow the Linux installation instructions
 3. Return to this guide after Node.js is installed
 
 ## 2. Navigate to Express.js Project Directory
-
-## 2. Install NVM (Node Version Manager)
 
 ## 3. Install Dependencies and Run Express.js Application
 
 ### Step 1: Open Terminal
 
-### Step 2: Configure NVM for Apple Silicon
-```bash
-# Add to ~/.zshrc (for zsh) or ~/.bash_profile (for bash)
-echo 'export NVM_DIR="$HOME/.nvm"' >> ~/.zshrc
-echo '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"' >> ~/.zshrc
-echo '[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"' >> ~/.zshrc
-
-# Reload shell configuration
-source ~/.zshrc
-
-# Verify NVM installation
-nvm --version
-```
-
-### Step 3: Install and Use Node.js with NVM
+### Step 2: Install Node.js with NVM
 ```bash
 # List available Node.js versions
 nvm list-remote
@@ -74,11 +58,11 @@ npm --version
 
 ### Step 1: Navigate to Backend Directory
 ```bash
-# Open Terminal and navigate to backend folder
+# Navigate to backend folder
 cd "/path/to/your/project/Back-End/express-rest-todo-api"
 
-# Or using Finder
-open "/path/to/your/project/Back-End/express-rest-todo-api"
+# Check directory contents
+ls -la
 ```
 
 ### Step 2: Install Dependencies
@@ -89,25 +73,29 @@ npm install
 # Install development dependencies specifically
 npm install --save-dev nodemon
 
-# Install global dependencies (if needed)
-npm install -g pm2
+# Install global dependencies (optional)
+sudo npm install -g pm2 nodemon
 
 # Verify installation
 npm list
 npm list -g --depth=0
 ```
 
-### Step 3: Handle ARM64 Specific Dependencies
+### Step 3: Handle Linux-Specific Dependencies
 ```bash
-# Some packages might need rebuilding for ARM64
+# Install build tools for native modules
+# Ubuntu/Debian
+sudo apt install -y build-essential python3-dev
+
+# CentOS/RHEL/Fedora
+sudo dnf groupinstall "Development Tools"
+sudo dnf install python3-devel
+
+# Arch Linux
+sudo pacman -S base-devel python
+
+# Rebuild native modules if needed
 npm rebuild
-
-# If you encounter node-gyp issues
-npm install -g node-gyp
-npm rebuild node-sass --force
-
-# Clear npm cache if needed
-npm cache clean --force
 ```
 
 ### Step 4: Setup Environment Variables
@@ -115,8 +103,10 @@ npm cache clean --force
 # Copy environment template (if exists)
 cp .env.example .env
 
-# Edit .env file using nano, vim, or VS Code
+# Edit .env file
 nano .env
+# or
+vim .env
 # or
 code .env
 ```
@@ -142,7 +132,7 @@ API_URL=http://localhost:3000
 FRONTEND_URL=http://localhost:4200
 ALLOWED_ORIGINS=http://localhost:4200,http://127.0.0.1:4200
 
-# macOS specific settings
+# Linux specific settings
 LOG_LEVEL=info
 LOG_FILE=./logs/app.log
 ```
@@ -169,22 +159,55 @@ node src/app.js
 # Start with nodemon for development
 npx nodemon src/app.js
 
-# Start with PM2 (production-like)
-pm2 start src/app.js --name "todo-api"
-pm2 status
+# Start in background
+nohup node src/app.js > server.log 2>&1 &
 ```
 
-### Method 3: Using macOS Launch Services
+### Method 3: Using PM2 (Production-like)
 ```bash
-# Create a launch script for easy starting
-cat > start-api.sh << 'EOF'
-#!/bin/bash
-cd "/path/to/your/project/Back-End/express-rest-todo-api"
-npm run dev
+# Install PM2 globally
+sudo npm install -g pm2
+
+# Start with PM2
+pm2 start src/app.js --name "todo-api"
+
+# Start with ecosystem file
+pm2 start ecosystem.config.js
+
+# Check status
+pm2 status
+pm2 logs todo-api
+```
+
+### Method 4: Using systemd Service
+```bash
+# Create systemd service file
+sudo tee /etc/systemd/system/todo-api.service > /dev/null <<EOF
+[Unit]
+Description=Todo API Express Server
+After=network.target
+
+[Service]
+Type=simple
+User=www-data
+WorkingDirectory=/path/to/your/project/Back-End/express-rest-todo-api
+ExecStart=/usr/bin/node src/app.js
+Restart=on-failure
+Environment=NODE_ENV=production
+
+[Install]
+WantedBy=multi-user.target
 EOF
 
-chmod +x start-api.sh
-./start-api.sh
+# Reload systemd
+sudo systemctl daemon-reload
+
+# Enable and start service
+sudo systemctl enable todo-api.service
+sudo systemctl start todo-api.service
+
+# Check status
+sudo systemctl status todo-api.service
 ```
 
 ### Verify API is Running
@@ -192,14 +215,12 @@ chmod +x start-api.sh
 # Test API endpoint
 curl http://localhost:3000/health
 
-# Test with detailed output
-curl -v http://localhost:3000/health
+# Test with headers
+curl -H "Accept: application/json" http://localhost:3000/health
 
 # Check process
 ps aux | grep node
-
-# Check port usage
-lsof -i :3000
+ss -tlnp | grep :3000
 ```
 
 ## 5. Stop Express API
@@ -213,13 +234,14 @@ Ctrl + C
 ### Method 2: Kill Process by Port
 ```bash
 # Find process using port 3000
-lsof -i :3000
+sudo ss -tlnp | grep :3000
+sudo netstat -tlnp | grep :3000
 
 # Kill the process (replace PID with actual process ID)
 kill -9 <PID>
 
 # Or kill all node processes (use with caution)
-killall node
+pkill -f node
 ```
 
 ### Method 3: Using PM2 (if used)
@@ -237,23 +259,13 @@ pm2 delete todo-api
 pm2 kill
 ```
 
-### Method 4: Create Stop Script
+### Method 4: Using systemd (if configured)
 ```bash
-# Create a stop script
-cat > stop-api.sh << 'EOF'
-#!/bin/bash
-echo "Stopping Express API..."
-PID=$(lsof -ti :3000)
-if [ ! -z "$PID" ]; then
-    kill -9 $PID
-    echo "Express API stopped (PID: $PID)"
-else
-    echo "No process found on port 3000"
-fi
-EOF
+# Stop systemd service
+sudo systemctl stop todo-api.service
 
-chmod +x stop-api.sh
-./stop-api.sh
+# Disable service
+sudo systemctl disable todo-api.service
 ```
 
 ## 6. API Testing Documentation (curl-doc)
@@ -267,6 +279,9 @@ curl -X GET http://localhost:3000/health
 
 # With JSON formatting (requires jq)
 curl -X GET http://localhost:3000/health | jq
+
+# With response time
+curl -w "Response time: %{time_total}s\n" -o /dev/null -s http://localhost:3000/health
 ```
 
 #### 6.2 User Registration
@@ -279,13 +294,13 @@ curl -X POST http://localhost:3000/api/auth/register \
     "email": "test@example.com",
     "password": "password123",
     "confirmPassword": "password123"
-  }'
+  }' | jq
 ```
 
 #### 6.3 User Login
 ```bash
 # Login user and save token
-response=$(curl -X POST http://localhost:3000/api/auth/login \
+response=$(curl -s -X POST http://localhost:3000/api/auth/login \
   -H "Content-Type: application/json" \
   -d '{
     "email": "test@example.com",
@@ -295,18 +310,22 @@ response=$(curl -X POST http://localhost:3000/api/auth/login \
 # Extract token (requires jq)
 token=$(echo $response | jq -r '.token')
 echo "Token: $token"
+
+# Save token to file for reuse
+echo $token > /tmp/api_token.txt
 ```
 
 #### 6.4 Create Todo List
 ```bash
-# Create a new todo list (replace $token with actual JWT token)
+# Create a new todo list (using saved token)
+token=$(cat /tmp/api_token.txt)
 curl -X POST http://localhost:3000/api/lists \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer $token" \
   -d '{
     "title": "My First List",
     "description": "A sample todo list"
-  }'
+  }' | jq
 ```
 
 #### 6.5 Get All Lists
@@ -327,7 +346,7 @@ curl -X POST http://localhost:3000/api/lists/$LIST_ID/todos \
     "title": "Sample Todo",
     "description": "A sample todo item",
     "priority": "medium"
-  }'
+  }' | jq
 ```
 
 #### 6.7 Get Todo Items
@@ -347,7 +366,7 @@ curl -X PUT http://localhost:3000/api/todos/$TODO_ID \
   -d '{
     "title": "Updated Todo",
     "completed": true
-  }'
+  }' | jq
 ```
 
 #### 6.9 Delete Todo Item
@@ -364,43 +383,82 @@ curl -X GET http://localhost:3000/api/users/profile \
   -H "Authorization: Bearer $token" | jq
 ```
 
-### Complete Testing Script for macOS
+### Complete Testing Script for Linux
 ```bash
 #!/bin/bash
-# save as test-api.sh
+# Save as test-api.sh
+
+set -e
 
 BASE_URL="http://localhost:3000"
 EMAIL="test@example.com"
 PASSWORD="password123"
+TOKEN_FILE="/tmp/api_token.txt"
 
-echo "🧪 Testing Express API..."
+echo "🧪 Testing Express API on Linux..."
+
+# Function to check if jq is installed
+check_jq() {
+    if ! command -v jq &> /dev/null; then
+        echo "Installing jq for JSON parsing..."
+        if command -v apt &> /dev/null; then
+            sudo apt install -y jq
+        elif command -v dnf &> /dev/null; then
+            sudo dnf install -y jq
+        elif command -v pacman &> /dev/null; then
+            sudo pacman -S jq
+        else
+            echo "Please install jq manually"
+            exit 1
+        fi
+    fi
+}
+
+check_jq
 
 # Health check
 echo "1. Health check..."
-curl -s "$BASE_URL/health" | jq
+if curl -s "$BASE_URL/health" | jq . > /dev/null; then
+    echo "✅ API is healthy"
+else
+    echo "❌ API health check failed"
+    exit 1
+fi
 
 # Register user
 echo "2. Registering user..."
-curl -s -X POST "$BASE_URL/api/auth/register" \
+register_response=$(curl -s -X POST "$BASE_URL/api/auth/register" \
   -H "Content-Type: application/json" \
   -d "{
     \"username\": \"testuser\",
     \"email\": \"$EMAIL\",
     \"password\": \"$PASSWORD\",
     \"confirmPassword\": \"$PASSWORD\"
-  }" | jq
+  }")
+
+if echo "$register_response" | jq -e '.success' > /dev/null; then
+    echo "✅ User registered successfully"
+else
+    echo "⚠️  User might already exist, continuing with login..."
+fi
 
 # Login and get token
 echo "3. Logging in..."
-response=$(curl -s -X POST "$BASE_URL/api/auth/login" \
+login_response=$(curl -s -X POST "$BASE_URL/api/auth/login" \
   -H "Content-Type: application/json" \
   -d "{
     \"email\": \"$EMAIL\",
     \"password\": \"$PASSWORD\"
   }")
 
-token=$(echo $response | jq -r '.token')
-echo "Token: ${token:0:50}..."
+token=$(echo $login_response | jq -r '.token')
+if [ "$token" != "null" ] && [ "$token" != "" ]; then
+    echo "✅ Login successful"
+    echo $token > $TOKEN_FILE
+else
+    echo "❌ Login failed"
+    exit 1
+fi
 
 # Create list
 echo "4. Creating todo list..."
@@ -413,19 +471,49 @@ list_response=$(curl -s -X POST "$BASE_URL/api/lists" \
   }')
 
 list_id=$(echo $list_response | jq -r '.data._id')
-echo "List ID: $list_id"
+if [ "$list_id" != "null" ] && [ "$list_id" != "" ]; then
+    echo "✅ List created: $list_id"
+else
+    echo "❌ Failed to create list"
+    exit 1
+fi
 
 # Create todo
 echo "5. Creating todo item..."
-curl -s -X POST "$BASE_URL/api/lists/$list_id/todos" \
+todo_response=$(curl -s -X POST "$BASE_URL/api/lists/$list_id/todos" \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer $token" \
   -d '{
     "title": "Test Todo",
     "description": "A test todo item"
-  }' | jq
+  }')
 
-echo "✅ API testing completed!"
+todo_id=$(echo $todo_response | jq -r '.data._id')
+if [ "$todo_id" != "null" ] && [ "$todo_id" != "" ]; then
+    echo "✅ Todo created: $todo_id"
+else
+    echo "❌ Failed to create todo"
+    exit 1
+fi
+
+# Update todo
+echo "6. Updating todo item..."
+update_response=$(curl -s -X PUT "$BASE_URL/api/todos/$todo_id" \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer $token" \
+  -d '{
+    "completed": true
+  }')
+
+if echo "$update_response" | jq -e '.success' > /dev/null; then
+    echo "✅ Todo updated successfully"
+else
+    echo "❌ Failed to update todo"
+fi
+
+echo "✅ API testing completed successfully!"
+echo "🗑️  Cleaning up..."
+rm -f $TOKEN_FILE
 ```
 
 Make the script executable and run:
@@ -436,85 +524,109 @@ chmod +x test-api.sh
 
 ## Troubleshooting
 
-### Common Issues on Apple Silicon:
+### Common Issues on Linux:
 
-1. **Node.js ARM64 compatibility**
+1. **Port 3000 already in use**
    ```bash
-   # Check Node.js architecture
-   node -p "process.arch"
+   # Check what's using port 3000
+   sudo ss -tlnp | grep :3000
+   sudo netstat -tlnp | grep :3000
    
-   # Should return 'arm64' for Apple Silicon
+   # Kill the process
+   sudo kill -9 <PID>
    
-   # If you have x64 version, reinstall ARM64 version
-   nvm uninstall node
-   arch -arm64 brew install node
+   # Check for other Node.js processes
+   ps aux | grep node
    ```
 
-2. **Native modules compilation issues**
+2. **Permission issues**
    ```bash
-   # Install Python (required for node-gyp)
-   brew install python@3.11
+   # Fix file permissions
+   sudo chown -R $USER:$USER /path/to/project
    
-   # Rebuild native modules
-   npm rebuild
+   # Fix npm permissions
+   mkdir ~/.npm-global
+   npm config set prefix '~/.npm-global'
+   echo 'export PATH=~/.npm-global/bin:$PATH' >> ~/.bashrc
+   source ~/.bashrc
+   ```
+
+3. **Node.js not found after installation**
+   ```bash
+   # Add Node.js to PATH
+   echo 'export PATH=/usr/bin:$PATH' >> ~/.bashrc
+   source ~/.bashrc
    
-   # If still failing, clear cache and reinstall
+   # Or create symlink
+   sudo ln -s /usr/bin/nodejs /usr/bin/node
+   ```
+
+4. **MongoDB connection failed**
+   ```bash
+   # Check if MongoDB is running
+   docker ps | grep mongodb
+   
+   # Test MongoDB connection
+   telnet localhost 27017
+   
+   # Check logs
+   docker-compose logs mongodb
+   ```
+
+5. **Native module compilation errors**
+   ```bash
+   # Install build essentials
+   # Ubuntu/Debian
+   sudo apt install build-essential python3-dev
+   
+   # CentOS/RHEL/Fedora
+   sudo dnf groupinstall "Development Tools"
+   sudo dnf install python3-devel
+   
+   # Clear cache and rebuild
    npm cache clean --force
    rm -rf node_modules package-lock.json
    npm install
    ```
 
-3. **Port 3000 already in use**
+6. **Firewall blocking connections**
    ```bash
-   # Find what's using port 3000
-   lsof -i :3000
+   # Ubuntu (UFW)
+   sudo ufw allow 3000/tcp
    
-   # Kill the process
-   kill -9 <PID>
+   # CentOS/RHEL/Fedora (firewalld)
+   sudo firewall-cmd --permanent --add-port=3000/tcp
+   sudo firewall-cmd --reload
    
-   # Or change port in environment
-   export PORT=3001
+   # Check firewall status
+   sudo ufw status
+   sudo firewall-cmd --list-all
    ```
 
-4. **MongoDB connection issues**
-   ```bash
-   # Check if MongoDB is running
-   docker-compose ps
-   
-   # Test connection
-   curl localhost:27017
-   
-   # Check MongoDB logs
-   docker-compose logs mongodb
-   ```
+## Performance Optimization
 
-5. **Permission issues**
-   ```bash
-   # Fix npm permissions
-   sudo chown -R $(whoami) ~/.npm
-   
-   # Fix project permissions
-   sudo chown -R $(whoami) /path/to/project
-   ```
-
-## Performance Optimization for Apple Silicon
-
-### Memory Management
+### System Configuration:
 ```bash
-# Check memory usage
-top -l 1 | grep "PhysMem"
+# Increase file descriptor limits
+echo "* soft nofile 65536" | sudo tee -a /etc/security/limits.conf
+echo "* hard nofile 65536" | sudo tee -a /etc/security/limits.conf
 
-# Monitor Node.js memory usage
-node --max-old-space-size=4096 src/app.js
+# Optimize TCP settings
+echo "net.core.somaxconn = 65536" | sudo tee -a /etc/sysctl.conf
+echo "net.ipv4.tcp_max_syn_backlog = 65536" | sudo tee -a /etc/sysctl.conf
+sudo sysctl -p
 ```
 
-### CPU Optimization
+### Node.js Performance:
 ```bash
-# Use all CPU cores with PM2
-pm2 start src/app.js -i max --name "todo-api"
+# Use cluster mode with PM2
+pm2 start src/app.js -i max --name "todo-api-cluster"
 
-# Check CPU usage
-top -pid $(pgrep node)
+# Monitor performance
+pm2 monit
+
+# Use production optimizations
+NODE_ENV=production npm start
 ```
 
 ## Next Steps
@@ -530,16 +642,3 @@ Once the Express API is running successfully:
 - **API Documentation**: http://localhost:3000/api-docs (Swagger UI)
 - **Base URL**: http://localhost:3000
 - **Health Check**: http://localhost:3000/health
-
-## macOS Development Tools
-
-### Recommended Tools:
-- **Postman**: For API testing with GUI
-- **Bruno**: Lightweight API client
-- **HTTPie**: Command-line HTTP client
-- **jq**: JSON processor for terminal
-
-```bash
-# Install useful tools via Homebrew
-brew install jq httpie bruno postman
-```
