@@ -1,0 +1,161 @@
+<div class="admin-dashboard">
+  <!-- Header -->
+  <div class="dashboard-header">
+    <h2>Admin Dashboard</h2>
+    <button class="btn btn-primary" (click)="refreshData()">🔄 Refresh</button>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-state">
+    <div class="spinner"></div>
+    <p>Loading dashboard data...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error && !loading" class="error-state">
+    <p>⚠️ Error loading data: {{ error }}</p>
+    <button class="btn btn-secondary" (click)="refreshData()">Try Again</button>
+  </div>
+
+  <!-- Dashboard Content -->
+  <div *ngIf="!loading && !error">
+    <!-- System Statistics -->
+    <div class="stats-section">
+      <h3>System Overview</h3>
+      <div class="admin-stats">
+        <div class="admin-stat-card">
+          <div class="stat-icon">👥</div>
+          <div class="stat-content">
+            <h4>Total Users</h4>
+            <span class="stat-number">{{ metrics?.totalUsers || 0 }}</span>
+            <span class="stat-label">{{ metrics?.activeUsers || 0 }} active</span>
+          </div>
+        </div>
+        <div class="admin-stat-card">
+          <div class="stat-icon">📋</div>
+          <div class="stat-content">
+            <h4>Total Todos</h4>
+            <span class="stat-number">{{ metrics?.totalTodos || 0 }}</span>
+            <span class="stat-label">{{ metrics?.completedTodos || 0 }} completed</span>
+          </div>
+        </div>
+        <div class="admin-stat-card">
+          <div class="stat-icon">⏳</div>
+          <div class="stat-content">
+            <h4>Pending Tasks</h4>
+            <span class="stat-number">{{ metrics?.pendingTodos || 0 }}</span>
+            <span class="stat-label">{{ metrics?.inProgressTodos || 0 }} in progress</span>
+          </div>
+        </div>
+        <div class="admin-stat-card" [class.warning]="metrics?.overdueTodos && metrics.overdueTodos > 0">
+          <div class="stat-icon">⚠️</div>
+          <div class="stat-content">
+            <h4>Overdue</h4>
+            <span class="stat-number warning-text">{{ metrics?.overdueTodos || 0 }}</span>
+            <span class="stat-label">tasks overdue</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- System Health -->
+    <div class="health-section">
+      <h3>System Health</h3>
+      <div class="health-grid">
+        <div class="health-card">
+          <div class="health-header">
+            <span class="health-status" [class.healthy]="metrics?.systemHealth?.status === 'healthy'">
+              {{ metrics?.systemHealth?.status === 'healthy' ? '✅ Healthy' : '⚠️ Issues Detected' }}
+            </span>
+            <span class="health-uptime">Uptime: {{ metrics?.systemHealth?.uptime || 'N/A' }}</span>
+          </div>
+          <div class="health-metrics">
+            <div class="metric">
+              <label>CPU Usage</label>
+              <div class="progress-bar">
+                <div class="progress-fill"
+                  [style.width.%]="metrics?.systemHealth?.cpuUsage || 0"
+                  [class.warning]="(metrics?.systemHealth?.cpuUsage || 0) > 80"></div>
+              </div>
+              <span class="metric-value">{{ metrics?.systemHealth?.cpuUsage || 0 }}%</span>
+            </div>
+            <div class="metric">
+              <label>Memory Usage</label>
+              <div class="progress-bar">
+                <div class="progress-fill"
+                  [style.width.%]="metrics?.systemHealth?.memoryUsage || 0"
+                  [class.warning]="(metrics?.systemHealth?.memoryUsage || 0) > 80"></div>
+              </div>
+              <span class="metric-value">{{ metrics?.systemHealth?.memoryUsage || 0 }}%</span>
+            </div>
+            <div class="metric">
+              <label>Disk Usage</label>
+              <div class="progress-bar">
+                <div class="progress-fill"
+                  [style.width.%]="metrics?.systemHealth?.diskUsage || 0"
+                  [class.warning]="(metrics?.systemHealth?.diskUsage || 0) > 80"></div>
+              </div>
+              <span class="metric-value">{{ metrics?.systemHealth?.diskUsage || 0 }}%</span>
+            </div>
+          </div>
+          <div class="health-footer">
+            <span class="last-backup">Last Backup: {{ formatDate(metrics?.systemHealth?.lastBackup) }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent Activity -->
+    <div class="activity-section">
+      <h3>Recent Activity</h3>
+      <div class="activity-list" *ngIf="recentActivity.length > 0; else noActivity">
+        <div class="activity-item" *ngFor="let activity of recentActivity">
+          <div class="activity-icon">{{ getActivityIcon(activity.action) }}</div>
+          <div class="activity-content">
+            <span class="activity-text">{{ formatActivityAction(activity) }}</span>
+            <span class="activity-meta">
+              <span class="activity-entity">{{ activity.entityType }}</span>
+              •
+              <span class="activity-time">{{ formatRelativeTime(activity.timestamp) }}</span>
+            </span>
+          </div>
+          <div class="activity-user" *ngIf="activity.userId">
+            User ID: {{ activity.userId }}
+          </div>
+        </div>
+      </div>
+      <ng-template #noActivity>
+        <div class="empty-state">
+          <p>No recent activity</p>
+        </div>
+      </ng-template>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="actions-section">
+      <h3>Quick Actions</h3>
+      <div class="action-grid">
+        <button class="action-card" routerLink="/admin/users">
+          <span class="action-icon">👥</span>
+          <span class="action-label">Manage Users</span>
+          <span class="action-count">{{ metrics?.totalUsers || 0 }} users</span>
+        </button>
+        <button class="action-card" (click)="viewSystemLogs()">
+          <span class="action-icon">📊</span>
+          <span class="action-label">System Logs</span>
+          <span class="action-count">{{ recentActivity.length }} logs</span>
+        </button>
+        <button class="action-card" (click)="viewAnalytics()">
+          <span class="action-icon">📈</span>
+          <span class="action-label">Analytics</span>
+          <span class="action-count">View Reports</span>
+        </button>
+        <button class="action-card" routerLink="/admin/system">
+          <span class="action-icon">⚙️</span>
+          <span class="action-label">Settings</span>
+          <span class="action-count">Configure</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
