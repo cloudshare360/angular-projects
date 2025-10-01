@@ -1,0 +1,25 @@
+# Git credentials and sensitive files
+*.git-credentials
+.git-credentials
+git-credentials
+credentials.txt
+
+# Node modules
+node_modules/
+
+# Logs
+*.log
+logs/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+
+# Environment files
+.env
+.env.local
+.env.production
