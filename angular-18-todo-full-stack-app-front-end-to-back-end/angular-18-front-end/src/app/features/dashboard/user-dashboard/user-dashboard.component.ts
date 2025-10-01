@@ -194,6 +194,85 @@ import { Todo } from '../../../core/models/todo.model';
           </form>
         </div>
       </div>
+
+      <!-- Edit Todo Modal -->
+      <div class="modal-overlay" *ngIf="showEditModal" (click)="closeEditModal()">
+        <div class="modal" (click)="$event.stopPropagation()">
+          <div class="modal-header">
+            <h3>Edit Todo</h3>
+            <button class="close-btn" (click)="closeEditModal()">✕</button>
+          </div>
+          <form [formGroup]="editForm" (ngSubmit)="saveEditedTodo()">
+            <div class="form-group">
+              <label>Title *</label>
+              <input type="text" formControlName="title" placeholder="Enter todo title...">
+            </div>
+            <div class="form-group">
+              <label>Description</label>
+              <textarea formControlName="description" placeholder="Add detailed description..."></textarea>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Category</label>
+                <select formControlName="category">
+                  <option value="general">General</option>
+                  <option value="work">Work</option>
+                  <option value="personal">Personal</option>
+                  <option value="shopping">Shopping</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Due Date</label>
+                <input type="date" formControlName="dueDate">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Status</label>
+                <div class="status-selector">
+                  <button type="button"
+                    class="status-btn"
+                    [class.selected]="editForm.get('status')?.value === 'pending'"
+                    (click)="setEditStatus('pending')">Pending</button>
+                  <button type="button"
+                    class="status-btn"
+                    [class.selected]="editForm.get('status')?.value === 'in-progress'"
+                    (click)="setEditStatus('in-progress')">In Progress</button>
+                  <button type="button"
+                    class="status-btn"
+                    [class.selected]="editForm.get('status')?.value === 'completed'"
+                    (click)="setEditStatus('completed')">Completed</button>
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Priority</label>
+              <div class="priority-selector">
+                <button type="button"
+                  class="priority-btn"
+                  [class.selected]="editForm.get('priority')?.value === 'high'"
+                  (click)="setEditPriority('high')">High</button>
+                <button type="button"
+                  class="priority-btn"
+                  [class.selected]="editForm.get('priority')?.value === 'medium'"
+                  (click)="setEditPriority('medium')">Medium</button>
+                <button type="button"
+                  class="priority-btn"
+                  [class.selected]="editForm.get('priority')?.value === 'low'"
+                  (click)="setEditPriority('low')">Low</button>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Progress: {{ editForm.get('progress')?.value }}%</label>
+              <input type="range" formControlName="progress" min="0" max="100" step="5" class="progress-slider">
+            </div>
+            <div class="form-actions">
+              <button type="button" class="btn btn-secondary" (click)="closeEditModal()">Cancel</button>
+              <button type="submit" class="btn btn-primary" [disabled]="!editForm.get('title')?.value">Save Changes</button>
+            </div>
+          </form>
+        </div>
+      </div>
     </div>
   `,
   styles: [`
@@ -541,6 +620,59 @@ import { Todo } from '../../../core/models/todo.model';
       border-color: #007bff;
     }
 
+    .status-selector {
+      display: flex;
+      gap: 8px;
+    }
+
+    .status-btn {
+      flex: 1;
+      padding: 8px 12px;
+      border: 1px solid #ddd;
+      background: white;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-size: 14px;
+    }
+
+    .status-btn.selected {
+      background: #28a745;
+      color: white;
+      border-color: #28a745;
+    }
+
+    .progress-slider {
+      width: 100%;
+      height: 8px;
+      border-radius: 4px;
+      outline: none;
+      -webkit-appearance: none;
+      appearance: none;
+      background: linear-gradient(to right, #007bff 0%, #007bff var(--value), #e9ecef var(--value), #e9ecef 100%);
+    }
+
+    .progress-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #007bff;
+      cursor: pointer;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+
+    .progress-slider::-moz-range-thumb {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #007bff;
+      cursor: pointer;
+      border: none;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+
     .form-actions {
       display: flex;
       justify-content: flex-end;
@@ -593,10 +725,13 @@ export class UserDashboardComponent implements OnInit, OnDestroy {
   stats = { total: 0, pending: 0, completed: 0, overdue: 0 };
   activeFilter = 'all';
   showCreateModal = false;
+  showEditModal = false;
+  editingTodo: Todo | null = null;
   Math = Math;
 
   quickAddForm: FormGroup;
   createForm: FormGroup;
+  editForm: FormGroup;
 
   private subscription = new Subscription();
 
@@ -617,6 +752,16 @@ export class UserDashboardComponent implements OnInit, OnDestroy {
       category: ['general'],
       dueDate: [''],
       priority: ['medium']
+    });
+
+    this.editForm = this.fb.group({
+      title: [''],
+      description: [''],
+      category: ['general'],
+      dueDate: [''],
+      priority: ['medium'],
+      status: ['pending'],
+      progress: [0]
     });
   }
 
@@ -753,8 +898,71 @@ export class UserDashboardComponent implements OnInit, OnDestroy {
   }
 
   editTodo(todo: Todo): void {
-    // TODO: Implement edit functionality
-    console.log('Edit todo:', todo);
+    this.editingTodo = todo;
+    this.editForm.patchValue({
+      title: todo.title,
+      description: todo.description,
+      category: todo.category,
+      dueDate: todo.dueDate ? this.formatDateForInput(todo.dueDate) : '',
+      priority: todo.priority,
+      status: todo.status,
+      progress: todo.progress || 0
+    });
+    this.showEditModal = true;
+  }
+
+  saveEditedTodo(): void {
+    if (!this.editForm.get('title')?.value || !this.editingTodo) {
+      return;
+    }
+
+    const updateData = {
+      title: this.editForm.get('title')?.value,
+      description: this.editForm.get('description')?.value,
+      category: this.editForm.get('category')?.value,
+      dueDate: this.editForm.get('dueDate')?.value || null,
+      priority: this.editForm.get('priority')?.value,
+      status: this.editForm.get('status')?.value,
+      progress: this.editForm.get('progress')?.value
+    };
+
+    this.subscription.add(
+      this.todoService.updateTodo(this.editingTodo.id, updateData).subscribe({
+        next: () => {
+          this.showEditModal = false;
+          this.editingTodo = null;
+          this.editForm.reset();
+          this.loadTodos();
+          this.loadStats();
+        },
+        error: (error) => {
+          console.error('Error updating todo:', error);
+        }
+      })
+    );
+  }
+
+  closeEditModal(): void {
+    this.showEditModal = false;
+    this.editingTodo = null;
+    this.editForm.reset();
+  }
+
+  setEditPriority(priority: string): void {
+    this.editForm.patchValue({ priority });
+  }
+
+  setEditStatus(status: string): void {
+    this.editForm.patchValue({ status });
+  }
+
+  formatDateForInput(dateString: string): string {
+    try {
+      const date = new Date(dateString);
+      return date.toISOString().split('T')[0];
+    } catch {
+      return '';
+    }
   }
 
   deleteTodo(todo: Todo): void {
