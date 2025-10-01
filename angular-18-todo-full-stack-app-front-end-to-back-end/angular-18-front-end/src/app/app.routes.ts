@@ -64,6 +64,11 @@ export const routes: Routes = [
     canActivate: [authGuard]
   },
   {
+    path: 'calendar',
+    loadComponent: () => import('./features/calendar/calendar-view.component').then(m => m.CalendarViewComponent),
+    canActivate: [authGuard]
+  },
+  {
     path: 'admin',
     loadComponent: () => import('./layouts/admin-layout/admin-layout.component').then(m => m.AdminLayoutComponent),
     canActivate: [adminGuard],

@@ -1,0 +1,128 @@
+<div class="calendar-container">
+  <!-- Header -->
+  <div class="calendar-header">
+    <button class="btn-back" (click)="goBack()">
+      ← Back to Dashboard
+    </button>
+    <h1>📅 Calendar View</h1>
+  </div>
+
+  <!-- Calendar Controls -->
+  <div class="calendar-controls">
+    <button class="btn-nav" (click)="previousMonth()">◀ Previous</button>
+    <div class="month-year">
+      <h2>{{ monthNames[currentMonth] }} {{ currentYear }}</h2>
+    </div>
+    <button class="btn-nav" (click)="nextMonth()">Next ▶</button>
+    <button class="btn-today" (click)="goToToday()">Today</button>
+  </div>
+
+  <!-- Calendar Grid -->
+  <div class="calendar-wrapper">
+    <!-- Week Days Header -->
+    <div class="weekdays">
+      <div class="weekday" *ngFor="let day of weekDays">{{ day }}</div>
+    </div>
+
+    <!-- Calendar Days -->
+    <div class="calendar-grid">
+      <div
+        *ngFor="let day of calendarDays"
+        class="calendar-day"
+        [class.other-month]="!day.isCurrentMonth"
+        [class.today]="day.isToday"
+        [class.has-todos]="day.todos.length > 0"
+        (click)="selectDay(day)"
+      >
+        <div class="day-number">{{ day.day }}</div>
+
+        <!-- Todo indicators -->
+        <div class="todo-indicators" *ngIf="day.todos.length > 0 && day.isCurrentMonth">
+          <div class="todo-count">
+            <span class="count-badge">{{ getTodoCountForDay(day) }}</span>
+            <span class="completed-count" *ngIf="getCompletedCountForDay(day) > 0">
+              ✓ {{ getCompletedCountForDay(day) }}
+            </span>
+          </div>
+
+          <!-- Show up to 3 todo dots -->
+          <div class="todo-dots">
+            <span
+              *ngFor="let todo of day.todos.slice(0, 3)"
+              class="todo-dot"
+              [ngClass]="getPriorityClass(todo.priority)"
+              [title]="todo.title"
+            ></span>
+            <span *ngIf="day.todos.length > 3" class="more-dots">+{{ day.todos.length - 3 }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Legend -->
+  <div class="calendar-legend">
+    <h3>Legend:</h3>
+    <div class="legend-items">
+      <div class="legend-item">
+        <span class="legend-dot priority-high"></span>
+        <span>High Priority</span>
+      </div>
+      <div class="legend-item">
+        <span class="legend-dot priority-medium"></span>
+        <span>Medium Priority</span>
+      </div>
+      <div class="legend-item">
+        <span class="legend-dot priority-low"></span>
+        <span>Low Priority</span>
+      </div>
+      <div class="legend-item">
+        <span class="legend-square today-square"></span>
+        <span>Today</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Day Details Modal -->
+<div class="modal-overlay" *ngIf="selectedDate" (click)="closeModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>📋 Todos for {{ selectedDate | date:'MMMM d, y' }}</h2>
+      <button class="btn-close" (click)="closeModal()">×</button>
+    </div>
+
+    <div class="modal-body">
+      <div *ngIf="selectedDayTodos.length === 0" class="empty-state">
+        <p>🎉 No todos for this day!</p>
+      </div>
+
+      <div *ngIf="selectedDayTodos.length > 0" class="todos-list">
+        <div
+          *ngFor="let todo of selectedDayTodos"
+          class="todo-item"
+          [class.completed]="todo.completed"
+        >
+          <div class="todo-checkbox">
+            <input type="checkbox" [checked]="todo.completed" disabled />
+          </div>
+          <div class="todo-details">
+            <h4>{{ todo.title }}</h4>
+            <div class="todo-meta">
+              <span class="priority-badge" [ngClass]="getPriorityClass(todo.priority)">
+                {{ todo.priority }}
+              </span>
+              <span class="status-badge" [class.completed]="todo.completed">
+                {{ todo.completed ? '✓ Completed' : '⏳ Pending' }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn-primary" (click)="closeModal()">Close</button>
+    </div>
+  </div>
+</div>
