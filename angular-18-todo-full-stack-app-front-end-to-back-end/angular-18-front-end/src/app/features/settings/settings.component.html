@@ -1,0 +1,302 @@
+<div class="settings-container">
+  <!-- Header -->
+  <div class="settings-header">
+    <button class="btn-back" (click)="goBack()">
+      ← Back to Dashboard
+    </button>
+    <h1>⚙️ Settings</h1>
+  </div>
+
+  <!-- Tabs -->
+  <div class="settings-tabs">
+    <button class="tab-btn" [class.active]="activeTab === 'general'" (click)="setActiveTab('general')">
+      🎨 General
+    </button>
+    <button class="tab-btn" [class.active]="activeTab === 'notifications'" (click)="setActiveTab('notifications')">
+      🔔 Notifications
+    </button>
+    <button class="tab-btn" [class.active]="activeTab === 'privacy'" (click)="setActiveTab('privacy')">
+      🔒 Privacy
+    </button>
+    <button class="tab-btn" [class.active]="activeTab === 'data'" (click)="setActiveTab('data')">
+      💾 Data & Storage
+    </button>
+  </div>
+
+  <!-- Tab Content -->
+  <div class="tab-content">
+    <!-- General Settings -->
+    <div class="settings-section" *ngIf="activeTab === 'general'">
+      <h2>General Settings</h2>
+      <p class="section-description">Customize your app appearance and behavior</p>
+
+      <div class="settings-grid">
+        <!-- Theme -->
+        <div class="setting-item">
+          <label class="setting-label">
+            <span class="label-text">🎨 Theme</span>
+            <span class="label-description">Choose your preferred color scheme</span>
+          </label>
+          <select [(ngModel)]="appSettings.theme" class="setting-select">
+            <option value="light">☀️ Light</option>
+            <option value="dark">🌙 Dark</option>
+            <option value="auto">🔄 Auto (System)</option>
+          </select>
+        </div>
+
+        <!-- Language -->
+        <div class="setting-item">
+          <label class="setting-label">
+            <span class="label-text">🌍 Language</span>
+            <span class="label-description">Select your preferred language</span>
+          </label>
+          <select [(ngModel)]="appSettings.language" class="setting-select">
+            <option *ngFor="let lang of languages" [value]="lang.code">{{ lang.name }}</option>
+          </select>
+        </div>
+
+        <!-- Date Format -->
+        <div class="setting-item">
+          <label class="setting-label">
+            <span class="label-text">📅 Date Format</span>
+            <span class="label-description">How dates are displayed</span>
+          </label>
+          <select [(ngModel)]="appSettings.dateFormat" class="setting-select">
+            <option *ngFor="let format of dateFormats" [value]="format">{{ format }}</option>
+          </select>
+        </div>
+
+        <!-- Time Format -->
+        <div class="setting-item">
+          <label class="setting-label">
+            <span class="label-text">🕐 Time Format</span>
+            <span class="label-description">12-hour or 24-hour clock</span>
+          </label>
+          <select [(ngModel)]="appSettings.timeFormat" class="setting-select">
+            <option value="12h">12-hour (AM/PM)</option>
+            <option value="24h">24-hour</option>
+          </select>
+        </div>
+
+        <!-- First Day of Week -->
+        <div class="setting-item">
+          <label class="setting-label">
+            <span class="label-text">📆 Week Starts On</span>
+            <span class="label-description">First day of the week</span>
+          </label>
+          <select [(ngModel)]="appSettings.firstDayOfWeek" class="setting-select">
+            <option value="sunday">Sunday</option>
+            <option value="monday">Monday</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="action-buttons">
+        <button class="btn-save" (click)="saveGeneralSettings()">💾 Save Changes</button>
+        <button class="btn-reset" (click)="resetToDefaults()">🔄 Reset to Defaults</button>
+      </div>
+    </div>
+
+    <!-- Notification Settings -->
+    <div class="settings-section" *ngIf="activeTab === 'notifications'">
+      <h2>Notification Preferences</h2>
+      <p class="section-description">Manage how and when you receive notifications</p>
+
+      <div class="settings-list">
+        <div class="setting-toggle">
+          <div class="toggle-info">
+            <span class="toggle-label">📧 Email Notifications</span>
+            <span class="toggle-description">Receive updates via email</span>
+          </div>
+          <label class="switch">
+            <input type="checkbox" [(ngModel)]="notificationSettings.emailNotifications">
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <div class="setting-toggle">
+          <div class="toggle-info">
+            <span class="toggle-label">🔔 Push Notifications</span>
+            <span class="toggle-description">Browser push notifications</span>
+          </div>
+          <label class="switch">
+            <input type="checkbox" [(ngModel)]="notificationSettings.pushNotifications">
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <div class="setting-toggle">
+          <div class="toggle-info">
+            <span class="toggle-label">⏰ Task Reminders</span>
+            <span class="toggle-description">Reminders for upcoming tasks</span>
+          </div>
+          <label class="switch">
+            <input type="checkbox" [(ngModel)]="notificationSettings.taskReminders">
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <div class="setting-toggle">
+          <div class="toggle-info">
+            <span class="toggle-label">📅 Due Date Reminders</span>
+            <span class="toggle-description">Notify before tasks are due</span>
+          </div>
+          <label class="switch">
+            <input type="checkbox" [(ngModel)]="notificationSettings.dueDateReminders">
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <div class="setting-toggle">
+          <div class="toggle-info">
+            <span class="toggle-label">📊 Daily Digest</span>
+            <span class="toggle-description">Summary of your daily tasks</span>
+          </div>
+          <label class="switch">
+            <input type="checkbox" [(ngModel)]="notificationSettings.dailyDigest">
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <div class="setting-toggle">
+          <div class="toggle-info">
+            <span class="toggle-label">📈 Weekly Report</span>
+            <span class="toggle-description">Weekly productivity summary</span>
+          </div>
+          <label class="switch">
+            <input type="checkbox" [(ngModel)]="notificationSettings.weeklyReport">
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <div class="setting-toggle">
+          <div class="toggle-info">
+            <span class="toggle-label">👥 Collaboration Notifications</span>
+            <span class="toggle-description">Updates from shared tasks</span>
+          </div>
+          <label class="switch">
+            <input type="checkbox" [(ngModel)]="notificationSettings.collaborationNotifications">
+            <span class="slider"></span>
+          </label>
+        </div>
+      </div>
+
+      <div class="action-buttons">
+        <button class="btn-save" (click)="saveNotificationSettings()">💾 Save Changes</button>
+      </div>
+    </div>
+
+    <!-- Privacy Settings -->
+    <div class="settings-section" *ngIf="activeTab === 'privacy'">
+      <h2>Privacy & Security</h2>
+      <p class="section-description">Control your data and privacy preferences</p>
+
+      <div class="settings-grid">
+        <div class="setting-item">
+          <label class="setting-label">
+            <span class="label-text">👁️ Profile Visibility</span>
+            <span class="label-description">Who can see your profile</span>
+          </label>
+          <select [(ngModel)]="privacySettings.profileVisibility" class="setting-select">
+            <option value="public">🌍 Public</option>
+            <option value="friends">👥 Friends Only</option>
+            <option value="private">🔒 Private</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="settings-list">
+        <div class="setting-toggle">
+          <div class="toggle-info">
+            <span class="toggle-label">📧 Show Email Address</span>
+            <span class="toggle-description">Display email on your profile</span>
+          </div>
+          <label class="switch">
+            <input type="checkbox" [(ngModel)]="privacySettings.showEmail">
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <div class="setting-toggle">
+          <div class="toggle-info">
+            <span class="toggle-label">📊 Show Statistics</span>
+            <span class="toggle-description">Display your task statistics</span>
+          </div>
+          <label class="switch">
+            <input type="checkbox" [(ngModel)]="privacySettings.showStats">
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <div class="setting-toggle">
+          <div class="toggle-info">
+            <span class="toggle-label">📈 Allow Data Analytics</span>
+            <span class="toggle-description">Help us improve the app</span>
+          </div>
+          <label class="switch">
+            <input type="checkbox" [(ngModel)]="privacySettings.allowDataAnalytics">
+            <span class="slider"></span>
+          </label>
+        </div>
+      </div>
+
+      <div class="action-buttons">
+        <button class="btn-save" (click)="savePrivacySettings()">💾 Save Changes</button>
+      </div>
+    </div>
+
+    <!-- Data & Storage -->
+    <div class="settings-section" *ngIf="activeTab === 'data'">
+      <h2>Data & Storage</h2>
+      <p class="section-description">Manage your data and storage options</p>
+
+      <div class="data-actions">
+        <div class="data-card">
+          <div class="data-icon">📤</div>
+          <h3>Export Data</h3>
+          <p>Download all your data in JSON format</p>
+          <button class="btn-action" (click)="exportData()">📥 Export All Data</button>
+        </div>
+
+        <div class="data-card">
+          <div class="data-icon">📥</div>
+          <h3>Import Data</h3>
+          <p>Import data from a previous export</p>
+          <label class="btn-action" style="cursor: pointer;">
+            📤 Import Data
+            <input type="file" (change)="importData($event)" accept=".json" hidden>
+          </label>
+        </div>
+
+        <div class="data-card danger">
+          <div class="data-icon">🗑️</div>
+          <h3>Clear All Data</h3>
+          <p>Permanently delete all local data</p>
+          <button class="btn-danger" (click)="clearAllData()">⚠️ Clear All Data</button>
+        </div>
+      </div>
+
+      <div class="storage-info">
+        <h3>📊 Storage Information</h3>
+        <div class="storage-stats">
+          <div class="storage-item">
+            <span class="storage-label">Todos:</span>
+            <span class="storage-value">~2.5 KB</span>
+          </div>
+          <div class="storage-item">
+            <span class="storage-label">Settings:</span>
+            <span class="storage-value">~0.5 KB</span>
+          </div>
+          <div class="storage-item">
+            <span class="storage-label">Cache:</span>
+            <span class="storage-value">~1.2 KB</span>
+          </div>
+          <div class="storage-item">
+            <span class="storage-label">Total Usage:</span>
+            <span class="storage-value">~4.2 KB</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
