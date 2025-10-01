@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { TodoService } from '../../../core/services/todo.service';
 import { AuthService } from '../../../core/services/auth.service';
@@ -9,7 +9,7 @@ import { Todo } from '../../../core/models/todo.model';
 @Component({
   selector: 'app-user-dashboard',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule],
   template: `
     <div class="dashboard">
       <!-- Stats Cards -->
@@ -113,7 +113,12 @@ import { Todo } from '../../../core/models/todo.model';
               (change)="toggleComplete(todo)">
             
             <div class="todo-content">
-              <div class="todo-title" [class.strike]="todo.status === 'completed'">{{ todo.title }}</div>
+              <div class="todo-title" [class.strike]="todo.status === 'completed'">
+                {{ todo.title }}
+                <span class="subtask-badge" *ngIf="todo.subtasks && todo.subtasks.length > 0">
+                  📋 {{ todo.subtasks.filter(st => st.completed).length }}/{{ todo.subtasks.length }}
+                </span>
+              </div>
               <div class="todo-meta">
                 <span class="category-tag">{{ todo.category }}</span>
                 <span class="due-date" *ngIf="todo.dueDate">
@@ -266,6 +271,38 @@ import { Todo } from '../../../core/models/todo.model';
               <label>Progress: {{ editForm.get('progress')?.value }}%</label>
               <input type="range" formControlName="progress" min="0" max="100" step="5" class="progress-slider">
             </div>
+
+            <!-- Subtasks Section -->
+            <div class="form-group subtasks-section">
+              <div class="subtasks-header">
+                <label>Subtasks</label>
+                <button type="button" class="btn-icon" (click)="addSubtask()" title="Add subtask">+ Add</button>
+              </div>
+              <div class="subtasks-list" *ngIf="editingTodo?.subtasks && editingTodo.subtasks.length > 0">
+                <div class="subtask-item" *ngFor="let subtask of editingTodo.subtasks; let i = index">
+                  <input
+                    type="checkbox"
+                    [checked]="subtask.completed"
+                    (change)="toggleSubtask(i)"
+                    class="subtask-checkbox">
+                  <input
+                    type="text"
+                    [(ngModel)]="subtask.title"
+                    [ngModelOptions]="{standalone: true}"
+                    [class.completed]="subtask.completed"
+                    class="subtask-input"
+                    placeholder="Subtask title...">
+                  <button type="button" class="btn-icon-small" (click)="removeSubtask(i)" title="Delete">🗑️</button>
+                </div>
+              </div>
+              <div class="subtasks-empty" *ngIf="!editingTodo?.subtasks || editingTodo.subtasks.length === 0">
+                <p class="empty-message">No subtasks yet. Click "+ Add" to create one.</p>
+              </div>
+              <div class="subtasks-progress" *ngIf="editingTodo?.subtasks && editingTodo.subtasks.length > 0">
+                <small>{{ getCompletedSubtasksCount() }} of {{ editingTodo.subtasks.length }} completed</small>
+              </div>
+            </div>
+
             <div class="form-actions">
               <button type="button" class="btn btn-secondary" (click)="closeEditModal()">Cancel</button>
               <button type="submit" class="btn btn-primary" [disabled]="!editForm.get('title')?.value">Save Changes</button>
@@ -472,10 +509,24 @@ import { Todo } from '../../../core/models/todo.model';
       font-weight: 500;
       color: #333;
       margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
     }
 
     .todo-title.strike {
       text-decoration: line-through;
+    }
+
+    .subtask-badge {
+      font-size: 11px;
+      background: #e3f2fd;
+      color: #1976d2;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-weight: 600;
+      white-space: nowrap;
     }
 
     .todo-meta {
@@ -717,6 +768,115 @@ import { Todo } from '../../../core/models/todo.model';
         flex-direction: column;
       }
     }
+
+    /* Subtasks Styles */
+    .subtasks-section {
+      margin-top: 20px;
+      padding: 16px;
+      background: #f8f9fa;
+      border-radius: 8px;
+      border: 1px solid #e0e0e0;
+    }
+
+    .subtasks-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .subtasks-header label {
+      margin: 0;
+      font-weight: 600;
+      color: #333;
+    }
+
+    .btn-icon {
+      background: #007bff;
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 12px;
+      transition: background 0.2s;
+    }
+
+    .btn-icon:hover {
+      background: #0056b3;
+    }
+
+    .btn-icon-small {
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      padding: 4px;
+      font-size: 14px;
+      opacity: 0.6;
+      transition: opacity 0.2s;
+    }
+
+    .btn-icon-small:hover {
+      opacity: 1;
+    }
+
+    .subtasks-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .subtask-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px;
+      background: white;
+      border-radius: 4px;
+      border: 1px solid #e0e0e0;
+    }
+
+    .subtask-checkbox {
+      cursor: pointer;
+      width: 18px;
+      height: 18px;
+    }
+
+    .subtask-input {
+      flex: 1;
+      padding: 6px 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+
+    .subtask-input.completed {
+      text-decoration: line-through;
+      color: #999;
+    }
+
+    .subtasks-empty {
+      text-align: center;
+      padding: 20px;
+    }
+
+    .empty-message {
+      color: #999;
+      font-size: 14px;
+      margin: 0;
+    }
+
+    .subtasks-progress {
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px solid #e0e0e0;
+      text-align: right;
+    }
+
+    .subtasks-progress small {
+      color: #666;
+      font-size: 12px;
+    }
   `]
 })
 export class UserDashboardComponent implements OnInit, OnDestroy {
@@ -761,7 +921,8 @@ export class UserDashboardComponent implements OnInit, OnDestroy {
       dueDate: [''],
       priority: ['medium'],
       status: ['pending'],
-      progress: [0]
+      progress: [0],
+      subtasks: [[]]
     });
   }
 
@@ -898,7 +1059,7 @@ export class UserDashboardComponent implements OnInit, OnDestroy {
   }
 
   editTodo(todo: Todo): void {
-    this.editingTodo = todo;
+    this.editingTodo = { ...todo, subtasks: todo.subtasks || [] };
     this.editForm.patchValue({
       title: todo.title,
       description: todo.description,
@@ -906,7 +1067,8 @@ export class UserDashboardComponent implements OnInit, OnDestroy {
       dueDate: todo.dueDate ? this.formatDateForInput(todo.dueDate) : '',
       priority: todo.priority,
       status: todo.status,
-      progress: todo.progress || 0
+      progress: todo.progress || 0,
+      subtasks: this.editingTodo.subtasks
     });
     this.showEditModal = true;
   }
@@ -923,7 +1085,8 @@ export class UserDashboardComponent implements OnInit, OnDestroy {
       dueDate: this.editForm.get('dueDate')?.value || null,
       priority: this.editForm.get('priority')?.value,
       status: this.editForm.get('status')?.value,
-      progress: this.editForm.get('progress')?.value
+      progress: this.editForm.get('progress')?.value,
+      subtasks: this.editingTodo.subtasks || []
     };
 
     this.subscription.add(
@@ -997,5 +1160,55 @@ export class UserDashboardComponent implements OnInit, OnDestroy {
   formatDate(dateString: string): string {
     const date = new Date(dateString);
     return date.toLocaleDateString();
+  }
+
+  // Subtask Management Methods
+  addSubtask(): void {
+    if (!this.editingTodo) return;
+
+    if (!this.editingTodo.subtasks) {
+      this.editingTodo.subtasks = [];
+    }
+
+    const newSubtask = {
+      id: this.generateSubtaskId(),
+      title: '',
+      completed: false,
+      createdAt: new Date().toISOString()
+    };
+
+    this.editingTodo.subtasks.push(newSubtask);
+  }
+
+  removeSubtask(index: number): void {
+    if (!this.editingTodo || !this.editingTodo.subtasks) return;
+    this.editingTodo.subtasks.splice(index, 1);
+  }
+
+  toggleSubtask(index: number): void {
+    if (!this.editingTodo || !this.editingTodo.subtasks) return;
+    this.editingTodo.subtasks[index].completed = !this.editingTodo.subtasks[index].completed;
+
+    // Auto-update progress based on subtask completion
+    this.updateProgressFromSubtasks();
+  }
+
+  getCompletedSubtasksCount(): number {
+    if (!this.editingTodo || !this.editingTodo.subtasks) return 0;
+    return this.editingTodo.subtasks.filter(st => st.completed).length;
+  }
+
+  updateProgressFromSubtasks(): void {
+    if (!this.editingTodo || !this.editingTodo.subtasks || this.editingTodo.subtasks.length === 0) return;
+
+    const completedCount = this.getCompletedSubtasksCount();
+    const totalCount = this.editingTodo.subtasks.length;
+    const progress = Math.round((completedCount / totalCount) * 100);
+
+    this.editForm.patchValue({ progress });
+  }
+
+  generateSubtaskId(): string {
+    return 'subtask_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
   }
 }
