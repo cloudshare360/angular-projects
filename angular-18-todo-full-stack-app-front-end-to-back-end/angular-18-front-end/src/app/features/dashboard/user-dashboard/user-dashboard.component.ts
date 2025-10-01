@@ -129,8 +129,11 @@ import { Todo } from '../../../core/models/todo.model';
               <div class="todo-tags" *ngIf="todo.tags && todo.tags.length > 0">
                 <span class="tag-pill" *ngFor="let tag of todo.tags">🏷️ {{ tag }}</span>
               </div>
+              <div class="todo-attachments" *ngIf="todo.attachments && todo.attachments.length > 0">
+                <span class="attachment-count">📎 {{ todo.attachments.length }} file(s)</span>
+              </div>
             </div>
-            
+
             <div class="todo-actions">
               <button class="action-btn" (click)="editTodo(todo)" title="Edit">✏️</button>
               <button class="action-btn" (click)="deleteTodo(todo)" title="Delete">🗑️</button>
@@ -356,6 +359,41 @@ import { Todo } from '../../../core/models/todo.model';
               </div>
               <div class="tags-empty" *ngIf="!editingTodo?.tags || editingTodo.tags.length === 0">
                 <small class="empty-message">No tags added yet</small>
+              </div>
+            </div>
+
+            <!-- Attachments Section -->
+            <div class="form-group attachments-section">
+              <div class="attachments-header">
+                <label>Attachments</label>
+                <input
+                  type="file"
+                  #fileInput
+                  (change)="onFileSelected($event)"
+                  style="display: none"
+                  multiple
+                  accept="image/*,.pdf,.doc,.docx,.txt">
+                <button type="button" class="btn-icon" (click)="fileInput.click()">📎 Upload</button>
+              </div>
+              <div class="attachments-list" *ngIf="editingTodo?.attachments && editingTodo.attachments.length > 0">
+                <div class="attachment-item" *ngFor="let attachment of editingTodo.attachments; let i = index">
+                  <div class="attachment-icon">
+                    <span *ngIf="isImage(attachment.type)">🖼️</span>
+                    <span *ngIf="isPdf(attachment.type)">📄</span>
+                    <span *ngIf="!isImage(attachment.type) && !isPdf(attachment.type)">📎</span>
+                  </div>
+                  <div class="attachment-info">
+                    <div class="attachment-name">{{ attachment.filename }}</div>
+                    <div class="attachment-size">{{ formatFileSize(attachment.size) }}</div>
+                  </div>
+                  <button type="button" class="btn-icon-small" (click)="removeAttachment(i)" title="Remove">🗑️</button>
+                </div>
+              </div>
+              <div class="attachments-empty" *ngIf="!editingTodo?.attachments || editingTodo.attachments.length === 0">
+                <small class="empty-message">No attachments. Click "Upload" to add files.</small>
+              </div>
+              <div class="attachments-info">
+                <small>Max file size: 5MB. Supported: Images, PDF, DOC, TXT</small>
               </div>
             </div>
 
@@ -1032,6 +1070,111 @@ import { Todo } from '../../../core/models/todo.model';
       color: #999;
       font-size: 13px;
     }
+
+    .todo-attachments {
+      display: flex;
+      margin-top: 6px;
+    }
+
+    .attachment-count {
+      display: inline-block;
+      padding: 3px 10px;
+      background: #e3f2fd;
+      color: #1976d2;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 500;
+    }
+
+    /* Attachments Styles */
+    .attachments-section {
+      margin-top: 16px;
+      padding: 16px;
+      background: #f8f9fa;
+      border-radius: 8px;
+      border: 1px solid #e0e0e0;
+    }
+
+    .attachments-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .attachments-header label {
+      margin: 0;
+      font-weight: 600;
+      color: #333;
+    }
+
+    .attachments-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .attachment-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px;
+      background: white;
+      border-radius: 6px;
+      border: 1px solid #e0e0e0;
+      transition: background 0.2s;
+    }
+
+    .attachment-item:hover {
+      background: #f9f9f9;
+    }
+
+    .attachment-icon {
+      font-size: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      background: #f0f0f0;
+      border-radius: 6px;
+    }
+
+    .attachment-info {
+      flex: 1;
+    }
+
+    .attachment-name {
+      font-size: 14px;
+      font-weight: 500;
+      color: #333;
+      margin-bottom: 4px;
+    }
+
+    .attachment-size {
+      font-size: 12px;
+      color: #999;
+    }
+
+    .attachments-empty {
+      text-align: center;
+      padding: 20px;
+      background: white;
+      border-radius: 6px;
+      border: 2px dashed #ddd;
+    }
+
+    .attachments-info {
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px solid #e0e0e0;
+    }
+
+    .attachments-info small {
+      color: #666;
+      font-size: 12px;
+    }
   `]
 })
 export class UserDashboardComponent implements OnInit, OnDestroy {
@@ -1226,7 +1369,8 @@ export class UserDashboardComponent implements OnInit, OnDestroy {
     this.editingTodo = {
       ...todo,
       subtasks: todo.subtasks || [],
-      tags: todo.tags || []
+      tags: todo.tags || [],
+      attachments: todo.attachments || []
     };
     this.editForm.patchValue({
       title: todo.title,
@@ -1256,7 +1400,8 @@ export class UserDashboardComponent implements OnInit, OnDestroy {
       status: this.editForm.get('status')?.value,
       progress: this.editForm.get('progress')?.value,
       subtasks: this.editingTodo.subtasks || [],
-      tags: this.editingTodo.tags || []
+      tags: this.editingTodo.tags || [],
+      attachments: this.editingTodo.attachments || []
     };
 
     this.subscription.add(
@@ -1419,5 +1564,66 @@ export class UserDashboardComponent implements OnInit, OnDestroy {
     this.filteredTodos = this.todos.filter(todo =>
       todo.tags && todo.tags.includes(tag)
     );
+  }
+
+  // Attachment Management Methods
+  onFileSelected(event: any): void {
+    const files: FileList = event.target.files;
+    if (!files || files.length === 0 || !this.editingTodo) return;
+
+    const maxSize = 5 * 1024 * 1024; // 5MB
+
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+
+      // Validate file size
+      if (file.size > maxSize) {
+        alert(`File ${file.name} is too large. Maximum size is 5MB.`);
+        continue;
+      }
+
+      // Create attachment object (simulate upload)
+      const attachment = {
+        id: this.generateAttachmentId(),
+        filename: file.name,
+        size: file.size,
+        type: file.type,
+        url: URL.createObjectURL(file) // In real app, this would be a server URL
+      };
+
+      if (!this.editingTodo.attachments) {
+        this.editingTodo.attachments = [];
+      }
+
+      this.editingTodo.attachments.push(attachment);
+    }
+
+    // Reset file input
+    event.target.value = '';
+  }
+
+  removeAttachment(index: number): void {
+    if (!this.editingTodo?.attachments) return;
+    this.editingTodo.attachments.splice(index, 1);
+  }
+
+  isImage(type: string): boolean {
+    return type.startsWith('image/');
+  }
+
+  isPdf(type: string): boolean {
+    return type === 'application/pdf';
+  }
+
+  formatFileSize(bytes: number): string {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+  }
+
+  generateAttachmentId(): string {
+    return 'attachment_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
   }
 }
