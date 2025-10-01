@@ -17,11 +17,11 @@
 
 | Category | Tokens Used | Estimated Cost | Actual Cost* | Status |
 |----------|-------------|----------------|--------------|--------|
-| **Frontend Development** | 16.8M | $50.40 | **[PENDING USER INPUT]** | 🟢 In Progress |
+| **Frontend Development** | 19.4M | $58.20 | **[PENDING USER INPUT]** | 🟢 In Progress |
 | **Backend Development** | 0 | $0.00 | $0.00 | ⏳ Not Started |
 | **Database Setup** | 0 | $0.00 | $0.00 | ⏳ Not Started |
 | **Testing & QA** | 0 | $0.00 | $0.00 | ⏳ Not Started |
-| **TOTAL PROJECT** | **16.8M** | **$50.40** | **[USER TO VERIFY]** | |
+| **TOTAL PROJECT** | **19.4M** | **$58.20** | **[USER TO VERIFY]** | |
 
 **Billing Account:** Claude Subscription / Anthropic API *(User to specify)*
 
@@ -40,10 +40,10 @@
 #### Summary
 | Metric | Value |
 |--------|-------|
-| **Total Tasks Completed** | 15 |
-| **Total Hours Invested** | 43 hours |
-| **Total Tokens Used** | 16.8M tokens |
-| **Estimated Cost** | $50.40 |
+| **Total Tasks Completed** | 17 |
+| **Total Hours Invested** | 50 hours |
+| **Total Tokens Used** | 19.4M tokens |
+| **Estimated Cost** | $58.20 |
 | **Actual Cost** | **[USER TO VERIFY]** |
 | **Account Type** | Claude Subscription / Anthropic API |
 
@@ -77,14 +77,15 @@
 | 14 | Documentation Updates | 2h | 500K | $1.50 | [VERIFY] | ✅ |
 | 15 | **Subtasks Implementation** | 4h | 1.6M | $4.80 | [VERIFY] | ✅ |
 | 16 | **Tags System Implementation** | 3h | 1.2M | $3.60 | [VERIFY] | ✅ |
-| | **Week 2 Subtotal** | **24h** | **8.3M** | **$24.90** | **[VERIFY]** | |
+| 17 | **Attachments Upload** | 4h | 1.4M | $4.20 | [VERIFY] | ✅ |
+| | **Week 2 Subtotal** | **28h** | **9.7M** | **$29.10** | **[VERIFY]** | |
 
 ### **Frontend Development - Total**
 | Metric | Value |
 |--------|-------|
-| **Total Hours** | 46h |
-| **Total Tokens** | 18.0M |
-| **Estimated Cost** | $54.00 |
+| **Total Hours** | 50h |
+| **Total Tokens** | 19.4M |
+| **Estimated Cost** | $58.20 |
 | **Actual Cost** | **[USER TO VERIFY FROM BILLING]** |
 | **Account Used** | ☐ Claude Subscription ☐ Anthropic API |
 
@@ -170,13 +171,13 @@
 
 | Phase | Tasks | Hours | Tokens | Est. Cost | Actual Cost* | Progress |
 |-------|-------|-------|--------|-----------|--------------|----------|
-| **Frontend App** | 15 | 43h | 16.8M | $50.40 | [VERIFY] | 81% |
+| **Frontend App** | 17 | 50h | 19.4M | $58.20 | [VERIFY] | 87% |
 | **Frontend Testing** | 0 | 0h | 0 | $0.00 | - | 0% |
 | **Backend App** | 0 | 0h | 0 | $0.00 | - | 0% |
 | **Backend Testing** | 0 | 0h | 0 | $0.00 | - | 0% |
 | **Database** | 0 | 0h | 0 | $0.00 | - | 0% |
 | **Documentation** | 3 | 4h | 1.5M | $4.50 | [VERIFY] | ✅ |
-| **GRAND TOTAL** | **18** | **47h** | **18.3M** | **$54.90** | **[USER VERIFY]** | **35%** |
+| **GRAND TOTAL** | **20** | **54h** | **20.9M** | **$62.70** | **[USER VERIFY]** | **40%** |
 
 ---
 
@@ -223,12 +224,12 @@
 
 | Task | Est. Hours | Est. Tokens | Est. Cost |
 |------|-----------|-------------|-----------|
-| Tags System | 3h | 1.2M | $3.60 |
-| Attachments Upload | 4h | 1.4M | $4.20 |
 | User Profile Page | 3h | 1.0M | $3.00 |
 | Settings Page | 2h | 800K | $2.40 |
 | Forgot Password | 3h | 1.0M | $3.00 |
-| **Remaining Frontend** | **15h** | **5.4M** | **$16.20** |
+| Calendar View (Optional) | 5h | 1.8M | $5.40 |
+| Progress View (Optional) | 3h | 1.0M | $3.00 |
+| **Remaining Frontend** | **16h** | **5.6M** | **$16.80** |
 
 ---
 
