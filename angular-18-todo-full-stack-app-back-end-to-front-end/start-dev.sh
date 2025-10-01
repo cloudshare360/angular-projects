@@ -50,8 +50,17 @@ cleanup() {
         kill $FRONTEND_PID 2>/dev/null || true
         print_status "Frontend process stopped"
     fi
-    if [ ! -z "$DB_PID" ]; then
-        print_status "MongoDB container still running - use 'npm run db:stop' to stop it"
+    
+    # Ask user if they want to stop MongoDB containers
+    echo ""
+    read -p "Do you want to stop MongoDB containers? (y/n): " -n 1 -r
+    echo
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
+        print_status "Stopping MongoDB containers..."
+        cd data-base/mongodb 2>/dev/null && $DOCKER_COMPOSE_CMD down 2>/dev/null && cd ../.. || true
+        print_status "MongoDB containers stopped"
+    else
+        print_status "MongoDB containers left running - use 'cd data-base/mongodb && $DOCKER_COMPOSE_CMD down' to stop them manually"
     fi
     exit 0
 }
@@ -88,6 +97,36 @@ fi
 # Check if npm is installed
 if ! command -v npm &> /dev/null; then
     print_error "npm is not installed. Please install npm to continue."
+    exit 1
+fi
+
+# Check if Docker is installed
+if ! command -v docker &> /dev/null; then
+    print_error "Docker is not installed. Please install Docker to continue."
+    exit 1
+fi
+
+# Check if docker-compose is installed
+if ! command -v docker-compose &> /dev/null; then
+    print_error "docker-compose is not installed. Please install docker-compose to continue."
+    exit 1
+fi
+
+# Check Docker permissions and set DOCKER_CMD
+if docker ps > /dev/null 2>&1; then
+    DOCKER_CMD="docker"
+    DOCKER_COMPOSE_CMD="docker-compose"
+    print_status "Docker permissions: OK"
+elif sudo docker ps > /dev/null 2>&1; then
+    DOCKER_CMD="sudo docker"
+    DOCKER_COMPOSE_CMD="sudo docker-compose"
+    print_warning "Docker requires sudo - will use sudo for Docker commands"
+else
+    print_error "Cannot access Docker. Please check Docker installation and permissions."
+    print_status "You may need to:"
+    print_status "1. Add your user to docker group: sudo usermod -aG docker \$USER"
+    print_status "2. Log out and log back in, or run: newgrp docker"
+    print_status "3. Or run this script with sudo"
     exit 1
 fi
 
@@ -128,15 +167,38 @@ print_success "✓ Ports are available"
 print_status "Starting MongoDB..."
 cd data-base/mongodb
 if [ -f "docker-compose.yml" ]; then
-    if ! docker compose ps | grep -q "mongodb.*Up"; then
-        docker compose up -d
-        print_success "✓ MongoDB container started"
-        sleep 3 # Wait for MongoDB to be ready
+    # Check if containers are already running
+    if ! $DOCKER_COMPOSE_CMD ps | grep -q "mongodb.*Up"; then
+        print_status "Starting MongoDB containers..."
+        $DOCKER_COMPOSE_CMD up -d
+        print_success "✓ MongoDB containers started"
+        
+        # Wait for MongoDB to be ready
+        print_status "Waiting for MongoDB to be ready..."
+        sleep 5
+        
+        # Check MongoDB connection
+        timeout=30
+        counter=0
+        while [ $counter -lt $timeout ]; do
+            if $DOCKER_COMPOSE_CMD exec -T mongodb mongosh --quiet --eval "db.runCommand('ping')" > /dev/null 2>&1; then
+                print_success "✓ MongoDB is ready and accepting connections"
+                break
+            fi
+            sleep 2
+            counter=$((counter + 2))
+            print_status "Waiting for MongoDB... ($counter/${timeout}s)"
+        done
+        
+        if [ $counter -ge $timeout ]; then
+            print_warning "MongoDB took longer than expected to start, but continuing..."
+        fi
     else
         print_success "✓ MongoDB is already running"
     fi
 else
-    print_warning "MongoDB docker-compose.yml not found, assuming MongoDB is running elsewhere"
+    print_error "MongoDB docker-compose.yml not found in data-base/mongodb/"
+    exit 1
 fi
 cd ../..
 
@@ -153,14 +215,18 @@ fi
 
 # Check if .env file exists
 if [ ! -f ".env" ]; then
-    if [ -f ".env.example" ]; then
-        print_warning ".env file not found, copying from .env.example"
-        cp .env.example .env
-        print_warning "Please review and update the .env file with your configuration"
-    else
-        print_error ".env.example file not found. Please create a .env file."
-        exit 1
-    fi
+    print_error ".env file not found in Back-End/express-rest-todo-api/"
+    print_status "Please create a .env file with the required configuration."
+    print_status "You can use the following template:"
+    print_status ""
+    print_status "MONGODB_URI=mongodb://admin:todopassword123@localhost:27017/tododb?authSource=admin"
+    print_status "JWT_SECRET=your_super_secure_jwt_secret_key_change_this_in_production"
+    print_status "JWT_EXPIRE=24h"
+    print_status "PORT=3000"
+    print_status "NODE_ENV=development"
+    print_status "FRONTEND_URL=http://localhost:4200"
+    print_status ""
+    exit 1
 fi
 
 # Start backend server
@@ -170,8 +236,25 @@ BACKEND_PID=$!
 cd ../..
 print_success "✓ Backend server started (PID: $BACKEND_PID)"
 
-# Wait a moment for backend to start
-sleep 2
+# Wait for backend to be ready
+print_status "Waiting for backend API to be ready..."
+sleep 3
+timeout=30
+counter=0
+while [ $counter -lt $timeout ]; do
+    if curl -s http://localhost:3000/health > /dev/null 2>&1 || curl -s http://localhost:3000 > /dev/null 2>&1; then
+        print_success "✓ Backend API is ready and responding"
+        break
+    fi
+    sleep 2
+    counter=$((counter + 2))
+    print_status "Waiting for backend API... ($counter/${timeout}s)"
+done
+
+if [ $counter -ge $timeout ]; then
+    print_warning "Backend API took longer than expected to start, but continuing..."
+    print_status "Check logs/backend.log if you encounter issues"
+fi
 
 # Install frontend dependencies if needed
 print_status "Checking frontend dependencies..."
@@ -199,12 +282,15 @@ print_success "🎉 Development environment is ready!"
 print_status ""
 print_status "Services running:"
 print_status "  📊 MongoDB:      http://localhost:27017"
-print_status "  🚀 Backend API:  http://localhost:3000"
-print_status "  🖥️  Frontend:     http://localhost:4200"
+print_status "  �️  Mongo UI:     http://localhost:8081 (admin/admin123)"
+print_status "  �🚀 Backend API:  http://localhost:3000"
+print_status "  🌐 Frontend:     http://localhost:4200"
 print_status ""
 print_status "Logs are being written to:"
 print_status "  Backend:  logs/backend.log"
 print_status "  Frontend: logs/frontend.log"
+print_status ""
+print_status "API Documentation: http://localhost:3000/api-docs"
 print_status ""
 print_status "Press Ctrl+C to stop all services"
 print_status "============================================================"
