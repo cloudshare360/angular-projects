@@ -131,14 +131,14 @@ export default defineConfig({
     outputDir: 'test-results/',
 
     /* Run your local dev server before starting the tests */
-    webServer: {
-        command: 'echo "Web server already running"',
-        url: 'http://localhost:4200',
-        reuseExistingServer: true,
-        timeout: 30000,
-    },
+    // webServer: {
+    //     command: 'echo "Web server already running"',
+    //     url: 'http://localhost:4200',
+    //     reuseExistingServer: true,
+    //     timeout: 30000,
+    // },
 
     /* Global setup and teardown */
-    globalSetup: require.resolve('./e2e/global-setup.ts'),
-    globalTeardown: require.resolve('./e2e/global-teardown.ts'),
+    // globalSetup: require.resolve('./e2e/global-setup.ts'),
+    // globalTeardown: require.resolve('./e2e/global-teardown.ts'),
 });
