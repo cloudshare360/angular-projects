@@ -8,8 +8,10 @@ const logger = require('../utils/logger');
 const commonSchemas = {
   objectId: Joi.string().pattern(/^[0-9a-fA-F]{24}$/).message('Invalid ObjectId format'),
   email: Joi.string().email().trim().lowercase(),
-  password: Joi.string().min(8).pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/)
-    .message('Password must contain at least 8 characters with uppercase, lowercase, number and special character'),
+  password: process.env.NODE_ENV === 'production' 
+    ? Joi.string().min(8).pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/)
+        .message('Password must contain at least 8 characters with uppercase, lowercase, number and special character')
+    : Joi.string().min(6).message('Password must be at least 6 characters long'),
   username: Joi.string().alphanum().min(3).max(30).trim(),
   phone: Joi.string().pattern(/^\+?[1-9]\d{1,14}$/).message('Invalid phone number format'),
   url: Joi.string().uri(),
@@ -155,11 +157,11 @@ const paramSchemas = {
   }),
   
   listId: Joi.object({
-    listId: commonSchemas.objectId.required()
+    id: commonSchemas.objectId.required()
   }),
   
   todoId: Joi.object({
-    todoId: commonSchemas.objectId.required()
+    id: commonSchemas.objectId.required()
   })
 };
 
