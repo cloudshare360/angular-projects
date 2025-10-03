@@ -5,6 +5,8 @@
 - TypeScript for type safety
 - Material UI for professional design
 - RESTful API integration
+- **NEW**: Comprehensive E2E testing with Playwright
+- **NEW**: Interactive HTML wireframes for UI/UX documentation
 
 ## Features Required
 Todo App has following domain objects / actors
@@ -136,6 +138,42 @@ data-base
 14. ⏳ End-to-end workflow testing
 15. ⏳ Create comprehensive user guide
 
+## E2E Testing & Quality Assurance (NEW)
+
+### 🧪 Playwright E2E Testing Framework
+- [x] **Complete Test Coverage**: Authentication, Dashboard, User Workflows
+- [x] **Multi-Browser Support**: Chrome, Firefox, Safari, Mobile devices
+- [x] **Page Object Models**: Maintainable and scalable test architecture
+- [x] **Automated Reporting**: HTML reports with screenshots and videos
+- [x] **CI/CD Ready**: JSON and JUnit report formats
+
+### 🎨 HTML Wireframes & Documentation
+- [x] **Interactive Wireframes**: Complete UI/UX documentation in HTML
+- [x] **Navigation Flows**: Visual representation of user journeys
+- [x] **Feature Documentation**: Comprehensive feature overview
+- [x] **Web Server**: Local server for wireframe viewing
+
+### 📊 Testing Commands
+```bash
+# Run all E2E tests
+npm run test:e2e
+
+# Interactive UI mode
+npm run test:e2e:ui
+
+# Run with visible browser
+npm run test:e2e:headed
+
+# View HTML reports
+npm run test:e2e:report
+
+# Comprehensive test runner
+./run-e2e-tests.sh
+
+# View wireframes
+./html-wireframes/serve-wireframes.sh
+```
+
 ## Getting Started (Updated)
 **Prerequisites**: Node.js 20+, Docker, Angular CLI
 
@@ -152,6 +190,12 @@ cd Front-End/angular-18-todo-app && ng serve
 
 # 4. Test APIs
 cd curl-scripts && ./run-all-tests.sh
+
+# 5. Run E2E Tests (NEW)
+cd Front-End/angular-18-todo-app && npm run test:e2e
+
+# 6. View Wireframes (NEW)
+./html-wireframes/serve-wireframes.sh
 ```
 
 ### Project Status Files
@@ -159,3 +203,5 @@ cd curl-scripts && ./run-all-tests.sh
 - ✅ `project-status-tracker.md` (detailed progress tracking)
 - ✅ `project-analysis-report.html` (comprehensive analysis)
 - ✅ `copilot-agent-chat.md` (optimized execution plan)
+- ✅ `html-wireframes/` (interactive UI/UX documentation) **NEW**
+- ✅ `e2e/` (Playwright E2E testing framework) **NEW**
