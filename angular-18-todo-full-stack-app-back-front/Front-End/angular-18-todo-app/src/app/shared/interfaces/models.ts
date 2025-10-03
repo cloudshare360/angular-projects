@@ -32,6 +32,7 @@ export interface Todo {
   description?: string;
   isCompleted?: boolean;
   priority?: 'low' | 'medium' | 'high';
+  category?: string;
   dueDate?: string; // API returns ISO string
   tags?: string[];
   listId: string; // API uses 'listId' not 'list'
@@ -74,6 +75,7 @@ export interface CreateTodoRequest {
   title: string;
   description?: string;
   priority?: 'low' | 'medium' | 'high';
+  category?: string;
   dueDate?: string;
   tags?: string[];
   listId: string; // API expects 'listId' not 'list'
@@ -83,6 +85,7 @@ export interface UpdateTodoRequest {
   title?: string;
   description?: string;
   priority?: 'low' | 'medium' | 'high';
+  category?: string;
   dueDate?: string;
   tags?: string[];
   isCompleted?: boolean;

@@ -2,8 +2,13 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { AuthService } from '../../core/services/auth.service';
 import { ApiService } from '../../core/services/api.service';
+import { TodoModalComponent, TodoModalData } from '../../shared/components/todo-modal/todo-modal.component';
+import { ListModalComponent, ListModalData } from '../../shared/components/list-modal/list-modal.component';
+import { ConfirmDialogComponent, ConfirmDialogData } from '../../shared/components/confirm-dialog/confirm-dialog.component';
 import { User, TodoList, Todo, CreateListRequest, CreateTodoRequest } from '../../shared/interfaces/models';
 
 @Component({
@@ -56,6 +61,10 @@ import { User, TodoList, Todo, CreateListRequest, CreateTodoRequest } from '../.
                 <i class="icon">📋</i>
                 Create List
               </button>
+              <button class="btn btn-secondary" (click)="refreshData()">
+                <i class="icon">🔄</i>
+                Refresh
+              </button>
             </div>
           </div>
 
@@ -71,8 +80,8 @@ import { User, TodoList, Todo, CreateListRequest, CreateTodoRequest } from '../.
                 <div class="todo-content">
                   <div class="todo-title">{{ todo.title }}</div>
                   <div class="todo-meta">
-                    <span class="priority" [class]="'priority-' + todo.priority">
-                      {{ todo.priority }}
+                    <span class="priority" [class]="'priority-' + (todo.priority || 'medium')">
+                      {{ todo.priority || 'medium' }}
                     </span>
                     <span class="due-date" *ngIf="todo.dueDate">
                       Due: {{ formatDate(todo.dueDate) }}
@@ -81,7 +90,21 @@ import { User, TodoList, Todo, CreateListRequest, CreateTodoRequest } from '../.
                 </div>
                 <div class="todo-actions">
                   <button 
-                    class="btn-icon" 
+                    class="btn-icon edit" 
+                    (click)="editTodo(todo)"
+                    title="Edit todo"
+                  >
+                    ✏️
+                  </button>
+                  <button 
+                    class="btn-icon delete" 
+                    (click)="deleteTodo(todo)"
+                    title="Delete todo"
+                  >
+                    🗑️
+                  </button>
+                  <button 
+                    class="btn-icon toggle" 
                     (click)="toggleTodo(todo.id)"
                     [title]="todo.isCompleted ? 'Mark as incomplete' : 'Mark as complete'"
                   >
@@ -108,18 +131,33 @@ import { User, TodoList, Todo, CreateListRequest, CreateTodoRequest } from '../.
               <div 
                 class="list-card" 
                 *ngFor="let list of todoLists"
-                (click)="openList(list.id)"
               >
                 <div class="list-header">
                   <div class="list-color" [style.background-color]="list.color"></div>
-                  <div class="list-title">{{ list.name }}</div>
+                  <div class="list-title" (click)="openList(list.id)">{{ list.name }}</div>
+                  <div class="list-actions">
+                    <button 
+                      class="btn-icon edit" 
+                      (click)="editList(list); $event.stopPropagation()"
+                      title="Edit list"
+                    >
+                      ✏️
+                    </button>
+                    <button 
+                      class="btn-icon delete" 
+                      (click)="deleteList(list); $event.stopPropagation()"
+                      title="Delete list"
+                    >
+                      🗑️
+                    </button>
+                  </div>
                 </div>
-                <div class="list-stats">
+                <div class="list-stats" (click)="openList(list.id)">
                   <span class="todo-count">
                     {{ list.completedTodoCount || 0 }}/{{ list.todoCount || 0 }} completed
                   </span>
                 </div>
-                <div class="progress-bar">
+                <div class="progress-bar" (click)="openList(list.id)">
                   <div 
                     class="progress-fill" 
                     [style.width.%]="getCompletionPercentage(list)"
@@ -411,6 +449,80 @@ import { User, TodoList, Todo, CreateListRequest, CreateTodoRequest } from '../.
       margin-bottom: 1rem;
     }
 
+    .btn-icon {
+      background: none;
+      border: none;
+      padding: 0.25rem;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-size: 0.875rem;
+      margin-left: 0.25rem;
+    }
+
+    .btn-icon:hover {
+      background: #f5f5f5;
+      transform: scale(1.1);
+    }
+
+    .btn-icon.edit:hover {
+      background: #e3f2fd;
+    }
+
+    .btn-icon.delete:hover {
+      background: #ffebee;
+    }
+
+    .btn-icon.toggle:hover {
+      background: #e8f5e8;
+    }
+
+    .todo-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    .list-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+      margin-left: auto;
+    }
+
+    .list-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .list-title {
+      font-weight: 600;
+      color: #333;
+      cursor: pointer;
+      flex: 1;
+    }
+
+    .list-title:hover {
+      color: #1976d2;
+    }
+
+    .priority-low {
+      background: #e8f5e8;
+      color: #2e7d32;
+    }
+
+    .priority-medium {
+      background: #fff3e0;
+      color: #f57c00;
+    }
+
+    .priority-high {
+      background: #ffebee;
+      color: #d32f2f;
+    }
+
     @media (max-width: 768px) {
       .dashboard-grid {
         grid-template-columns: 1fr;
@@ -435,7 +547,7 @@ export class DashboardComponent implements OnInit {
   currentUser: User | null = null;
   todoLists: TodoList[] = [];
   recentTodos: Todo[] = [];
-  
+
   totalTodos = 0;
   completedTodos = 0;
   totalLists = 0;
@@ -443,14 +555,16 @@ export class DashboardComponent implements OnInit {
   constructor(
     private authService: AuthService,
     private apiService: ApiService,
-    private router: Router
-  ) {}
+    private router: Router,
+    private dialog: MatDialog,
+    private snackBar: MatSnackBar
+  ) { }
 
   ngOnInit(): void {
     this.authService.currentUser$.subscribe(user => {
       this.currentUser = user;
     });
-    
+
     this.loadDashboardData();
   }
 
@@ -477,7 +591,7 @@ export class DashboardComponent implements OnInit {
               return dateB - dateA;
             })
             .slice(0, 5);
-          
+
           this.totalTodos = response.data.length;
           this.completedTodos = response.data.filter(todo => todo.isCompleted).length;
         }
@@ -490,18 +604,197 @@ export class DashboardComponent implements OnInit {
     this.authService.logout();
   }
 
+  refreshData(): void {
+    this.loadDashboardData();
+    this.showSnackBar('Data refreshed successfully');
+  }
+
   createNewTodo(): void {
-    // Navigate to todo creation or open modal
-    console.log('Create new todo');
+    const dialogData: TodoModalData = {
+      mode: 'create',
+      listId: this.todoLists.length > 0 ? this.todoLists[0].id : undefined
+    };
+
+    const dialogRef = this.dialog.open(TodoModalComponent, {
+      width: '500px',
+      data: dialogData
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result && result.action === 'create') {
+        this.apiService.createTodo(result.data).subscribe({
+          next: (response) => {
+            if (response.success) {
+              this.showSnackBar('Todo created successfully');
+              this.loadDashboardData();
+            }
+          },
+          error: (error) => {
+            console.error('Error creating todo:', error);
+            this.showSnackBar('Error creating todo');
+          }
+        });
+      }
+    });
   }
 
   createNewList(): void {
-    // Navigate to list creation or open modal
-    console.log('Create new list');
+    const dialogData: ListModalData = {
+      mode: 'create'
+    };
+
+    const dialogRef = this.dialog.open(ListModalComponent, {
+      width: '450px',
+      data: dialogData
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result && result.action === 'create') {
+        this.apiService.createList(result.data).subscribe({
+          next: (response) => {
+            if (response.success) {
+              this.showSnackBar('List created successfully');
+              this.loadDashboardData();
+            }
+          },
+          error: (error) => {
+            console.error('Error creating list:', error);
+            this.showSnackBar('Error creating list');
+          }
+        });
+      }
+    });
+  }
+
+  editTodo(todo: Todo): void {
+    const dialogData: TodoModalData = {
+      mode: 'edit',
+      todo: todo,
+      listId: todo.listId
+    };
+
+    const dialogRef = this.dialog.open(TodoModalComponent, {
+      width: '500px',
+      data: dialogData
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result && result.action === 'edit') {
+        this.apiService.updateTodo(result.todoId, result.data).subscribe({
+          next: (response) => {
+            if (response.success) {
+              this.showSnackBar('Todo updated successfully');
+              this.loadDashboardData();
+            }
+          },
+          error: (error) => {
+            console.error('Error updating todo:', error);
+            this.showSnackBar('Error updating todo');
+          }
+        });
+      }
+    });
+  }
+
+  deleteTodo(todo: Todo): void {
+    const dialogData: ConfirmDialogData = {
+      title: 'Delete Todo',
+      message: `Are you sure you want to delete "${todo.title}"? This action cannot be undone.`,
+      confirmText: 'Delete',
+      cancelText: 'Cancel',
+      icon: 'delete',
+      color: 'warn'
+    };
+
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '400px',
+      data: dialogData
+    });
+
+    dialogRef.afterClosed().subscribe(confirmed => {
+      if (confirmed) {
+        this.apiService.deleteTodo(todo.id).subscribe({
+          next: (response) => {
+            if (response.success) {
+              this.showSnackBar('Todo deleted successfully');
+              this.loadDashboardData();
+            }
+          },
+          error: (error) => {
+            console.error('Error deleting todo:', error);
+            this.showSnackBar('Error deleting todo');
+          }
+        });
+      }
+    });
+  }
+
+  editList(list: TodoList): void {
+    const dialogData: ListModalData = {
+      mode: 'edit',
+      list: list
+    };
+
+    const dialogRef = this.dialog.open(ListModalComponent, {
+      width: '450px',
+      data: dialogData
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result && result.action === 'edit') {
+        this.apiService.updateList(result.listId, result.data).subscribe({
+          next: (response) => {
+            if (response.success) {
+              this.showSnackBar('List updated successfully');
+              this.loadDashboardData();
+            }
+          },
+          error: (error) => {
+            console.error('Error updating list:', error);
+            this.showSnackBar('Error updating list');
+          }
+        });
+      }
+    });
+  }
+
+  deleteList(list: TodoList): void {
+    const todoCount = list.todoCount || 0;
+    const dialogData: ConfirmDialogData = {
+      title: 'Delete List',
+      message: `Are you sure you want to delete "${list.name}"? This will also delete ${todoCount} todo(s) in this list. This action cannot be undone.`,
+      confirmText: 'Delete',
+      cancelText: 'Cancel',
+      icon: 'delete',
+      color: 'warn'
+    };
+
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '400px',
+      data: dialogData
+    });
+
+    dialogRef.afterClosed().subscribe(confirmed => {
+      if (confirmed) {
+        this.apiService.deleteList(list.id).subscribe({
+          next: (response) => {
+            if (response.success) {
+              this.showSnackBar('List deleted successfully');
+              this.loadDashboardData();
+            }
+          },
+          error: (error) => {
+            console.error('Error deleting list:', error);
+            this.showSnackBar('Error deleting list');
+          }
+        });
+      }
+    });
   }
 
   openList(listId: string): void {
-    console.log('Open list:', listId);
+    // Navigate to detailed list view
+    this.router.navigate(['/dashboard/list', listId]);
   }
 
   toggleTodo(todoId: string): void {
@@ -509,9 +802,21 @@ export class DashboardComponent implements OnInit {
       next: (response) => {
         if (response.success) {
           this.loadDashboardData(); // Refresh data
+          this.showSnackBar('Todo status updated');
         }
       },
-      error: (error) => console.error('Error toggling todo:', error)
+      error: (error) => {
+        console.error('Error toggling todo:', error);
+        this.showSnackBar('Error updating todo status');
+      }
+    });
+  }
+
+  private showSnackBar(message: string): void {
+    this.snackBar.open(message, 'Close', {
+      duration: 3000,
+      horizontalPosition: 'right',
+      verticalPosition: 'top'
     });
   }
 
