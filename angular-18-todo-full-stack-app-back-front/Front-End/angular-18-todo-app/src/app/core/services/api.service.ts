@@ -2,27 +2,34 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
-import { 
-  ApiResponse, 
-  AuthResponse, 
-  User, 
-  Todo, 
+import {
+  ApiResponse,
+  AuthResponse,
+  User,
+  Todo,
   TodoList,
   LoginRequest,
   RegisterRequest,
   CreateTodoRequest,
   UpdateTodoRequest,
   CreateListRequest,
-  UpdateListRequest 
+  UpdateListRequest
 } from '../../shared/interfaces/models';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ApiService {
-  private readonly baseUrl = '/api';
+  // Dynamic API URL that works on localhost and LAN
+  // Uses current hostname (localhost or LAN IP) with backend port 3000
+  private readonly baseUrl: string;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+    // Get current hostname from browser (works for localhost and LAN)
+    const hostname = typeof window !== 'undefined' ? window.location.hostname : 'localhost';
+    this.baseUrl = `http://${hostname}:3000/api`;
+    console.log('API Service initialized with baseUrl:', this.baseUrl);
+  }
 
   private getAuthHeaders(): HttpHeaders {
     const token = localStorage.getItem('auth_token');
@@ -39,13 +46,17 @@ export class ApiService {
 
   // Authentication endpoints
   login(credentials: LoginRequest): Observable<AuthResponse> {
-    // Convert email to usernameOrEmail as expected by API
-    const loginData = {
-      usernameOrEmail: credentials.email,
-      password: credentials.password
-    };
-    return this.http.post<AuthResponse>(`${this.baseUrl}/auth/login`, loginData)
-      .pipe(catchError(this.handleError));
+    return this.http.post<any>(`${this.baseUrl}/auth/login`, credentials)
+      .pipe(
+        map(response => ({
+          success: response.success,
+          message: response.message,
+          user: response.data?.user,
+          token: response.data?.token,
+          refreshToken: response.data?.refreshToken
+        })),
+        catchError(this.handleError)
+      );
   }
 
   register(userData: RegisterRequest): Observable<AuthResponse> {
@@ -54,8 +65,17 @@ export class ApiService {
       ...userData,
       confirmPassword: userData.password // API requires password confirmation
     };
-    return this.http.post<AuthResponse>(`${this.baseUrl}/auth/register`, registrationData)
-      .pipe(catchError(this.handleError));
+    return this.http.post<any>(`${this.baseUrl}/auth/register`, registrationData)
+      .pipe(
+        map(response => ({
+          success: response.success,
+          message: response.message,
+          user: response.data?.user,
+          token: response.data?.token,
+          refreshToken: response.data?.refreshToken
+        })),
+        catchError(this.handleError)
+      );
   }
 
   refreshToken(): Observable<AuthResponse> {
@@ -145,7 +165,7 @@ export class ApiService {
   // Todo endpoints
   getTodos(params?: { listId?: string; completed?: boolean; priority?: string }): Observable<ApiResponse<Todo[]>> {
     let httpParams = new HttpParams();
-    
+
     if (params) {
       if (params.listId) httpParams = httpParams.set('listId', params.listId);
       if (params.completed !== undefined) httpParams = httpParams.set('completed', params.completed.toString());

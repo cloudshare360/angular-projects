@@ -59,7 +59,7 @@ export interface ApiResponse<T = any> {
 }
 
 export interface LoginRequest {
-  email: string;
+  usernameOrEmail: string;
   password: string;
 }
 

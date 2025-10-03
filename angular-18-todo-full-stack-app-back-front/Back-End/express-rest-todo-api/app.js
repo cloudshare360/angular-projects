@@ -225,16 +225,19 @@ const startServer = async () => {
     // Initialize database connection
     await initializeDatabase();
     
-    server = app.listen(PORT, () => {
+    // Bind to 0.0.0.0 to accept connections from LAN
+    server = app.listen(PORT, '0.0.0.0', () => {
       logger.info(`🚀 Server started successfully!`);
       logger.info(`🌍 Environment: ${NODE_ENV}`);
-      logger.info(`🔗 Server URL: http://localhost:${PORT}`);
+      logger.info(`🔗 Server URL (localhost): http://localhost:${PORT}`);
+      logger.info(`🔗 Server URL (LAN): http://192.168.68.50:${PORT}`);
       logger.info(`📚 API Documentation: http://localhost:${PORT}/api/docs`);
       logger.info(`📊 Health Check: http://localhost:${PORT}/health`);
       logger.info(`ℹ️  API Info: http://localhost:${PORT}/info`);
-      
+
       if (NODE_ENV === 'development') {
         logger.info(`🔧 Development mode - detailed logging enabled`);
+        logger.info(`🌐 Accepting connections from all network interfaces (0.0.0.0)`);
       }
     });
 

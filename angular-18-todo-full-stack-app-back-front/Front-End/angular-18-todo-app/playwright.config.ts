@@ -6,13 +6,13 @@ import { defineConfig, devices } from '@playwright/test';
 export default defineConfig({
     testDir: './e2e',
     /* Run tests in files in parallel */
-    fullyParallel: true,
+    fullyParallel: false, // Changed to false for sequential execution
     /* Fail the build on CI if you accidentally left test.only in the source code. */
     forbidOnly: !!process.env['CI'],
     /* Retry on CI only */
     retries: process.env['CI'] ? 2 : 0,
     /* Opt out of parallel tests on CI. */
-    workers: process.env['CI'] ? 1 : undefined,
+    workers: process.env['CI'] ? 1 : 1, // Changed to 1 worker for sequential execution
     /* Reporter to use. See https://playwright.dev/docs/test-reporters */
     reporter: [
         ['html', {
@@ -20,12 +20,9 @@ export default defineConfig({
             open: 'never'
         }],
         ['json', {
-            outputFile: 'test-results/results.json'
+            outputFile: 'test-results/test-results.json'
         }],
-        ['junit', {
-            outputFile: 'test-results/junit.xml'
-        }],
-        ['line']
+        ['list']
     ],
     /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
     use: {
@@ -47,27 +44,62 @@ export default defineConfig({
     projects: [
         {
             name: 'chromium',
-            use: { ...devices['Desktop Chrome'] },
+            use: {
+                ...devices['Desktop Chrome'],
+                // Enable headed mode for user observation
+                headless: false,
+                // Slow down for better user experience
+                launchOptions: {
+                    slowMo: 500, // 500ms delay between actions
+                },
+                viewport: { width: 1280, height: 720 },
+            },
         },
 
         {
             name: 'firefox',
-            use: { ...devices['Desktop Firefox'] },
+            use: {
+                ...devices['Desktop Firefox'],
+                headless: false,
+                launchOptions: {
+                    slowMo: 500,
+                },
+                viewport: { width: 1280, height: 720 },
+            },
         },
 
         {
             name: 'webkit',
-            use: { ...devices['Desktop Safari'] },
+            use: {
+                ...devices['Desktop Safari'],
+                headless: false,
+                launchOptions: {
+                    slowMo: 500,
+                },
+                viewport: { width: 1280, height: 720 },
+            },
         },
 
         /* Test against mobile viewports. */
         {
             name: 'Mobile Chrome',
-            use: { ...devices['Pixel 5'] },
+            use: {
+                ...devices['Pixel 5'],
+                headless: false,
+                launchOptions: {
+                    slowMo: 500,
+                },
+            },
         },
         {
             name: 'Mobile Safari',
-            use: { ...devices['iPhone 12'] },
+            use: {
+                ...devices['iPhone 12'],
+                headless: false,
+                launchOptions: {
+                    slowMo: 500,
+                },
+            },
         },
 
         /* Test against branded browsers. */
@@ -81,39 +113,18 @@ export default defineConfig({
         // },
     ],
 
-    /* Run your local dev server before starting the tests */
-    webServer: [
-        {
-            command: 'npm run start',
-            url: 'http://localhost:4200',
-            reuseExistingServer: !process.env['CI'],
-            timeout: 120 * 1000,
-        },
-        {
-            command: 'cd ../../Back-End/express-rest-todo-api && npm start',
-            url: 'http://localhost:3000/api/health',
-            reuseExistingServer: !process.env['CI'],
-            timeout: 120 * 1000,
-        }
-    ],
-
-    /* Global setup and teardown */
-    globalSetup: require.resolve('./e2e/global-setup'),
-    globalTeardown: require.resolve('./e2e/global-teardown'),
-
-    /* Output directory for test artifacts */
+    /* Folder for test artifacts such as screenshots, videos, traces, etc. */
     outputDir: 'test-results/',
 
-    /* Expect options */
-    expect: {
-        /* Maximum time expect() should wait for the condition to be met. */
-        timeout: 5000,
-        /* Visual comparison options */
-        toHaveScreenshot: {
-            threshold: 0.2,
-        },
+    /* Run your local dev server before starting the tests */
+    webServer: {
+        command: 'echo "Web server already running"',
+        url: 'http://localhost:4200',
+        reuseExistingServer: true,
+        timeout: 30000,
     },
 
-    /* Test timeout */
-    timeout: 30 * 1000,
+    /* Global setup and teardown */
+    globalSetup: require.resolve('./e2e/global-setup.ts'),
+    globalTeardown: require.resolve('./e2e/global-teardown.ts'),
 });

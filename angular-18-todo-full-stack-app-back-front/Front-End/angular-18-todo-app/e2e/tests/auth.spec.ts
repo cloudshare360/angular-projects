@@ -68,8 +68,8 @@ test.describe('Authentication Flow', () => {
         const loginPage = new LoginPage(page);
         await loginPage.goto();
 
-        const email = process.env['E2E_TEST_EMAIL'] || 'admin@example.com';
-        const password = process.env['E2E_TEST_PASSWORD'] || 'admin123';
+        const email = process.env['E2E_TEST_EMAIL'] || 'test@example.com';
+        const password = process.env['E2E_TEST_PASSWORD'] || 'password123';
 
         await loginPage.login(email, password);
 

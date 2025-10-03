@@ -13,14 +13,14 @@ export class DashboardPage {
 
     constructor(page: Page) {
         this.page = page;
-        this.addListButton = page.locator('[data-testid="add-list-btn"]');
-        this.addTodoButton = page.locator('[data-testid="add-todo-btn"]');
-        this.logoutButton = page.locator('[data-testid="logout-btn"]');
-        this.userMenu = page.locator('[data-testid="user-menu"]');
+        this.addListButton = page.locator('[data-testid="add-list-btn"], button:has-text("Create List")').first();
+        this.addTodoButton = page.locator('[data-testid="add-todo-btn"], button:has-text("Add New Todo")').first();
+        this.logoutButton = page.locator('[data-testid="logout-btn"], button:has-text("Logout")').first();
+        this.userMenu = page.locator('[data-testid="user-menu"], .nav-user').first();
         this.searchInput = page.locator('input[placeholder*="Search"]');
         this.filterSelect = page.locator('mat-select[placeholder*="Filter"]');
-        this.listContainer = page.locator('.lists-container');
-        this.todoContainer = page.locator('.todos-container');
+        this.listContainer = page.locator('.lists-overview, .lists-grid');
+        this.todoContainer = page.locator('.recent-todos, .todo-list');
     }
 
     async goto() {
@@ -59,7 +59,7 @@ export class DashboardPage {
     }
 
     async getListCount() {
-        const lists = this.page.locator('.list-item');
+        const lists = this.page.locator('.list-card, .list-item');
         return await lists.count();
     }
 
@@ -99,7 +99,6 @@ export class DashboardPage {
     }
 
     async logout() {
-        await this.userMenu.click();
         await this.logoutButton.click();
     }
 

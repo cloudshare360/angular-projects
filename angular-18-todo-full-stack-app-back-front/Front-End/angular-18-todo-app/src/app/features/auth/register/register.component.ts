@@ -261,12 +261,16 @@ export class RegisterComponent {
       this.authService.register(registerData).subscribe({
         next: (response) => {
           this.isLoading = false;
-          if (!response.success) {
+          if (response.success) {
+            // Registration successful - auth service will handle redirect
+            console.log('Registration successful, redirecting to dashboard');
+          } else {
             this.errorMessage = response.message || 'Registration failed. Please try again.';
           }
         },
         error: (error) => {
           this.isLoading = false;
+          console.error('Registration error:', error);
           this.errorMessage = error.error?.message || 'An error occurred. Please try again.';
         }
       });

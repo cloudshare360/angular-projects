@@ -13,23 +13,23 @@ import { LoginRequest } from '../../../shared/interfaces/models';
     <div class="auth-container">
       <div class="auth-card">
         <div class="auth-header">
-          <h1>Sign In</h1>
-          <p>Welcome back! Please sign in to your account.</p>
+          <h1>Welcome Back</h1>
+          <p>Please sign in to your account.</p>
         </div>
         
         <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="auth-form">
           <div class="form-group">
-            <label for="email">Email</label>
+            <label for="usernameOrEmail">Email</label>
             <input
               type="email"
-              id="email"
-              formControlName="email"
+              id="usernameOrEmail"
+              formControlName="usernameOrEmail"
               class="form-control"
-              [class.error]="loginForm.get('email')?.invalid && loginForm.get('email')?.touched"
+              [class.error]="loginForm.get('usernameOrEmail')?.invalid && loginForm.get('usernameOrEmail')?.touched"
             />
-            <div class="error-message" *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched">
-              <span *ngIf="loginForm.get('email')?.hasError('required')">Email is required</span>
-              <span *ngIf="loginForm.get('email')?.hasError('email')">Please enter a valid email</span>
+            <div class="error-message" *ngIf="loginForm.get('usernameOrEmail')?.invalid && loginForm.get('usernameOrEmail')?.touched">
+              <span *ngIf="loginForm.get('usernameOrEmail')?.hasError('required')">Email is required</span>
+              <span *ngIf="loginForm.get('usernameOrEmail')?.hasError('email')">Please enter a valid email</span>
             </div>
           </div>
 
@@ -198,7 +198,7 @@ export class LoginComponent {
     private router: Router
   ) {
     this.loginForm = this.fb.group({
-      email: ['', [Validators.required, Validators.email]],
+      usernameOrEmail: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required]]
     });
   }
@@ -213,12 +213,16 @@ export class LoginComponent {
       this.authService.login(loginData).subscribe({
         next: (response) => {
           this.isLoading = false;
-          if (!response.success) {
+          if (response.success) {
+            // Login successful - auth service will handle redirect
+            console.log('Login successful, redirecting to dashboard');
+          } else {
             this.errorMessage = response.message || 'Login failed. Please try again.';
           }
         },
         error: (error) => {
           this.isLoading = false;
+          console.error('Login error:', error);
           this.errorMessage = error.error?.message || 'An error occurred. Please try again.';
         }
       });

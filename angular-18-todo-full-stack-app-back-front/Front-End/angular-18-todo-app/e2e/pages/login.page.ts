@@ -10,11 +10,11 @@ export class LoginPage {
 
     constructor(page: Page) {
         this.page = page;
-        this.emailInput = page.locator('input[type="email"]');
-        this.passwordInput = page.locator('input[type="password"]');
-        this.loginButton = page.locator('button[type="submit"]');
-        this.errorMessage = page.locator('.error-message');
-        this.registerLink = page.locator('a[href="/auth/register"]');
+        this.emailInput = page.locator('input#usernameOrEmail, input[type="email"]').first();
+        this.passwordInput = page.locator('input#password, input[type="password"]').first();
+        this.loginButton = page.locator('button[type="submit"]').first();
+        this.errorMessage = page.locator('.error-message').first();
+        this.registerLink = page.locator('a[href="/auth/register"], a:has-text("Sign up here")').first();
     }
 
     async goto() {

@@ -16,16 +16,16 @@ import { User, TodoList, Todo, CreateListRequest, CreateTodoRequest } from '../.
   standalone: true,
   imports: [CommonModule, RouterModule, FormsModule],
   template: `
-    <div class="dashboard">
+    <div class="dashboard-container">
       <nav class="navbar">
         <div class="nav-brand">
           <h1>Todo Dashboard</h1>
         </div>
-        <div class="nav-user">
+        <div class="nav-user" data-testid="user-menu">
           <span class="welcome-text" *ngIf="currentUser">
             Welcome, {{ currentUser.firstName }}!
           </span>
-          <button class="btn btn-secondary" (click)="logout()">
+          <button class="btn btn-secondary" data-testid="logout-btn" (click)="logout()">
             Logout
           </button>
         </div>
@@ -53,11 +53,11 @@ import { User, TodoList, Todo, CreateListRequest, CreateTodoRequest } from '../.
           <div class="actions-section">
             <h2>Quick Actions</h2>
             <div class="action-buttons">
-              <button class="btn btn-primary" (click)="createNewTodo()">
+              <button class="btn btn-primary" data-testid="add-todo-btn" (click)="createNewTodo()">
                 <i class="icon">+</i>
                 Add New Todo
               </button>
-              <button class="btn btn-outline" (click)="createNewList()">
+              <button class="btn btn-outline" data-testid="add-list-btn" (click)="createNewList()">
                 <i class="icon">📋</i>
                 Create List
               </button>
@@ -89,22 +89,25 @@ import { User, TodoList, Todo, CreateListRequest, CreateTodoRequest } from '../.
                   </div>
                 </div>
                 <div class="todo-actions">
-                  <button 
-                    class="btn-icon edit" 
+                  <button
+                    class="btn-icon edit"
+                    data-testid="edit-todo-btn"
                     (click)="editTodo(todo)"
                     title="Edit todo"
                   >
                     ✏️
                   </button>
-                  <button 
-                    class="btn-icon delete" 
+                  <button
+                    class="btn-icon delete"
+                    data-testid="delete-todo-btn"
                     (click)="deleteTodo(todo)"
                     title="Delete todo"
                   >
                     🗑️
                   </button>
-                  <button 
-                    class="btn-icon toggle" 
+                  <button
+                    class="btn-icon toggle"
+                    data-testid="toggle-todo-btn"
                     (click)="toggleTodo(todo.id)"
                     [title]="todo.isCompleted ? 'Mark as incomplete' : 'Mark as complete'"
                   >
@@ -180,7 +183,7 @@ import { User, TodoList, Todo, CreateListRequest, CreateTodoRequest } from '../.
     </div>
   `,
   styles: [`
-    .dashboard {
+    .dashboard-container {
       min-height: 100vh;
       background: #f8f9fa;
     }
