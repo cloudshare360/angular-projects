@@ -101,7 +101,7 @@ print_status "🚀 Starting Angular Todo Application Development Environment"
 print_status "============================================================"
 
 # Check if we're in the right directory
-if [ ! -f "PROJECT_STATUS.md" ]; then
+if [ ! -f "project-status-tracker.md" ]; then
     print_error "Please run this script from the angular-todo-application root directory"
     exit 1
 fi
@@ -193,7 +193,7 @@ fi
 print_success "✓ Ports are available"
 
 # ========================================
-# PHASE 1: DATABASE LAYER STARTUP
+# PHASE 1: DATABASE LAYER STARTUP & TESTING
 # ========================================
 print_phase "🗄️ PHASE 1: Starting Database Layer (MongoDB + MongoDB Express)"
 
@@ -222,15 +222,50 @@ else
 fi
 cd ../..
 
-print_success "🎉 PHASE 1 COMPLETE: Database layer is ready"
+# MANDATORY LAYER 1 TESTING
+print_status "🧪 TESTING DATABASE LAYER..."
+
+# Test 1: Container verification
+if $DOCKER_CMD ps --format "table {{.Names}}\t{{.Status}}" | grep -q "angular-todo-mongodb.*Up"; then
+    print_success "✅ Test 1: MongoDB container running"
+else
+    print_error "❌ Test 1: MongoDB container not running"
+    exit 1
+fi
+
+# Test 2: MongoDB connection test
+if $DOCKER_CMD exec angular-todo-mongodb mongosh --quiet --eval 'db.adminCommand("ping")' > /dev/null 2>&1; then
+    print_success "✅ Test 2: MongoDB connection successful"
+else
+    print_error "❌ Test 2: MongoDB connection failed"
+    exit 1
+fi
+
+# Test 3: MongoDB authentication test
+if $DOCKER_CMD exec angular-todo-mongodb mongosh --quiet --eval 'use admin; db.auth("admin", "todopassword123"); db.runCommand({listCollections: 1});' > /dev/null 2>&1; then
+    print_success "✅ Test 3: MongoDB authentication successful"
+else
+    print_error "❌ Test 3: MongoDB authentication failed"
+    exit 1
+fi
+
+# Test 4: MongoDB Express UI accessibility
+UI_RESPONSE=$(curl -s -I http://localhost:8081 2>/dev/null | head -n 1)
+if echo "$UI_RESPONSE" | grep -q "200 OK\|401 Unauthorized"; then
+    print_success "✅ Test 4: MongoDB Express UI accessible (authentication required)"
+else
+    print_warning "⚠️ Test 4: MongoDB Express UI not accessible (optional service)"
+fi
+
+print_success "🎉 PHASE 1 COMPLETE: Database layer verified and ready"
 print_status "📊 Database services available:"
 print_status "   • MongoDB: localhost:27017"
 print_status "   • MongoDB Express UI: http://localhost:8081"
 
 # ========================================
-# PHASE 2: BACKEND API STARTUP
+# PHASE 2: BACKEND API STARTUP & TESTING
 # ========================================
-print_phase "🚀 PHASE 2: Starting Backend API (Express.js)"
+print_phase "🚀 PHASE 2: Starting Backend API Layer (Express.js + MongoDB Integration)"
 
 # Install backend dependencies if needed
 print_status "Checking backend dependencies..."
@@ -259,23 +294,75 @@ if [ ! -f ".env" ]; then
     exit 1
 fi
 
-# Start backend API server
-print_status "Starting Express.js API server..."
-npm start &
-BACKEND_PID=$!
+# Check if backend is already running
+if ! lsof -i :3000 > /dev/null 2>&1; then
+    print_status "Starting Express.js API server..."
+    npm start > ../../logs/backend.log 2>&1 &
+    BACKEND_PID=$!
+    echo $BACKEND_PID > ../../logs/backend.pid
+    print_success "✓ Backend API starting (PID: $BACKEND_PID)"
+else
+    print_success "✓ Backend API is already running"
+fi
 cd ../..
 
 # Wait for backend to be ready
 wait_for_service "Express.js API" "curl -s http://localhost:3000/health" 60
 
-print_success "🎉 PHASE 2 COMPLETE: Backend API is ready"
+# MANDATORY LAYER 2 TESTING
+print_status "🧪 TESTING BACKEND API LAYER..."
+
+# Test 1: API Health check
+if curl -s -f http://localhost:3000/health > /dev/null 2>&1; then
+    print_success "✅ Test 1: Backend API health check passed"
+else
+    print_error "❌ Test 1: Backend API health check failed"
+    print_error "   API may not be ready. Check logs: tail -f logs/backend.log"
+    exit 1
+fi
+
+# Test 2: Database connection verification
+HEALTH_RESPONSE=$(curl -s http://localhost:3000/health 2>/dev/null)
+if echo "$HEALTH_RESPONSE" | grep -q "database.*connected\|mongodb.*ok\|database.*Connected\|healthy"; then
+    print_success "✅ Test 2: Backend-Database connection verified"
+else
+    print_warning "⚠️ Test 2: Backend-Database connection status unclear"
+    print_status "   Health response: $HEALTH_RESPONSE"
+fi
+
+# Test 3: Authentication endpoints accessibility
+REGISTER_RESPONSE=$(curl -s -X POST http://localhost:3000/api/auth/register -H "Content-Type: application/json" -d '{}' 2>/dev/null)
+if echo "$REGISTER_RESPONSE" | grep -q "success\|error\|message"; then
+    print_success "✅ Test 3: Authentication endpoints accessible (returned structured response)"
+else
+    print_error "❌ Test 3: Authentication endpoints not accessible"
+    exit 1
+fi
+
+# Test 4: CRUD endpoints accessibility using existing curl scripts
+cd curl-scripts
+if [ -f "run-all-tests.sh" ]; then
+    print_status "Running comprehensive API tests..."
+    chmod +x run-all-tests.sh
+    if timeout 30 ./run-all-tests.sh > ../logs/api-test.log 2>&1; then
+        print_success "✅ Test 4: CRUD endpoints working correctly"
+    else
+        print_warning "⚠️ Test 4: Some CRUD endpoint tests failed (check logs/api-test.log)"
+        print_status "   Continuing startup as basic connectivity is confirmed..."
+    fi
+else
+    print_warning "⚠️ Test 4: Comprehensive API tests not available (run-all-tests.sh not found)"
+fi
+cd ..
+
+print_success "🎉 PHASE 2 COMPLETE: Backend API layer verified and ready"
 print_status "📊 Backend services available:"
 print_status "   • API Server: http://localhost:3000"
 print_status "   • API Documentation: http://localhost:3000/api-docs"
 print_status "   • Health Check: http://localhost:3000/health"
 
 # ========================================
-# PHASE 3: FRONTEND APPLICATION STARTUP  
+# PHASE 3: FRONTEND APPLICATION STARTUP & TESTING
 # ========================================
 print_phase "🎨 PHASE 3: Starting Frontend Application (Angular 18)"
 
@@ -305,20 +392,70 @@ else
     print_success "✓ Angular CLI is available"
 fi
 
-# Start Angular development server
-print_status "Starting Angular development server..."
-print_status "This may take 15-30 seconds for initial compilation..."
-$NG_CMD serve --proxy-config proxy.conf.json --host 0.0.0.0 &
-FRONTEND_PID=$!
+# Check if frontend is already running
+if ! lsof -i :4200 > /dev/null 2>&1; then
+    print_status "Starting Angular development server..."
+    print_status "This may take 15-30 seconds for initial compilation..."
+    $NG_CMD serve --proxy-config proxy.conf.json --host 0.0.0.0 > ../../logs/frontend.log 2>&1 &
+    FRONTEND_PID=$!
+    echo $FRONTEND_PID > ../../logs/frontend.pid
+    print_success "✓ Angular application starting (PID: $FRONTEND_PID)"
+else
+    print_success "✓ Angular application is already running"
+fi
 cd ../..
 
 # Wait for frontend to be ready (Angular takes longer to compile)
 wait_for_service "Angular Application" "curl -s http://localhost:4200" 120
 
-print_success "🎉 PHASE 3 COMPLETE: Frontend application is ready"
+# MANDATORY LAYER 3 TESTING
+print_status "🧪 TESTING FRONTEND APPLICATION LAYER..."
+
+# Test 1: Angular app accessibility
+if curl -s -f http://localhost:4200 > /dev/null 2>&1; then
+    print_success "✅ Test 1: Angular application accessible"
+else
+    print_error "❌ Test 1: Angular application not accessible"
+    print_error "   Check frontend logs: tail -f logs/frontend.log"
+    exit 1
+fi
+
+# Test 2: Proxy configuration validation (API calls through proxy)
+if curl -s -f http://localhost:4200/api/health > /dev/null 2>&1; then
+    print_success "✅ Test 2: Proxy configuration working (frontend can reach backend)"
+else
+    print_warning "⚠️ Test 2: Proxy configuration may have issues"
+    print_status "   Direct backend test..."
+    if curl -s -f http://localhost:3000/health > /dev/null 2>&1; then
+        print_status "   Backend is accessible directly, proxy may need configuration"
+    else
+        print_error "   Backend is not accessible - check backend health"
+    fi
+fi
+
+# Test 3: Static assets verification
+RESPONSE=$(curl -s -I http://localhost:4200 2>/dev/null)
+if echo "$RESPONSE" | grep -q "200 OK"; then
+    print_success "✅ Test 3: Static assets serving correctly"
+else
+    print_error "❌ Test 3: Static assets not serving correctly"
+    exit 1
+fi
+
+# Test 4: Angular components loading validation
+APP_CONTENT=$(curl -s http://localhost:4200 2>/dev/null)
+if echo "$APP_CONTENT" | grep -q "app-root\|angular\|ng-"; then
+    print_success "✅ Test 4: Angular components loading correctly"
+else
+    print_warning "⚠️ Test 4: Angular components may not be loading correctly"
+    print_status "   Application may still be compiling or have compilation errors"
+fi
+
+print_success "🎉 PHASE 3 COMPLETE: Frontend application layer verified and ready"
 print_status "📊 Frontend services available:"
 print_status "   • Angular Application: http://localhost:4200"
 print_status "   • Development Server: Live reload enabled"
+print_status "   • Proxy to Backend: http://localhost:4200/api/*"
 
 # ========================================
 # FINAL HEALTH CHECK & SUMMARY

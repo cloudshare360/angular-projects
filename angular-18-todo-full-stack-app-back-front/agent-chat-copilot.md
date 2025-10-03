@@ -143,7 +143,7 @@ Priority: CRITICAL | Dependencies: Phase 4
 
 ### 🚀 **CRITICAL**: Proper Service Startup Order
 
-The application components **MUST** be started in the following sequence to ensure proper functionality and E2E testing:
+The application components **MUST** be started in the following sequence with **mandatory testing** at each layer before proceeding:
 
 #### **1. Database Layer (MongoDB + MongoDB Express)**
 ```bash
@@ -153,14 +153,26 @@ cd data-base/mongodb
 # Start MongoDB and MongoDB Express using Docker Compose
 docker-compose up -d
 
-# Verify database services are running
-docker ps | grep mongo
+# MANDATORY TESTING - Wait for services to initialize
+sleep 15
 
-# Check MongoDB connectivity
-docker exec -it angular-todo-mongodb mongosh --eval "db.adminCommand('ping')"
+# Test 1: Verify MongoDB container is running
+docker ps | grep angular-todo-mongodb
 
-# Access MongoDB Express UI (optional)
-# http://localhost:8081 (admin/admin123)
+# Test 2: Test MongoDB connection
+docker exec angular-todo-mongodb mongosh --eval "db.adminCommand('ping')"
+
+# Test 3: Test MongoDB Express UI accessibility
+curl -s -o /dev/null -w "MongoDB Express UI: %{http_code}\n" http://localhost:8081
+
+# Test 4: Validate MongoDB authentication
+docker exec angular-todo-mongodb mongosh --eval "
+  use admin;
+  db.auth('admin', 'todopassword123');
+  db.runCommand({listCollections: 1});
+"
+
+# ✅ DATABASE LAYER VERIFIED - PROCEED TO BACKEND
 ```
 
 #### **2. Backend API (Express.js)**
@@ -172,13 +184,41 @@ cd Back-End/express-rest-todo-api
 npm install
 
 # Start Express.js API server
-npm start
+npm start &
 
-# Verify backend API is running
-curl http://localhost:3000/health
+# MANDATORY TESTING - Wait for backend to initialize
+sleep 10
 
-# Check API documentation (optional)
-# http://localhost:3000/api-docs
+# Test 1: Health endpoint verification
+curl -f http://localhost:3000/health || echo "❌ Backend health check failed"
+
+# Test 2: API documentation accessibility
+curl -s -o /dev/null -w "API Docs: %{http_code}\n" http://localhost:3000/api-docs
+
+# Test 3: Database connection verification
+curl -s http://localhost:3000/health | grep -q "database.*connected" && echo "✅ Database connected" || echo "❌ Database not connected"
+
+# Test 4: Authentication endpoints testing
+curl -X POST http://localhost:3000/api/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{"test": "connectivity"}' \
+  -s -o /dev/null -w "Auth Register: %{http_code}\n"
+
+curl -X POST http://localhost:3000/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"test": "connectivity"}' \
+  -s -o /dev/null -w "Auth Login: %{http_code}\n"
+
+# Test 5: API endpoints accessibility
+curl -s -o /dev/null -w "Users API: %{http_code}\n" http://localhost:3000/api/users
+curl -s -o /dev/null -w "Lists API: %{http_code}\n" http://localhost:3000/api/lists
+curl -s -o /dev/null -w "Todos API: %{http_code}\n" http://localhost:3000/api/todos
+
+# Test 6: Comprehensive API testing using existing curl scripts
+cd ../../curl-scripts
+./run-all-tests.sh --connectivity-only
+
+# ✅ BACKEND LAYER VERIFIED - PROCEED TO FRONTEND
 ```
 
 #### **3. Frontend Application (Angular 18)**
@@ -190,45 +230,116 @@ cd Front-End/angular-18-todo-app
 npm install
 
 # Start Angular development server
-ng serve --proxy-config proxy.conf.json
+ng serve --proxy-config proxy.conf.json &
 
-# Verify frontend is accessible
-curl http://localhost:4200
+# MANDATORY TESTING - Wait for Angular compilation
+sleep 30
 
-# Application should be available at:
-# http://localhost:4200
+# Test 1: Frontend accessibility
+curl -s -o /dev/null -w "Angular App: %{http_code}\n" http://localhost:4200
+
+# Test 2: Frontend-Backend proxy integration
+curl -s -o /dev/null -w "Proxy to API: %{http_code}\n" http://localhost:4200/api/health
+
+# Test 3: Angular application loading
+curl -s http://localhost:4200 | grep -q "angular" && echo "✅ Angular app loaded" || echo "❌ Angular app not loaded"
+
+# Test 4: Static assets loading
+curl -s -o /dev/null -w "Main JS: %{http_code}\n" http://localhost:4200/main.js
+curl -s -o /dev/null -w "Styles: %{http_code}\n" http://localhost:4200/styles.css
+
+# Test 5: API integration through proxy
+curl -s http://localhost:4200/api/health | grep -q "OK" && echo "✅ API proxy working" || echo "❌ API proxy failed"
+
+# ✅ FRONTEND LAYER VERIFIED - READY FOR E2E TESTING
 ```
 
-### 🔍 Service Health Checks
-
-#### **Database Health Check**
+#### **4. Comprehensive E2E Testing (Playwright)**
 ```bash
-# Check MongoDB container status
-docker ps --filter "name=angular-todo-mongodb"
+# Final verification before E2E testing
+curl http://localhost:3000/health && curl -s http://localhost:4200 > /dev/null && echo "✅ All services ready for E2E testing"
 
-# Test MongoDB connection
-docker exec angular-todo-mongodb mongosh --eval "db.runCommand({ ping: 1 })"
+# Run Playwright E2E tests
+npm run test:e2e
 
-# Check MongoDB Express UI
-curl -s http://localhost:8081
+# Or use comprehensive test runner
+./run-e2e-tests.sh
 ```
 
-#### **Backend Health Check**
-```bash
-# Test API health endpoint
-curl -f http://localhost:3000/health
+### 🔍 **Layer-by-Layer Testing Protocol**
 
-# Test API connectivity
-curl -s http://localhost:3000/api/auth/health 2>/dev/null || echo "Backend not ready"
+Each service layer **MUST** be validated using curl scripts before proceeding to the next layer:
+
+#### **Database Layer Testing**
+```bash
+# MongoDB Container Verification
+docker ps --format "table {{.Names}}\t{{.Status}}" | grep angular-todo
+
+# MongoDB Connection Testing
+docker exec angular-todo-mongodb mongosh --eval "
+  print('=== MongoDB Connection Test ===');
+  db.adminCommand('ping');
+  print('Database ping successful');
+"
+
+# MongoDB Authentication Testing
+docker exec angular-todo-mongodb mongosh --eval "
+  use admin;
+  db.auth('admin', 'todopassword123');
+  print('Authentication successful');
+  db.runCommand({listCollections: 1});
+"
+
+# MongoDB Express UI Testing
+curl -s -f http://localhost:8081 > /dev/null && echo "✅ MongoDB Express accessible" || echo "❌ MongoDB Express failed"
 ```
 
-#### **Frontend Health Check**
+#### **Backend API Layer Testing**
 ```bash
-# Test Angular application
-curl -s -o /dev/null -w "%{http_code}" http://localhost:4200
+# API Health Check
+curl -f http://localhost:3000/health || exit 1
 
-# Verify Angular development server
-ps aux | grep "ng serve" | grep -v grep
+# Database Connection Verification
+curl -s http://localhost:3000/health | jq '.services.database' | grep -q "connected" && echo "✅ DB Connected"
+
+# Authentication Endpoints Testing
+curl -X POST http://localhost:3000/api/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{}' -w "Register endpoint: %{http_code}\n" -o /dev/null
+
+curl -X POST http://localhost:3000/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{}' -w "Login endpoint: %{http_code}\n" -o /dev/null
+
+# CRUD Endpoints Accessibility
+endpoints=("users" "lists" "todos")
+for endpoint in "${endpoints[@]}"; do
+  curl -s -o /dev/null -w "${endpoint} API: %{http_code}\n" http://localhost:3000/api/${endpoint}
+done
+
+# Comprehensive API Testing (using existing curl scripts)
+cd curl-scripts
+if [ -f "run-all-tests.sh" ]; then
+  echo "🧪 Running comprehensive API tests..."
+  ./run-all-tests.sh --quick-validation
+fi
+cd ..
+```
+
+#### **Frontend Application Layer Testing**
+```bash
+# Angular App Accessibility
+curl -s -f http://localhost:4200 > /dev/null && echo "✅ Angular app accessible" || exit 1
+
+# Proxy Configuration Testing
+curl -s http://localhost:4200/api/health | grep -q "OK" && echo "✅ API proxy working" || echo "❌ Proxy failed"
+
+# Static Assets Verification
+curl -s -o /dev/null -w "Main bundle: %{http_code}\n" http://localhost:4200/main.js
+curl -s -o /dev/null -w "Polyfills: %{http_code}\n" http://localhost:4200/polyfills.js
+
+# Angular App Content Validation
+curl -s http://localhost:4200 | grep -q "<app-root>" && echo "✅ Angular components loaded" || echo "❌ Angular loading failed"
 ```
 
 ### 🧪 **Before Running Playwright E2E Tests**
