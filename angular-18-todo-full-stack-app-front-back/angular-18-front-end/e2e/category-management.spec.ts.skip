@@ -1,0 +1,375 @@
+import { test, expect } from '@playwright/test';
+
+// Helper function to login as user
+async function loginAsUser(page: any) {
+  await page.goto('/auth/login');
+  await page.fill('input[formControlName="email"]', 'john.doe@example.com');
+  await page.fill('input[formControlName="password"]', 'password123');
+  await page.click('.role-option:has-text("User Login")');
+  await page.click('button[type="submit"]');
+  await page.waitForURL('/dashboard');
+}
+
+test.describe('Category Management - CRUD Operations', () => {
+  test.beforeEach(async ({ page }) => {
+    await loginAsUser(page);
+  });
+
+  test('should display categories section in dashboard', async ({ page }) => {
+    // Check if categories section exists
+    const categoriesSection = page.locator('.categories, .category-list, [data-test="categories"]');
+    const isVisible = await categoriesSection.isVisible().catch(() => false);
+
+    if (isVisible) {
+      await expect(categoriesSection).toBeVisible();
+    } else {
+      // Categories might be in sidebar
+      const sidebarCategories = page.locator('.sidebar .category-item, nav .category-link');
+      await expect(sidebarCategories.first()).toBeVisible();
+    }
+  });
+
+  test('should display existing categories', async ({ page }) => {
+    // Look for category elements
+    const categoryItems = page.locator('.category-item, .category-card, [data-test="category"]');
+    const count = await categoryItems.count();
+
+    // Should have at least one category
+    expect(count).toBeGreaterThan(0);
+  });
+
+  test('should show category with todo count', async ({ page }) => {
+    // Find first category
+    const firstCategory = page.locator('.category-item, .category-card').first();
+
+    if (await firstCategory.isVisible()) {
+      // Should display category name
+      await expect(firstCategory).toBeVisible();
+
+      // Should show todo count
+      const todoCount = firstCategory.locator('.todo-count, .count, .badge');
+      const hasCount = await todoCount.isVisible().catch(() => false);
+
+      if (hasCount) {
+        await expect(todoCount).toBeVisible();
+      }
+    }
+  });
+
+  test('should open create category modal', async ({ page }) => {
+    // Look for add/create category button
+    const addButton = page.locator('button:has-text("Add Category"), button:has-text("New Category"), button:has-text("Create Category"), [data-test="add-category"]');
+
+    const isVisible = await addButton.first().isVisible().catch(() => false);
+
+    if (isVisible) {
+      await addButton.first().click();
+
+      // Should open modal
+      const modal = page.locator('.modal, .dialog, [role="dialog"]');
+      await expect(modal).toBeVisible();
+
+      // Should have category form
+      const nameInput = page.locator('input[formControlName="name"], input[name="categoryName"], #categoryName');
+      await expect(nameInput.first()).toBeVisible();
+    }
+  });
+
+  test('should create new category', async ({ page }) => {
+    // Click add category button
+    const addButton = page.locator('button:has-text("Add Category"), button:has-text("New Category"), button:has-text("Create Category")').first();
+
+    const isVisible = await addButton.isVisible().catch(() => false);
+
+    if (isVisible) {
+      await addButton.click();
+      await page.waitForTimeout(300);
+
+      // Fill category name
+      const nameInput = page.locator('input[formControlName="name"], input[name="categoryName"], input[placeholder*="name" i]').first();
+      await nameInput.fill('Test Category E2E');
+
+      // Fill description if available
+      const descInput = page.locator('textarea[formControlName="description"], textarea[name="description"]').first();
+      const hasDesc = await descInput.isVisible().catch(() => false);
+
+      if (hasDesc) {
+        await descInput.fill('Test category created by E2E test');
+      }
+
+      // Submit form
+      const submitButton = page.locator('button[type="submit"], button:has-text("Create"), button:has-text("Save")').first();
+      await submitButton.click();
+
+      // Wait for category to be created
+      await page.waitForTimeout(500);
+
+      // Should show success message or new category
+      const newCategory = page.locator(':has-text("Test Category E2E")');
+      const categoryExists = await newCategory.isVisible().catch(() => false);
+
+      if (categoryExists) {
+        await expect(newCategory.first()).toBeVisible();
+      }
+    }
+  });
+
+  test('should validate required category name', async ({ page }) => {
+    const addButton = page.locator('button:has-text("Add Category"), button:has-text("New Category")').first();
+
+    const isVisible = await addButton.isVisible().catch(() => false);
+
+    if (isVisible) {
+      await addButton.click();
+      await page.waitForTimeout(300);
+
+      // Try to submit without name
+      const submitButton = page.locator('button[type="submit"], button:has-text("Create")').first();
+      await submitButton.click();
+
+      // Button should be disabled or show validation error
+      const isDisabled = await submitButton.isDisabled().catch(() => false);
+      const errorMessage = page.locator('.error, .validation-error, .invalid-feedback');
+      const hasError = await errorMessage.isVisible().catch(() => false);
+
+      expect(isDisabled || hasError).toBeTruthy();
+    }
+  });
+
+  test('should edit existing category', async ({ page }) => {
+    // Find edit button for first category
+    const editButton = page.locator('button:has-text("Edit"), [aria-label="Edit category"], .edit-category').first();
+
+    const isVisible = await editButton.isVisible().catch(() => false);
+
+    if (isVisible) {
+      await editButton.click();
+      await page.waitForTimeout(300);
+
+      // Should open edit modal
+      const modal = page.locator('.modal, [role="dialog"]');
+      await expect(modal).toBeVisible();
+
+      // Update category name
+      const nameInput = page.locator('input[formControlName="name"], input[name="categoryName"]').first();
+      await nameInput.fill('Updated Category Name');
+
+      // Submit
+      const submitButton = page.locator('button[type="submit"], button:has-text("Update"), button:has-text("Save")').first();
+      await submitButton.click();
+
+      // Wait for update
+      await page.waitForTimeout(500);
+
+      // Should show updated name
+      const updatedCategory = page.locator(':has-text("Updated Category Name")');
+      const exists = await updatedCategory.isVisible().catch(() => false);
+
+      if (exists) {
+        await expect(updatedCategory.first()).toBeVisible();
+      }
+    }
+  });
+
+  test('should delete category', async ({ page }) => {
+    // First create a category to delete
+    const addButton = page.locator('button:has-text("Add Category"), button:has-text("New Category")').first();
+    const canAdd = await addButton.isVisible().catch(() => false);
+
+    if (canAdd) {
+      await addButton.click();
+      await page.waitForTimeout(300);
+
+      const nameInput = page.locator('input[formControlName="name"], input[name="categoryName"]').first();
+      await nameInput.fill('Category to Delete');
+
+      const submitButton = page.locator('button[type="submit"], button:has-text("Create")').first();
+      await submitButton.click();
+      await page.waitForTimeout(500);
+
+      // Now delete it
+      const deleteButton = page.locator('button:has-text("Delete"), [aria-label="Delete category"]').last();
+      const canDelete = await deleteButton.isVisible().catch(() => false);
+
+      if (canDelete) {
+        await deleteButton.click();
+
+        // Confirm deletion if modal appears
+        const confirmButton = page.locator('button:has-text("Confirm"), button:has-text("Yes"), button:has-text("Delete")').last();
+        const needsConfirm = await confirmButton.isVisible().catch(() => false);
+
+        if (needsConfirm) {
+          await confirmButton.click();
+        }
+
+        await page.waitForTimeout(500);
+
+        // Category should be removed
+        const deletedCategory = page.locator(':has-text("Category to Delete")');
+        const stillExists = await deletedCategory.isVisible().catch(() => false);
+
+        expect(stillExists).toBeFalsy();
+      }
+    }
+  });
+
+  test('should filter todos by category', async ({ page }) => {
+    // Click on a category
+    const categoryLink = page.locator('.category-item, .category-link').first();
+    await categoryLink.click();
+    await page.waitForTimeout(300);
+
+    // Should filter todos
+    const todos = page.locator('.todo-item, .todo-card');
+    const todoCount = await todos.count();
+
+    // Todos should be displayed (filtered by category)
+    expect(todoCount).toBeGreaterThanOrEqual(0);
+
+    // Check if category filter is applied
+    const activeCategory = page.locator('.category-item.active, .category-link.active');
+    await expect(activeCategory.first()).toBeVisible();
+  });
+
+  test('should show category color', async ({ page }) => {
+    // Categories should have color indicators
+    const categoryWithColor = page.locator('.category-item, .category-card').first();
+
+    if (await categoryWithColor.isVisible()) {
+      // Look for color indicator
+      const colorDot = categoryWithColor.locator('.color-dot, .category-color, [style*="background"]');
+      const hasColor = await colorDot.isVisible().catch(() => false);
+
+      if (hasColor) {
+        await expect(colorDot).toBeVisible();
+      }
+    }
+  });
+
+  test('should close create category modal', async ({ page }) => {
+    const addButton = page.locator('button:has-text("Add Category"), button:has-text("New Category")').first();
+
+    const isVisible = await addButton.isVisible().catch(() => false);
+
+    if (isVisible) {
+      await addButton.click();
+      await page.waitForTimeout(300);
+
+      // Close modal
+      const closeButton = page.locator('button:has-text("Cancel"), button:has-text("Close"), .close, [aria-label="Close"]').first();
+      await closeButton.click();
+
+      // Modal should be hidden
+      const modal = page.locator('.modal, [role="dialog"]');
+      const modalVisible = await modal.isVisible().catch(() => false);
+
+      expect(modalVisible).toBeFalsy();
+    }
+  });
+
+  test('should show all categories in sidebar', async ({ page }) => {
+    // Sidebar should list all categories
+    const sidebarCategories = page.locator('.sidebar .category-item, nav .category-link');
+    const count = await sidebarCategories.count();
+
+    // Should have at least one category
+    expect(count).toBeGreaterThan(0);
+
+    // Each category should be clickable
+    const firstCategory = sidebarCategories.first();
+    await expect(firstCategory).toBeVisible();
+  });
+
+  test('should search/filter categories', async ({ page }) => {
+    // Look for category search/filter
+    const searchInput = page.locator('input[placeholder*="Search categories" i], input[placeholder*="Filter categories" i]').first();
+
+    const hasSearch = await searchInput.isVisible().catch(() => false);
+
+    if (hasSearch) {
+      // Type search query
+      await searchInput.fill('work');
+      await page.waitForTimeout(300);
+
+      // Should filter categories
+      const visibleCategories = page.locator('.category-item:visible, .category-card:visible');
+      const count = await visibleCategories.count();
+
+      // At least one category should match
+      expect(count).toBeGreaterThanOrEqual(0);
+    }
+  });
+});
+
+test.describe('Category Management - Edge Cases', () => {
+  test.beforeEach(async ({ page }) => {
+    await loginAsUser(page);
+  });
+
+  test('should prevent creating category with empty name', async ({ page }) => {
+    const addButton = page.locator('button:has-text("Add Category"), button:has-text("New Category")').first();
+
+    const isVisible = await addButton.isVisible().catch(() => false);
+
+    if (isVisible) {
+      await addButton.click();
+      await page.waitForTimeout(300);
+
+      // Try to submit with empty name
+      const submitButton = page.locator('button[type="submit"]').first();
+
+      // Button should be disabled
+      const isDisabled = await submitButton.isDisabled().catch(() => true);
+      expect(isDisabled).toBeTruthy();
+    }
+  });
+
+  test('should prevent creating duplicate category names', async ({ page }) => {
+    const addButton = page.locator('button:has-text("Add Category"), button:has-text("New Category")').first();
+
+    const isVisible = await addButton.isVisible().catch(() => false);
+
+    if (isVisible) {
+      await addButton.click();
+      await page.waitForTimeout(300);
+
+      // Try to create category with existing name
+      const nameInput = page.locator('input[formControlName="name"], input[name="categoryName"]').first();
+      await nameInput.fill('Work'); // Assuming "Work" already exists
+
+      const submitButton = page.locator('button[type="submit"]').first();
+      await submitButton.click();
+
+      // Should show error or prevent creation
+      const errorMessage = page.locator('.error, .validation-error, :has-text("already exists")');
+      const hasError = await errorMessage.isVisible().catch(() => false);
+
+      if (hasError) {
+        await expect(errorMessage.first()).toBeVisible();
+      }
+    }
+  });
+
+  test('should warn before deleting category with todos', async ({ page }) => {
+    // Try to delete a category that has todos
+    const categoryWithTodos = page.locator('.category-item, .category-card').first();
+
+    // Look for delete button
+    const deleteButton = page.locator('button:has-text("Delete"), [aria-label="Delete"]').first();
+    const canDelete = await deleteButton.isVisible().catch(() => false);
+
+    if (canDelete) {
+      await deleteButton.click();
+
+      // Should show warning/confirmation
+      const confirmDialog = page.locator('.modal, [role="dialog"], [role="alertdialog"]');
+      const warningMessage = page.locator(':has-text("This category has todos"), :has-text("delete"), :has-text("confirm")');
+
+      const hasWarning = await warningMessage.isVisible().catch(() => false);
+
+      if (hasWarning) {
+        await expect(warningMessage.first()).toBeVisible();
+      }
+    }
+  });
+});

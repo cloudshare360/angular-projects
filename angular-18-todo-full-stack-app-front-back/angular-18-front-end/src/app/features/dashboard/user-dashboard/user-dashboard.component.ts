@@ -116,7 +116,7 @@ import { Todo } from '../../../core/models/todo.model';
               <div class="todo-title" [class.strike]="todo.status === 'completed'">
                 {{ todo.title }}
                 <span class="subtask-badge" *ngIf="todo.subtasks && todo.subtasks.length > 0">
-                  📋 {{ todo.subtasks.filter(st => st.completed).length }}/{{ todo.subtasks.length }}
+                  📋 {{ getCompletedSubtasksForTodo(todo) }}/{{ todo.subtasks.length }}
                 </span>
               </div>
               <div class="todo-meta">
@@ -311,7 +311,7 @@ import { Todo } from '../../../core/models/todo.model';
                 <label>Subtasks</label>
                 <button type="button" class="btn-icon" (click)="addSubtask()" title="Add subtask">+ Add</button>
               </div>
-              <div class="subtasks-list" *ngIf="editingTodo?.subtasks && editingTodo.subtasks.length > 0">
+              <div class="subtasks-list" *ngIf="editingTodo && editingTodo.subtasks && editingTodo.subtasks.length > 0">
                 <div class="subtask-item" *ngFor="let subtask of editingTodo.subtasks; let i = index">
                   <input
                     type="checkbox"
@@ -328,10 +328,10 @@ import { Todo } from '../../../core/models/todo.model';
                   <button type="button" class="btn-icon-small" (click)="removeSubtask(i)" title="Delete">🗑️</button>
                 </div>
               </div>
-              <div class="subtasks-empty" *ngIf="!editingTodo?.subtasks || editingTodo.subtasks.length === 0">
+              <div class="subtasks-empty" *ngIf="!editingTodo || !editingTodo.subtasks || editingTodo.subtasks.length === 0">
                 <p class="empty-message">No subtasks yet. Click "+ Add" to create one.</p>
               </div>
-              <div class="subtasks-progress" *ngIf="editingTodo?.subtasks && editingTodo.subtasks.length > 0">
+              <div class="subtasks-progress" *ngIf="editingTodo && editingTodo.subtasks && editingTodo.subtasks.length > 0">
                 <small>{{ getCompletedSubtasksCount() }} of {{ editingTodo.subtasks.length }} completed</small>
               </div>
             </div>
@@ -351,13 +351,13 @@ import { Todo } from '../../../core/models/todo.model';
                   class="tag-input">
                 <button type="button" class="btn-icon" (click)="addTag(newTag, 'edit')">+ Add</button>
               </div>
-              <div class="tags-list" *ngIf="editingTodo?.tags && editingTodo.tags.length > 0">
+              <div class="tags-list" *ngIf="editingTodo && editingTodo.tags && editingTodo.tags.length > 0">
                 <span class="tag-badge" *ngFor="let tag of editingTodo.tags; let i = index">
                   {{ tag }}
                   <button type="button" class="tag-remove" (click)="removeTag(i, 'edit')">×</button>
                 </span>
               </div>
-              <div class="tags-empty" *ngIf="!editingTodo?.tags || editingTodo.tags.length === 0">
+              <div class="tags-empty" *ngIf="!editingTodo || !editingTodo.tags || editingTodo.tags.length === 0">
                 <small class="empty-message">No tags added yet</small>
               </div>
             </div>
@@ -375,7 +375,7 @@ import { Todo } from '../../../core/models/todo.model';
                   accept="image/*,.pdf,.doc,.docx,.txt">
                 <button type="button" class="btn-icon" (click)="fileInput.click()">📎 Upload</button>
               </div>
-              <div class="attachments-list" *ngIf="editingTodo?.attachments && editingTodo.attachments.length > 0">
+              <div class="attachments-list" *ngIf="editingTodo && editingTodo.attachments && editingTodo.attachments.length > 0">
                 <div class="attachment-item" *ngFor="let attachment of editingTodo.attachments; let i = index">
                   <div class="attachment-icon">
                     <span *ngIf="isImage(attachment.type)">🖼️</span>
@@ -389,7 +389,7 @@ import { Todo } from '../../../core/models/todo.model';
                   <button type="button" class="btn-icon-small" (click)="removeAttachment(i)" title="Remove">🗑️</button>
                 </div>
               </div>
-              <div class="attachments-empty" *ngIf="!editingTodo?.attachments || editingTodo.attachments.length === 0">
+              <div class="attachments-empty" *ngIf="!editingTodo || !editingTodo.attachments || editingTodo.attachments.length === 0">
                 <small class="empty-message">No attachments. Click "Upload" to add files.</small>
               </div>
               <div class="attachments-info">
@@ -1625,5 +1625,11 @@ export class UserDashboardComponent implements OnInit, OnDestroy {
 
   generateAttachmentId(): string {
     return 'attachment_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+  }
+
+  // Helper method for template to count completed subtasks
+  getCompletedSubtasksForTodo(todo: Todo): number {
+    if (!todo.subtasks || todo.subtasks.length === 0) return 0;
+    return todo.subtasks.filter(st => st.completed).length;
   }
 }

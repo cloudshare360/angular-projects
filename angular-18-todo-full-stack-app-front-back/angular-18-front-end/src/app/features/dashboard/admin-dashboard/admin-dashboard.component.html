@@ -47,7 +47,7 @@
             <span class="stat-label">{{ metrics?.inProgressTodos || 0 }} in progress</span>
           </div>
         </div>
-        <div class="admin-stat-card" [class.warning]="metrics?.overdueTodos && metrics.overdueTodos > 0">
+        <div class="admin-stat-card" [class.warning]="metrics && metrics.overdueTodos && metrics.overdueTodos > 0">
           <div class="stat-icon">⚠️</div>
           <div class="stat-content">
             <h4>Overdue</h4>

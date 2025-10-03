@@ -1,0 +1,18 @@
+{
+  "totalUsers": 5,
+  "activeUsers": 4,
+  "totalTodos": 7,
+  "completedTodos": 1,
+  "pendingTodos": 4,
+  "inProgressTodos": 2,
+  "overdueTodos": 1,
+  "systemHealth": {
+    "status": "healthy",
+    "cpuUsage": 45,
+    "memoryUsage": 67,
+    "diskUsage": 23,
+    "uptime": "15 days, 4 hours",
+    "lastBackup": "2024-09-24T02:00:00Z"
+  },
+  "lastUpdated": "2024-09-24T14:55:00Z"
+}

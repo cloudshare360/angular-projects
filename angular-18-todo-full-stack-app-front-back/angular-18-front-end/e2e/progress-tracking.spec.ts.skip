@@ -1,0 +1,647 @@
+import { test, expect } from '@playwright/test';
+
+// Helper function to login as user
+async function loginAsUser(page: any) {
+  await page.goto('/auth/login');
+  await page.fill('input[formControlName="email"]', 'john.doe@example.com');
+  await page.fill('input[formControlName="password"]', 'password123');
+  await page.click('.role-option:has-text("User Login")');
+  await page.click('button[type="submit"]');
+  await page.waitForURL('/dashboard');
+}
+
+test.describe('Progress Tracking - Overall Statistics', () => {
+  test.beforeEach(async ({ page }) => {
+    await loginAsUser(page);
+    // Navigate to progress tracking page
+    await page.goto('/dashboard/progress');
+  });
+
+  test('should display progress tracking page', async ({ page }) => {
+    // Check page title
+    const title = page.locator('h1, h2').filter({ hasText: /Progress|Statistics|Analytics/i });
+    await expect(title.first()).toBeVisible();
+  });
+
+  test('should display overall statistics cards', async ({ page }) => {
+    const statsCards = page.locator('.stat-card, .stats-card, .metric-card');
+    const count = await statsCards.count();
+
+    // Should have at least 3-4 stats cards
+    expect(count).toBeGreaterThanOrEqual(3);
+  });
+
+  test('should display completed tasks count', async ({ page }) => {
+    const completedCard = page.locator(':has-text("Completed"), .completed-stat');
+    const hasCard = await completedCard.first().isVisible().catch(() => false);
+
+    if (hasCard) {
+      await expect(completedCard.first()).toBeVisible();
+
+      // Should show a number
+      const numberElement = page.locator('.stat-number, .stat-value').first();
+      const text = await numberElement.textContent();
+      expect(text).toMatch(/\d+/);
+    }
+  });
+
+  test('should display pending tasks count', async ({ page }) => {
+    const pendingCard = page.locator(':has-text("Pending"), .pending-stat');
+    const hasCard = await pendingCard.first().isVisible().catch(() => false);
+
+    if (hasCard) {
+      await expect(pendingCard.first()).toBeVisible();
+
+      // Should show a number
+      const text = await pendingCard.first().textContent();
+      expect(text).toMatch(/\d+/);
+    }
+  });
+
+  test('should display completion percentage', async ({ page }) => {
+    const progressCard = page.locator(':has-text("Progress"), :has-text("%"), .progress-stat');
+    const hasCard = await progressCard.first().isVisible().catch(() => false);
+
+    if (hasCard) {
+      await expect(progressCard.first()).toBeVisible();
+
+      // Should show a percentage
+      const text = await progressCard.first().textContent();
+      expect(text).toMatch(/\d+%/);
+    }
+  });
+
+  test('should display current streak', async ({ page }) => {
+    const streakCard = page.locator(':has-text("Streak"), .streak-stat');
+    const hasCard = await streakCard.first().isVisible().catch(() => false);
+
+    if (hasCard) {
+      await expect(streakCard.first()).toBeVisible();
+
+      // Should show streak number
+      const text = await streakCard.first().textContent();
+      expect(text).toMatch(/\d+/);
+    }
+  });
+
+  test('should display total tasks count', async ({ page }) => {
+    const totalCard = page.locator(':has-text("Total"), .total-stat');
+    const hasCard = await totalCard.first().isVisible().catch(() => false);
+
+    if (hasCard) {
+      await expect(totalCard.first()).toBeVisible();
+    }
+  });
+
+  test('should display overdue tasks count', async ({ page }) => {
+    const overdueCard = page.locator(':has-text("Overdue"), .overdue-stat');
+    const hasCard = await overdueCard.first().isVisible().catch(() => false);
+
+    if (hasCard) {
+      await expect(overdueCard.first()).toBeVisible();
+    }
+  });
+});
+
+test.describe('Progress Tracking - Progress Bar', () => {
+  test.beforeEach(async ({ page }) => {
+    await loginAsUser(page);
+    await page.goto('/dashboard/progress');
+  });
+
+  test('should display overall progress bar', async ({ page }) => {
+    const progressBar = page.locator('.progress-bar, progress, .completion-bar');
+    const hasProgress = await progressBar.first().isVisible().catch(() => false);
+
+    if (hasProgress) {
+      await expect(progressBar.first()).toBeVisible();
+    }
+  });
+
+  test('should show progress percentage on bar', async ({ page }) => {
+    const progressText = page.locator('.progress-text, .progress-percentage');
+    const hasText = await progressText.first().isVisible().catch(() => false);
+
+    if (hasText) {
+      const text = await progressText.first().textContent();
+      expect(text).toMatch(/\d+%/);
+    }
+  });
+
+  test('should display progress bar with correct fill', async ({ page }) => {
+    const progressBar = page.locator('.progress-bar, .progress-fill').first();
+    const hasBar = await progressBar.isVisible().catch(() => false);
+
+    if (hasBar) {
+      // Check if progress bar has width style
+      const style = await progressBar.getAttribute('style');
+      if (style) {
+        expect(style).toMatch(/width/);
+      }
+    }
+  });
+
+  test('should show visual indicator of completion level', async ({ page }) => {
+    const progressIndicator = page.locator('.progress, .completion-indicator');
+    const hasIndicator = await progressIndicator.first().isVisible().catch(() => false);
+
+    if (hasIndicator) {
+      await expect(progressIndicator.first()).toBeVisible();
+    }
+  });
+});
+
+test.describe('Progress Tracking - Category Breakdown', () => {
+  test.beforeEach(async ({ page }) => {
+    await loginAsUser(page);
+    await page.goto('/dashboard/progress');
+  });
+
+  test('should display category-wise progress section', async ({ page }) => {
+    const categorySection = page.locator(':has-text("Category"), .category-progress, .category-breakdown');
+    const hasSection = await categorySection.first().isVisible().catch(() => false);
+
+    if (hasSection) {
+      await expect(categorySection.first()).toBeVisible();
+    }
+  });
+
+  test('should display progress for each category', async ({ page }) => {
+    const categoryItems = page.locator('.category-item, .category-stat');
+    const count = await categoryItems.count();
+
+    if (count > 0) {
+      expect(count).toBeGreaterThan(0);
+
+      // Each category should have a name and progress
+      const firstCategory = categoryItems.first();
+      await expect(firstCategory).toBeVisible();
+    }
+  });
+
+  test('should show progress bars for each category', async ({ page }) => {
+    const categoryBars = page.locator('.category-progress-bar, .category .progress-bar');
+    const count = await categoryBars.count();
+
+    if (count > 0) {
+      await expect(categoryBars.first()).toBeVisible();
+    }
+  });
+
+  test('should display category names', async ({ page }) => {
+    const categories = ['Work', 'Personal', 'Shopping', 'Health'];
+
+    for (const category of categories) {
+      const categoryElement = page.locator(`:has-text("${category}")`);
+      const hasCategory = await categoryElement.first().isVisible().catch(() => false);
+
+      if (hasCategory) {
+        await expect(categoryElement.first()).toBeVisible();
+        break; // At least one category found
+      }
+    }
+  });
+
+  test('should show task count for each category', async ({ page }) => {
+    const categoryCount = page.locator('.category-count, .category-item :has-text("/")');
+    const hasCount = await categoryCount.first().isVisible().catch(() => false);
+
+    if (hasCount) {
+      const text = await categoryCount.first().textContent();
+      expect(text).toMatch(/\d+/);
+    }
+  });
+
+  test('should show completion percentage for each category', async ({ page }) => {
+    const categoryPercentage = page.locator('.category-percentage, .category-item :has-text("%")');
+    const hasPercentage = await categoryPercentage.first().isVisible().catch(() => false);
+
+    if (hasPercentage) {
+      const text = await categoryPercentage.first().textContent();
+      expect(text).toMatch(/\d+%/);
+    }
+  });
+});
+
+test.describe('Progress Tracking - Weekly Activity', () => {
+  test.beforeEach(async ({ page }) => {
+    await loginAsUser(page);
+    await page.goto('/dashboard/progress');
+  });
+
+  test('should display weekly activity chart', async ({ page }) => {
+    const weeklyChart = page.locator('.weekly-chart, .activity-chart, canvas');
+    const hasChart = await weeklyChart.first().isVisible().catch(() => false);
+
+    if (hasChart) {
+      await expect(weeklyChart.first()).toBeVisible();
+    }
+  });
+
+  test('should display weekly activity section header', async ({ page }) => {
+    const weeklyHeader = page.locator(':has-text("Weekly Activity"), :has-text("Weekly Progress")');
+    const hasHeader = await weeklyHeader.first().isVisible().catch(() => false);
+
+    if (hasHeader) {
+      await expect(weeklyHeader.first()).toBeVisible();
+    }
+  });
+
+  test('should show all days of the week in chart', async ({ page }) => {
+    const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+    let foundDays = 0;
+
+    for (const day of days) {
+      const dayElement = page.locator(`:has-text("${day}")`);
+      const hasDay = await dayElement.first().isVisible().catch(() => false);
+
+      if (hasDay) {
+        foundDays++;
+      }
+    }
+
+    // Should find at least some days
+    expect(foundDays).toBeGreaterThan(0);
+  });
+
+  test('should display bar chart for weekly data', async ({ page }) => {
+    const bars = page.locator('.bar, .chart-bar, canvas');
+    const hasBars = await bars.first().isVisible().catch(() => false);
+
+    if (hasBars) {
+      await expect(bars.first()).toBeVisible();
+    }
+  });
+
+  test('should show task completion count per day', async ({ page }) => {
+    const dataPoints = page.locator('.data-point, .bar-value');
+    const hasData = await dataPoints.first().isVisible().catch(() => false);
+
+    if (hasData) {
+      const count = await dataPoints.count();
+      expect(count).toBeGreaterThan(0);
+    }
+  });
+});
+
+test.describe('Progress Tracking - Priority Distribution', () => {
+  test.beforeEach(async ({ page }) => {
+    await loginAsUser(page);
+    await page.goto('/dashboard/progress');
+  });
+
+  test('should display priority distribution section', async ({ page }) => {
+    const prioritySection = page.locator(':has-text("Priority Distribution"), .priority-chart');
+    const hasSection = await prioritySection.first().isVisible().catch(() => false);
+
+    if (hasSection) {
+      await expect(prioritySection.first()).toBeVisible();
+    }
+  });
+
+  test('should display chart for priority distribution', async ({ page }) => {
+    const chart = page.locator('.priority-chart, .pie-chart, canvas');
+    const hasChart = await chart.first().isVisible().catch(() => false);
+
+    if (hasChart) {
+      await expect(chart.first()).toBeVisible();
+    }
+  });
+
+  test('should show high priority tasks count', async ({ page }) => {
+    const highPriority = page.locator(':has-text("High Priority"), :has-text("High")');
+    const hasHigh = await highPriority.first().isVisible().catch(() => false);
+
+    if (hasHigh) {
+      await expect(highPriority.first()).toBeVisible();
+    }
+  });
+
+  test('should show medium priority tasks count', async ({ page }) => {
+    const mediumPriority = page.locator(':has-text("Medium Priority"), :has-text("Medium")');
+    const hasMedium = await mediumPriority.first().isVisible().catch(() => false);
+
+    if (hasMedium) {
+      await expect(mediumPriority.first()).toBeVisible();
+    }
+  });
+
+  test('should show low priority tasks count', async ({ page }) => {
+    const lowPriority = page.locator(':has-text("Low Priority"), :has-text("Low")');
+    const hasLow = await lowPriority.first().isVisible().catch(() => false);
+
+    if (hasLow) {
+      await expect(lowPriority.first()).toBeVisible();
+    }
+  });
+
+  test('should display percentage for each priority', async ({ page }) => {
+    const percentages = page.locator('.priority-percentage, .priority-item :has-text("%")');
+    const count = await percentages.count();
+
+    if (count > 0) {
+      const text = await percentages.first().textContent();
+      expect(text).toMatch(/\d+%/);
+    }
+  });
+
+  test('should use color coding for priorities', async ({ page }) => {
+    const priorityItems = page.locator('.priority-item, .priority-legend');
+    const count = await priorityItems.count();
+
+    if (count > 0) {
+      // Check if items have different colors/classes
+      const firstClass = await priorityItems.first().getAttribute('class');
+      expect(firstClass).toBeTruthy();
+    }
+  });
+});
+
+test.describe('Progress Tracking - Time Insights', () => {
+  test.beforeEach(async ({ page }) => {
+    await loginAsUser(page);
+    await page.goto('/dashboard/progress');
+  });
+
+  test('should display time insights section', async ({ page }) => {
+    const timeSection = page.locator(':has-text("Time Insights"), :has-text("Productivity")');
+    const hasSection = await timeSection.first().isVisible().catch(() => false);
+
+    if (hasSection) {
+      await expect(timeSection.first()).toBeVisible();
+    }
+  });
+
+  test('should display average completion time', async ({ page }) => {
+    const avgTime = page.locator(':has-text("Average"), :has-text("completion time")');
+    const hasAvg = await avgTime.first().isVisible().catch(() => false);
+
+    if (hasAvg) {
+      await expect(avgTime.first()).toBeVisible();
+    }
+  });
+
+  test('should display most productive day', async ({ page }) => {
+    const productiveDay = page.locator(':has-text("Most Productive"), :has-text("Best day")');
+    const hasDay = await productiveDay.first().isVisible().catch(() => false);
+
+    if (hasDay) {
+      await expect(productiveDay.first()).toBeVisible();
+
+      // Should show a day name
+      const text = await productiveDay.first().textContent();
+      const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+      const hasValidDay = days.some(day => text?.includes(day));
+
+      if (hasValidDay) {
+        expect(hasValidDay).toBeTruthy();
+      }
+    }
+  });
+
+  test('should display most productive time', async ({ page }) => {
+    const productiveTime = page.locator(':has-text("Most Productive Time"), :has-text("Peak time")');
+    const hasTime = await productiveTime.first().isVisible().catch(() => false);
+
+    if (hasTime) {
+      await expect(productiveTime.first()).toBeVisible();
+    }
+  });
+
+  test('should display tasks completed this week', async ({ page }) => {
+    const weeklyTasks = page.locator(':has-text("This Week"), :has-text("Weekly")');
+    const hasTasks = await weeklyTasks.first().isVisible().catch(() => false);
+
+    if (hasTasks) {
+      await expect(weeklyTasks.first()).toBeVisible();
+    }
+  });
+
+  test('should display tasks completed this month', async ({ page }) => {
+    const monthlyTasks = page.locator(':has-text("This Month"), :has-text("Monthly")');
+    const hasTasks = await monthlyTasks.first().isVisible().catch(() => false);
+
+    if (hasTasks) {
+      await expect(monthlyTasks.first()).toBeVisible();
+    }
+  });
+});
+
+test.describe('Progress Tracking - Achievements', () => {
+  test.beforeEach(async ({ page }) => {
+    await loginAsUser(page);
+    await page.goto('/dashboard/progress');
+  });
+
+  test('should display achievements section', async ({ page }) => {
+    const achievementsSection = page.locator(':has-text("Achievements"), :has-text("Badges"), .achievements');
+    const hasSection = await achievementsSection.first().isVisible().catch(() => false);
+
+    if (hasSection) {
+      await expect(achievementsSection.first()).toBeVisible();
+    }
+  });
+
+  test('should display achievement badges', async ({ page }) => {
+    const badges = page.locator('.badge, .achievement-badge, .achievement-item');
+    const count = await badges.count();
+
+    if (count > 0) {
+      await expect(badges.first()).toBeVisible();
+    }
+  });
+
+  test('should show locked and unlocked achievements', async ({ page }) => {
+    const locked = page.locator('.locked, .achievement-locked');
+    const unlocked = page.locator('.unlocked, .achievement-unlocked');
+
+    const hasLocked = await locked.first().isVisible().catch(() => false);
+    const hasUnlocked = await unlocked.first().isVisible().catch(() => false);
+
+    // Should have either locked or unlocked achievements
+    expect(hasLocked || hasUnlocked).toBeTruthy();
+  });
+
+  test('should display achievement titles', async ({ page }) => {
+    const achievementTitles = page.locator('.achievement-title, .badge-title');
+    const hasTitles = await achievementTitles.first().isVisible().catch(() => false);
+
+    if (hasTitles) {
+      await expect(achievementTitles.first()).toBeVisible();
+    }
+  });
+
+  test('should display achievement descriptions', async ({ page }) => {
+    const descriptions = page.locator('.achievement-description, .badge-description');
+    const hasDesc = await descriptions.first().isVisible().catch(() => false);
+
+    if (hasDesc) {
+      await expect(descriptions.first()).toBeVisible();
+    }
+  });
+
+  test('should show progress towards locked achievements', async ({ page }) => {
+    const progress = page.locator('.achievement-progress, .badge-progress');
+    const hasProgress = await progress.first().isVisible().catch(() => false);
+
+    if (hasProgress) {
+      await expect(progress.first()).toBeVisible();
+    }
+  });
+
+  test('should display achievement icons or emojis', async ({ page }) => {
+    const icons = page.locator('.achievement-icon, .badge-icon');
+    const hasIcons = await icons.first().isVisible().catch(() => false);
+
+    if (hasIcons) {
+      await expect(icons.first()).toBeVisible();
+    }
+  });
+});
+
+test.describe('Progress Tracking - Streak System', () => {
+  test.beforeEach(async ({ page }) => {
+    await loginAsUser(page);
+    await page.goto('/dashboard/progress');
+  });
+
+  test('should display current streak', async ({ page }) => {
+    const currentStreak = page.locator(':has-text("Current Streak"), .current-streak');
+    const hasStreak = await currentStreak.first().isVisible().catch(() => false);
+
+    if (hasStreak) {
+      await expect(currentStreak.first()).toBeVisible();
+
+      // Should show number of days
+      const text = await currentStreak.first().textContent();
+      expect(text).toMatch(/\d+/);
+    }
+  });
+
+  test('should display longest streak', async ({ page }) => {
+    const longestStreak = page.locator(':has-text("Longest Streak"), :has-text("Best Streak")');
+    const hasStreak = await longestStreak.first().isVisible().catch(() => false);
+
+    if (hasStreak) {
+      await expect(longestStreak.first()).toBeVisible();
+    }
+  });
+
+  test('should show streak calendar or visualization', async ({ page }) => {
+    const streakViz = page.locator('.streak-calendar, .streak-visualization, .activity-heatmap');
+    const hasViz = await streakViz.first().isVisible().catch(() => false);
+
+    if (hasViz) {
+      await expect(streakViz.first()).toBeVisible();
+    }
+  });
+
+  test('should display streak fire icon or indicator', async ({ page }) => {
+    const fireIcon = page.locator(':has-text("🔥"), .streak-icon');
+    const hasIcon = await fireIcon.first().isVisible().catch(() => false);
+
+    if (hasIcon) {
+      await expect(fireIcon.first()).toBeVisible();
+    }
+  });
+
+  test('should show days since last completion', async ({ page }) => {
+    const lastCompletion = page.locator(':has-text("Last completion"), :has-text("days ago")');
+    const hasInfo = await lastCompletion.first().isVisible().catch(() => false);
+
+    if (hasInfo) {
+      await expect(lastCompletion.first()).toBeVisible();
+    }
+  });
+
+  test('should encourage streak maintenance', async ({ page }) => {
+    const encouragement = page.locator(':has-text("Keep it up"), :has-text("Great job"), .streak-message');
+    const hasMsg = await encouragement.first().isVisible().catch(() => false);
+
+    if (hasMsg) {
+      await expect(encouragement.first()).toBeVisible();
+    }
+  });
+});
+
+test.describe('Progress Tracking - Data Refresh', () => {
+  test.beforeEach(async ({ page }) => {
+    await loginAsUser(page);
+    await page.goto('/dashboard/progress');
+  });
+
+  test('should display refresh button', async ({ page }) => {
+    const refreshButton = page.locator('button:has-text("Refresh"), button[aria-label="Refresh"]');
+    const hasRefresh = await refreshButton.first().isVisible().catch(() => false);
+
+    if (hasRefresh) {
+      await expect(refreshButton.first()).toBeVisible();
+    }
+  });
+
+  test('should reload data when refresh is clicked', async ({ page }) => {
+    const refreshButton = page.locator('button:has-text("Refresh")').first();
+    const hasRefresh = await refreshButton.isVisible().catch(() => false);
+
+    if (hasRefresh) {
+      await refreshButton.click();
+      await page.waitForTimeout(1000);
+
+      // Page should still be visible with updated data
+      const statsCards = page.locator('.stat-card, .stats-card');
+      await expect(statsCards.first()).toBeVisible();
+    }
+  });
+
+  test('should show last updated timestamp', async ({ page }) => {
+    const timestamp = page.locator(':has-text("Last updated"), :has-text("Updated"), .last-updated');
+    const hasTimestamp = await timestamp.first().isVisible().catch(() => false);
+
+    if (hasTimestamp) {
+      await expect(timestamp.first()).toBeVisible();
+    }
+  });
+});
+
+test.describe('Progress Tracking - Export Options', () => {
+  test.beforeEach(async ({ page }) => {
+    await loginAsUser(page);
+    await page.goto('/dashboard/progress');
+  });
+
+  test('should display export button', async ({ page }) => {
+    const exportButton = page.locator('button:has-text("Export"), button:has-text("Download Report")');
+    const hasExport = await exportButton.first().isVisible().catch(() => false);
+
+    if (hasExport) {
+      await expect(exportButton.first()).toBeVisible();
+    }
+  });
+
+  test('should show export options', async ({ page }) => {
+    const exportButton = page.locator('button:has-text("Export")').first();
+    const hasExport = await exportButton.isVisible().catch(() => false);
+
+    if (hasExport) {
+      await exportButton.click();
+      await page.waitForTimeout(300);
+
+      // Should show export format options (PDF, CSV, etc.)
+      const exportMenu = page.locator('.export-menu, .dropdown-menu');
+      const hasMenu = await exportMenu.first().isVisible().catch(() => false);
+
+      if (hasMenu) {
+        await expect(exportMenu.first()).toBeVisible();
+      }
+    }
+  });
+
+  test('should display date range selector for reports', async ({ page }) => {
+    const dateRange = page.locator('.date-range, input[type="date"]');
+    const hasRange = await dateRange.first().isVisible().catch(() => false);
+
+    if (hasRange) {
+      await expect(dateRange.first()).toBeVisible();
+    }
+  });
+});

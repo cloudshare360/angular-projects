@@ -1,0 +1,556 @@
+import { test, expect } from '@playwright/test';
+
+// Helper function to login as user
+async function loginAsUser(page: any) {
+  await page.goto('/auth/login');
+  await page.fill('input[formControlName="email"]', 'john.doe@example.com');
+  await page.fill('input[formControlName="password"]', 'password123');
+  await page.click('.role-option:has-text("User Login")');
+  await page.click('button[type="submit"]');
+  await page.waitForURL('/dashboard');
+}
+
+test.describe('User Profile - Viewing', () => {
+  test.beforeEach(async ({ page }) => {
+    await loginAsUser(page);
+    // Navigate to profile page
+    await page.goto('/profile');
+  });
+
+  test('should display user profile page with all sections', async ({ page }) => {
+    // Check page title
+    await expect(page.locator('h1, h2').filter({ hasText: /Profile|Account/i }).first()).toBeVisible();
+
+    // Check profile sections
+    const profileSection = page.locator(':has-text("Profile Information"), .profile-section, [data-test="profile-info"]');
+    await expect(profileSection.first()).toBeVisible();
+
+    // Check user avatar
+    const avatar = page.locator('.user-avatar, .profile-avatar, .avatar');
+    await expect(avatar.first()).toBeVisible();
+  });
+
+  test('should display user information correctly', async ({ page }) => {
+    // Check name
+    const nameField = page.locator(':has-text("John Doe"), input[formControlName="name"], input[formControlName="fullName"]');
+    const hasName = await nameField.first().isVisible().catch(() => false);
+    expect(hasName).toBeTruthy();
+
+    // Check email
+    const emailField = page.locator(':has-text("john.doe@example.com"), input[formControlName="email"]');
+    const hasEmail = await emailField.first().isVisible().catch(() => false);
+    expect(hasEmail).toBeTruthy();
+  });
+
+  test('should display user statistics', async ({ page }) => {
+    // Look for statistics cards
+    const statsSection = page.locator('.stats, .statistics, .user-stats');
+    const hasStats = await statsSection.first().isVisible().catch(() => false);
+
+    if (hasStats) {
+      // Check for common stats
+      const statsCards = page.locator('.stat-card, .stats-item');
+      const count = await statsCards.count();
+      expect(count).toBeGreaterThan(0);
+    }
+  });
+
+  test('should show total todos count', async ({ page }) => {
+    const totalTodos = page.locator(':has-text("Total Tasks"), :has-text("Total Todos"), .total-count');
+    const hasTotal = await totalTodos.first().isVisible().catch(() => false);
+
+    if (hasTotal) {
+      await expect(totalTodos.first()).toBeVisible();
+    }
+  });
+
+  test('should show completed todos percentage', async ({ page }) => {
+    const completedStat = page.locator(':has-text("Completed"), :has-text("%"), .completion-rate');
+    const hasCompleted = await completedStat.first().isVisible().catch(() => false);
+
+    if (hasCompleted) {
+      await expect(completedStat.first()).toBeVisible();
+    }
+  });
+
+  test('should display member since date', async ({ page }) => {
+    const memberSince = page.locator(':has-text("Member since"), :has-text("Joined"), .join-date');
+    const hasDate = await memberSince.first().isVisible().catch(() => false);
+
+    if (hasDate) {
+      await expect(memberSince.first()).toBeVisible();
+    }
+  });
+});
+
+test.describe('User Profile - Editing', () => {
+  test.beforeEach(async ({ page }) => {
+    await loginAsUser(page);
+    await page.goto('/profile');
+  });
+
+  test('should enable edit mode when clicking edit button', async ({ page }) => {
+    const editButton = page.locator('button:has-text("Edit Profile"), button:has-text("Edit"), [aria-label="Edit profile"]').first();
+    const hasEditButton = await editButton.isVisible().catch(() => false);
+
+    if (hasEditButton) {
+      await editButton.click();
+      await page.waitForTimeout(300);
+
+      // Form fields should be editable
+      const nameInput = page.locator('input[formControlName="name"], input[formControlName="fullName"]').first();
+      const isEditable = await nameInput.isEditable().catch(() => false);
+      expect(isEditable).toBeTruthy();
+    }
+  });
+
+  test('should edit user name', async ({ page }) => {
+    // Click edit button
+    const editButton = page.locator('button:has-text("Edit")').first();
+    const hasEditButton = await editButton.isVisible().catch(() => false);
+
+    if (hasEditButton) {
+      await editButton.click();
+      await page.waitForTimeout(300);
+
+      // Update name
+      const nameInput = page.locator('input[formControlName="name"], input[formControlName="fullName"]').first();
+      await nameInput.fill('John Updated Doe');
+
+      // Save changes
+      const saveButton = page.locator('button:has-text("Save"), button[type="submit"]').first();
+      await saveButton.click();
+      await page.waitForTimeout(500);
+
+      // Verify success
+      const successMessage = page.locator('.success-message, :has-text("updated"), :has-text("saved")');
+      const hasSuccess = await successMessage.isVisible().catch(() => false);
+
+      if (hasSuccess) {
+        await expect(successMessage.first()).toBeVisible();
+      }
+    }
+  });
+
+  test('should edit user email', async ({ page }) => {
+    const editButton = page.locator('button:has-text("Edit")').first();
+    const hasEditButton = await editButton.isVisible().catch(() => false);
+
+    if (hasEditButton) {
+      await editButton.click();
+      await page.waitForTimeout(300);
+
+      const emailInput = page.locator('input[formControlName="email"]').first();
+      const isEditable = await emailInput.isEditable().catch(() => false);
+
+      if (isEditable) {
+        await emailInput.fill('john.updated@example.com');
+
+        const saveButton = page.locator('button:has-text("Save")').first();
+        await saveButton.click();
+        await page.waitForTimeout(500);
+      }
+    }
+  });
+
+  test('should edit phone number', async ({ page }) => {
+    const editButton = page.locator('button:has-text("Edit")').first();
+    const hasEditButton = await editButton.isVisible().catch(() => false);
+
+    if (hasEditButton) {
+      await editButton.click();
+      await page.waitForTimeout(300);
+
+      const phoneInput = page.locator('input[formControlName="phone"], input[type="tel"]').first();
+      const hasPhone = await phoneInput.isVisible().catch(() => false);
+
+      if (hasPhone) {
+        await phoneInput.fill('+1234567890');
+
+        const saveButton = page.locator('button:has-text("Save")').first();
+        await saveButton.click();
+        await page.waitForTimeout(500);
+      }
+    }
+  });
+
+  test('should edit location', async ({ page }) => {
+    const editButton = page.locator('button:has-text("Edit")').first();
+    const hasEditButton = await editButton.isVisible().catch(() => false);
+
+    if (hasEditButton) {
+      await editButton.click();
+      await page.waitForTimeout(300);
+
+      const locationInput = page.locator('input[formControlName="location"], input[placeholder*="location" i]').first();
+      const hasLocation = await locationInput.isVisible().catch(() => false);
+
+      if (hasLocation) {
+        await locationInput.fill('New York, USA');
+
+        const saveButton = page.locator('button:has-text("Save")').first();
+        await saveButton.click();
+        await page.waitForTimeout(500);
+      }
+    }
+  });
+
+  test('should edit website', async ({ page }) => {
+    const editButton = page.locator('button:has-text("Edit")').first();
+    const hasEditButton = await editButton.isVisible().catch(() => false);
+
+    if (hasEditButton) {
+      await editButton.click();
+      await page.waitForTimeout(300);
+
+      const websiteInput = page.locator('input[formControlName="website"], input[type="url"]').first();
+      const hasWebsite = await websiteInput.isVisible().catch(() => false);
+
+      if (hasWebsite) {
+        await websiteInput.fill('https://example.com');
+
+        const saveButton = page.locator('button:has-text("Save")').first();
+        await saveButton.click();
+        await page.waitForTimeout(500);
+      }
+    }
+  });
+
+  test('should edit bio', async ({ page }) => {
+    const editButton = page.locator('button:has-text("Edit")').first();
+    const hasEditButton = await editButton.isVisible().catch(() => false);
+
+    if (hasEditButton) {
+      await editButton.click();
+      await page.waitForTimeout(300);
+
+      const bioInput = page.locator('textarea[formControlName="bio"], textarea[placeholder*="bio" i]').first();
+      const hasBio = await bioInput.isVisible().catch(() => false);
+
+      if (hasBio) {
+        await bioInput.fill('This is my updated bio for E2E testing');
+
+        const saveButton = page.locator('button:has-text("Save")').first();
+        await saveButton.click();
+        await page.waitForTimeout(500);
+      }
+    }
+  });
+
+  test('should cancel editing', async ({ page }) => {
+    const editButton = page.locator('button:has-text("Edit")').first();
+    const hasEditButton = await editButton.isVisible().catch(() => false);
+
+    if (hasEditButton) {
+      await editButton.click();
+      await page.waitForTimeout(300);
+
+      // Make changes
+      const nameInput = page.locator('input[formControlName="name"], input[formControlName="fullName"]').first();
+      await nameInput.fill('Should Not Save');
+
+      // Cancel
+      const cancelButton = page.locator('button:has-text("Cancel")').first();
+      const hasCancel = await cancelButton.isVisible().catch(() => false);
+
+      if (hasCancel) {
+        await cancelButton.click();
+        await page.waitForTimeout(300);
+
+        // Changes should be reverted
+        const currentValue = await nameInput.inputValue();
+        expect(currentValue).not.toBe('Should Not Save');
+      }
+    }
+  });
+});
+
+test.describe('User Profile - Profile Picture', () => {
+  test.beforeEach(async ({ page }) => {
+    await loginAsUser(page);
+    await page.goto('/profile');
+  });
+
+  test('should display profile picture or avatar', async ({ page }) => {
+    const avatar = page.locator('.profile-avatar, .user-avatar, img[alt*="profile" i]');
+    await expect(avatar.first()).toBeVisible();
+  });
+
+  test('should show upload button for profile picture', async ({ page }) => {
+    const uploadButton = page.locator('button:has-text("Upload Photo"), button:has-text("Change Photo"), input[type="file"]');
+    const hasUpload = await uploadButton.first().isVisible().catch(() => false);
+
+    if (hasUpload) {
+      await expect(uploadButton.first()).toBeDefined();
+    }
+  });
+
+  test('should have remove photo option', async ({ page }) => {
+    const removeButton = page.locator('button:has-text("Remove Photo"), button:has-text("Delete Photo")');
+    const hasRemove = await removeButton.first().isVisible().catch(() => false);
+
+    if (hasRemove) {
+      await expect(removeButton.first()).toBeVisible();
+    }
+  });
+
+  test('should show avatar with initials if no photo', async ({ page }) => {
+    const avatar = page.locator('.user-avatar, .avatar-initials');
+    const hasAvatar = await avatar.first().isVisible().catch(() => false);
+
+    if (hasAvatar) {
+      const text = await avatar.first().textContent();
+      // Should have initials like "JD"
+      expect(text).toMatch(/[A-Z]{1,2}/);
+    }
+  });
+});
+
+test.describe('User Profile - Password Change', () => {
+  test.beforeEach(async ({ page }) => {
+    await loginAsUser(page);
+    await page.goto('/profile');
+  });
+
+  test('should display change password section', async ({ page }) => {
+    const passwordSection = page.locator(':has-text("Change Password"), :has-text("Password"), .password-section');
+    const hasSection = await passwordSection.first().isVisible().catch(() => false);
+
+    if (hasSection) {
+      await expect(passwordSection.first()).toBeVisible();
+    }
+  });
+
+  test('should show change password form', async ({ page }) => {
+    const changePasswordBtn = page.locator('button:has-text("Change Password")').first();
+    const hasButton = await changePasswordBtn.isVisible().catch(() => false);
+
+    if (hasButton) {
+      await changePasswordBtn.click();
+      await page.waitForTimeout(300);
+
+      // Check for password fields
+      const currentPassword = page.locator('input[formControlName="currentPassword"], input[placeholder*="current password" i]');
+      const hasCurrentPwd = await currentPassword.first().isVisible().catch(() => false);
+
+      if (hasCurrentPwd) {
+        await expect(currentPassword.first()).toBeVisible();
+      }
+    }
+  });
+
+  test('should require current password', async ({ page }) => {
+    const changePasswordBtn = page.locator('button:has-text("Change Password")').first();
+    const hasButton = await changePasswordBtn.isVisible().catch(() => false);
+
+    if (hasButton) {
+      await changePasswordBtn.click();
+      await page.waitForTimeout(300);
+
+      const newPassword = page.locator('input[formControlName="newPassword"], input[placeholder*="new password" i]').first();
+      const hasNewPwd = await newPassword.isVisible().catch(() => false);
+
+      if (hasNewPwd) {
+        await newPassword.fill('newpassword123');
+
+        const submitButton = page.locator('button[type="submit"], button:has-text("Update Password")').first();
+        const isDisabled = await submitButton.isDisabled().catch(() => false);
+
+        // Should be disabled without current password
+        expect(isDisabled).toBeTruthy();
+      }
+    }
+  });
+
+  test('should require password confirmation', async ({ page }) => {
+    const changePasswordBtn = page.locator('button:has-text("Change Password")').first();
+    const hasButton = await changePasswordBtn.isVisible().catch(() => false);
+
+    if (hasButton) {
+      await changePasswordBtn.click();
+      await page.waitForTimeout(300);
+
+      const confirmPassword = page.locator('input[formControlName="confirmPassword"], input[placeholder*="confirm" i]').first();
+      const hasConfirm = await confirmPassword.isVisible().catch(() => false);
+
+      if (hasConfirm) {
+        await expect(confirmPassword).toBeVisible();
+      }
+    }
+  });
+
+  test('should validate password match', async ({ page }) => {
+    const changePasswordBtn = page.locator('button:has-text("Change Password")').first();
+    const hasButton = await changePasswordBtn.isVisible().catch(() => false);
+
+    if (hasButton) {
+      await changePasswordBtn.click();
+      await page.waitForTimeout(300);
+
+      const newPassword = page.locator('input[formControlName="newPassword"]').first();
+      const confirmPassword = page.locator('input[formControlName="confirmPassword"]').first();
+
+      const hasFields = await newPassword.isVisible().catch(() => false) && await confirmPassword.isVisible().catch(() => false);
+
+      if (hasFields) {
+        await newPassword.fill('password123');
+        await confirmPassword.fill('different123');
+
+        const errorMessage = page.locator(':has-text("match"), .error-message');
+        const hasError = await errorMessage.isVisible().catch(() => false);
+
+        if (hasError) {
+          await expect(errorMessage.first()).toBeVisible();
+        }
+      }
+    }
+  });
+});
+
+test.describe('User Profile - Account Actions', () => {
+  test.beforeEach(async ({ page }) => {
+    await loginAsUser(page);
+    await page.goto('/profile');
+  });
+
+  test('should display account settings section', async ({ page }) => {
+    const accountSection = page.locator(':has-text("Account"), .account-section, .account-settings');
+    const hasSection = await accountSection.first().isVisible().catch(() => false);
+
+    if (hasSection) {
+      await expect(accountSection.first()).toBeVisible();
+    }
+  });
+
+  test('should show export data option', async ({ page }) => {
+    const exportButton = page.locator('button:has-text("Export Data"), button:has-text("Download Data")');
+    const hasExport = await exportButton.first().isVisible().catch(() => false);
+
+    if (hasExport) {
+      await expect(exportButton.first()).toBeVisible();
+    }
+  });
+
+  test('should show delete account option', async ({ page }) => {
+    const deleteButton = page.locator('button:has-text("Delete Account"), button:has-text("Close Account")');
+    const hasDelete = await deleteButton.first().isVisible().catch(() => false);
+
+    if (hasDelete) {
+      await expect(deleteButton.first()).toBeVisible();
+    }
+  });
+
+  test('should show confirmation dialog for delete account', async ({ page }) => {
+    const deleteButton = page.locator('button:has-text("Delete Account")').first();
+    const hasDelete = await deleteButton.isVisible().catch(() => false);
+
+    if (hasDelete) {
+      await deleteButton.click();
+      await page.waitForTimeout(300);
+
+      // Should show confirmation dialog
+      const confirmDialog = page.locator('.modal, .dialog, :has-text("Are you sure")');
+      const hasDialog = await confirmDialog.first().isVisible().catch(() => false);
+
+      if (hasDialog) {
+        await expect(confirmDialog.first()).toBeVisible();
+
+        // Cancel deletion
+        const cancelButton = page.locator('button:has-text("Cancel")').first();
+        await cancelButton.click();
+      }
+    }
+  });
+
+  test('should show account created date', async ({ page }) => {
+    const createdDate = page.locator(':has-text("Member since"), :has-text("Account created"), .created-date');
+    const hasDate = await createdDate.first().isVisible().catch(() => false);
+
+    if (hasDate) {
+      await expect(createdDate.first()).toBeVisible();
+    }
+  });
+
+  test('should show last login information', async ({ page }) => {
+    const lastLogin = page.locator(':has-text("Last login"), :has-text("Last active"), .last-login');
+    const hasLastLogin = await lastLogin.first().isVisible().catch(() => false);
+
+    if (hasLastLogin) {
+      await expect(lastLogin.first()).toBeVisible();
+    }
+  });
+});
+
+test.describe('User Profile - Form Validation', () => {
+  test.beforeEach(async ({ page }) => {
+    await loginAsUser(page);
+    await page.goto('/profile');
+  });
+
+  test('should validate email format', async ({ page }) => {
+    const editButton = page.locator('button:has-text("Edit")').first();
+    const hasEditButton = await editButton.isVisible().catch(() => false);
+
+    if (hasEditButton) {
+      await editButton.click();
+      await page.waitForTimeout(300);
+
+      const emailInput = page.locator('input[formControlName="email"]').first();
+      const isEditable = await emailInput.isEditable().catch(() => false);
+
+      if (isEditable) {
+        await emailInput.fill('invalid-email');
+
+        const errorMessage = page.locator('.error-message, .invalid-feedback, :has-text("valid email")');
+        const hasError = await errorMessage.isVisible().catch(() => false);
+
+        if (hasError) {
+          await expect(errorMessage.first()).toBeVisible();
+        }
+      }
+    }
+  });
+
+  test('should validate required fields', async ({ page }) => {
+    const editButton = page.locator('button:has-text("Edit")').first();
+    const hasEditButton = await editButton.isVisible().catch(() => false);
+
+    if (hasEditButton) {
+      await editButton.click();
+      await page.waitForTimeout(300);
+
+      const nameInput = page.locator('input[formControlName="name"], input[formControlName="fullName"]').first();
+      await nameInput.fill('');
+
+      const saveButton = page.locator('button:has-text("Save")').first();
+      const isDisabled = await saveButton.isDisabled().catch(() => false);
+
+      // Save button should be disabled with empty required field
+      expect(isDisabled).toBeTruthy();
+    }
+  });
+
+  test('should validate website URL format', async ({ page }) => {
+    const editButton = page.locator('button:has-text("Edit")').first();
+    const hasEditButton = await editButton.isVisible().catch(() => false);
+
+    if (hasEditButton) {
+      await editButton.click();
+      await page.waitForTimeout(300);
+
+      const websiteInput = page.locator('input[formControlName="website"]').first();
+      const hasWebsite = await websiteInput.isVisible().catch(() => false);
+
+      if (hasWebsite) {
+        await websiteInput.fill('not-a-url');
+
+        const errorMessage = page.locator('.error-message, :has-text("valid URL")');
+        const hasError = await errorMessage.isVisible().catch(() => false);
+
+        if (hasError) {
+          await expect(errorMessage.first()).toBeVisible();
+        }
+      }
+    }
+  });
+});

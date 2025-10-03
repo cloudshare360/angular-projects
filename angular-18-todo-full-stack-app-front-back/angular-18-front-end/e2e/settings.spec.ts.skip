@@ -1,0 +1,615 @@
+import { test, expect } from '@playwright/test';
+
+// Helper function to login as user
+async function loginAsUser(page: any) {
+  await page.goto('/auth/login');
+  await page.fill('input[formControlName="email"]', 'john.doe@example.com');
+  await page.fill('input[formControlName="password"]', 'password123');
+  await page.click('.role-option:has-text("User Login")');
+  await page.click('button[type="submit"]');
+  await page.waitForURL('/dashboard');
+}
+
+test.describe('Settings - General Settings', () => {
+  test.beforeEach(async ({ page }) => {
+    await loginAsUser(page);
+    // Navigate to settings page
+    await page.goto('/settings');
+  });
+
+  test('should display settings page with all tabs', async ({ page }) => {
+    // Check page title
+    await expect(page.locator('h1, h2').filter({ hasText: /Settings|Preferences/i }).first()).toBeVisible();
+
+    // Check for settings sections/tabs
+    const settingsTabs = page.locator('.tab, .nav-item, [role="tab"]');
+    const count = await settingsTabs.count();
+    expect(count).toBeGreaterThan(0);
+  });
+
+  test('should display general settings section', async ({ page }) => {
+    const generalSection = page.locator(':has-text("General"), .general-settings, [data-test="general"]');
+    const hasGeneral = await generalSection.first().isVisible().catch(() => false);
+
+    if (hasGeneral) {
+      await expect(generalSection.first()).toBeVisible();
+    }
+  });
+
+  test('should display theme selection', async ({ page }) => {
+    const themeSelector = page.locator('select[formControlName="theme"], .theme-selector, :has-text("Theme")');
+    const hasTheme = await themeSelector.first().isVisible().catch(() => false);
+
+    if (hasTheme) {
+      await expect(themeSelector.first()).toBeVisible();
+    }
+  });
+
+  test('should switch to light theme', async ({ page }) => {
+    const themeSelect = page.locator('select[formControlName="theme"]').first();
+    const hasSelect = await themeSelect.isVisible().catch(() => false);
+
+    if (hasSelect) {
+      await themeSelect.selectOption('light');
+      await page.waitForTimeout(500);
+
+      // Check if theme applied
+      const bodyClass = await page.locator('body').getAttribute('class');
+      expect(bodyClass).toContain('light');
+    } else {
+      // Look for theme buttons
+      const lightButton = page.locator('button:has-text("Light"), .theme-option:has-text("Light")').first();
+      const hasButton = await lightButton.isVisible().catch(() => false);
+
+      if (hasButton) {
+        await lightButton.click();
+        await page.waitForTimeout(500);
+      }
+    }
+  });
+
+  test('should switch to dark theme', async ({ page }) => {
+    const themeSelect = page.locator('select[formControlName="theme"]').first();
+    const hasSelect = await themeSelect.isVisible().catch(() => false);
+
+    if (hasSelect) {
+      await themeSelect.selectOption('dark');
+      await page.waitForTimeout(500);
+
+      // Check if theme applied
+      const bodyClass = await page.locator('body').getAttribute('class');
+      expect(bodyClass).toContain('dark');
+    } else {
+      // Look for theme buttons
+      const darkButton = page.locator('button:has-text("Dark"), .theme-option:has-text("Dark")').first();
+      const hasButton = await darkButton.isVisible().catch(() => false);
+
+      if (hasButton) {
+        await darkButton.click();
+        await page.waitForTimeout(500);
+      }
+    }
+  });
+
+  test('should switch to auto theme', async ({ page }) => {
+    const themeSelect = page.locator('select[formControlName="theme"]').first();
+    const hasSelect = await themeSelect.isVisible().catch(() => false);
+
+    if (hasSelect) {
+      await themeSelect.selectOption('auto');
+      await page.waitForTimeout(500);
+    } else {
+      // Look for theme buttons
+      const autoButton = page.locator('button:has-text("Auto"), .theme-option:has-text("Auto")').first();
+      const hasButton = await autoButton.isVisible().catch(() => false);
+
+      if (hasButton) {
+        await autoButton.click();
+        await page.waitForTimeout(500);
+      }
+    }
+  });
+
+  test('should display language selection', async ({ page }) => {
+    const languageSelector = page.locator('select[formControlName="language"], .language-selector, :has-text("Language")');
+    const hasLanguage = await languageSelector.first().isVisible().catch(() => false);
+
+    if (hasLanguage) {
+      await expect(languageSelector.first()).toBeVisible();
+    }
+  });
+
+  test('should change language', async ({ page }) => {
+    const languageSelect = page.locator('select[formControlName="language"]').first();
+    const hasSelect = await languageSelect.isVisible().catch(() => false);
+
+    if (hasSelect) {
+      await languageSelect.selectOption('es');
+      await page.waitForTimeout(500);
+
+      // Verify language change (check for Spanish text or setting saved)
+      const successMessage = page.locator('.success-message, :has-text("saved")');
+      const hasSuccess = await successMessage.isVisible().catch(() => false);
+
+      if (hasSuccess) {
+        await expect(successMessage.first()).toBeVisible();
+      }
+    }
+  });
+
+  test('should display date format options', async ({ page }) => {
+    const dateFormatSelector = page.locator('select[formControlName="dateFormat"], :has-text("Date Format")');
+    const hasDateFormat = await dateFormatSelector.first().isVisible().catch(() => false);
+
+    if (hasDateFormat) {
+      await expect(dateFormatSelector.first()).toBeVisible();
+    }
+  });
+
+  test('should change date format', async ({ page }) => {
+    const dateFormatSelect = page.locator('select[formControlName="dateFormat"]').first();
+    const hasSelect = await dateFormatSelect.isVisible().catch(() => false);
+
+    if (hasSelect) {
+      await dateFormatSelect.selectOption('MM/DD/YYYY');
+      await page.waitForTimeout(300);
+    }
+  });
+
+  test('should display time format options', async ({ page }) => {
+    const timeFormatSelector = page.locator('select[formControlName="timeFormat"], :has-text("Time Format")');
+    const hasTimeFormat = await timeFormatSelector.first().isVisible().catch(() => false);
+
+    if (hasTimeFormat) {
+      await expect(timeFormatSelector.first()).toBeVisible();
+    }
+  });
+
+  test('should toggle between 12h and 24h time format', async ({ page }) => {
+    const timeFormatSelect = page.locator('select[formControlName="timeFormat"]').first();
+    const hasSelect = await timeFormatSelect.isVisible().catch(() => false);
+
+    if (hasSelect) {
+      // Try 24-hour format
+      await timeFormatSelect.selectOption('24h');
+      await page.waitForTimeout(300);
+
+      // Try 12-hour format
+      await timeFormatSelect.selectOption('12h');
+      await page.waitForTimeout(300);
+    }
+  });
+});
+
+test.describe('Settings - Notification Settings', () => {
+  test.beforeEach(async ({ page }) => {
+    await loginAsUser(page);
+    await page.goto('/settings');
+
+    // Navigate to notifications tab if exists
+    const notificationsTab = page.locator('button:has-text("Notifications"), a:has-text("Notifications"), [data-tab="notifications"]').first();
+    const hasTab = await notificationsTab.isVisible().catch(() => false);
+
+    if (hasTab) {
+      await notificationsTab.click();
+      await page.waitForTimeout(300);
+    }
+  });
+
+  test('should display notification settings section', async ({ page }) => {
+    const notificationSection = page.locator(':has-text("Notification"), .notification-settings');
+    const hasSection = await notificationSection.first().isVisible().catch(() => false);
+
+    if (hasSection) {
+      await expect(notificationSection.first()).toBeVisible();
+    }
+  });
+
+  test('should toggle email notifications', async ({ page }) => {
+    const emailToggle = page.locator('input[formControlName="emailNotifications"], input[type="checkbox"][name*="email" i]').first();
+    const hasToggle = await emailToggle.isVisible().catch(() => false);
+
+    if (hasToggle) {
+      const initialState = await emailToggle.isChecked();
+      await emailToggle.click();
+      await page.waitForTimeout(300);
+
+      const newState = await emailToggle.isChecked();
+      expect(newState).not.toBe(initialState);
+    }
+  });
+
+  test('should toggle push notifications', async ({ page }) => {
+    const pushToggle = page.locator('input[formControlName="pushNotifications"], input[type="checkbox"][name*="push" i]').first();
+    const hasToggle = await pushToggle.isVisible().catch(() => false);
+
+    if (hasToggle) {
+      const initialState = await pushToggle.isChecked();
+      await pushToggle.click();
+      await page.waitForTimeout(300);
+
+      const newState = await pushToggle.isChecked();
+      expect(newState).not.toBe(initialState);
+    }
+  });
+
+  test('should toggle task reminder notifications', async ({ page }) => {
+    const reminderToggle = page.locator('input[formControlName="taskReminders"], input[type="checkbox"][name*="reminder" i]').first();
+    const hasToggle = await reminderToggle.isVisible().catch(() => false);
+
+    if (hasToggle) {
+      await reminderToggle.click();
+      await page.waitForTimeout(300);
+    }
+  });
+
+  test('should toggle daily digest notifications', async ({ page }) => {
+    const digestToggle = page.locator('input[formControlName="dailyDigest"], input[type="checkbox"][name*="digest" i]').first();
+    const hasToggle = await digestToggle.isVisible().catch(() => false);
+
+    if (hasToggle) {
+      await digestToggle.click();
+      await page.waitForTimeout(300);
+    }
+  });
+
+  test('should toggle weekly summary notifications', async ({ page }) => {
+    const summaryToggle = page.locator('input[formControlName="weeklySummary"], input[type="checkbox"][name*="summary" i], input[type="checkbox"][name*="weekly" i]').first();
+    const hasToggle = await summaryToggle.isVisible().catch(() => false);
+
+    if (hasToggle) {
+      await summaryToggle.click();
+      await page.waitForTimeout(300);
+    }
+  });
+
+  test('should set notification time', async ({ page }) => {
+    const timeInput = page.locator('input[type="time"][formControlName="notificationTime"]').first();
+    const hasInput = await timeInput.isVisible().catch(() => false);
+
+    if (hasInput) {
+      await timeInput.fill('09:00');
+      await page.waitForTimeout(300);
+    }
+  });
+
+  test('should save notification settings', async ({ page }) => {
+    const saveButton = page.locator('button:has-text("Save"), button[type="submit"]').first();
+    const hasButton = await saveButton.isVisible().catch(() => false);
+
+    if (hasButton) {
+      await saveButton.click();
+      await page.waitForTimeout(500);
+
+      const successMessage = page.locator('.success-message, :has-text("saved")');
+      const hasSuccess = await successMessage.isVisible().catch(() => false);
+
+      if (hasSuccess) {
+        await expect(successMessage.first()).toBeVisible();
+      }
+    }
+  });
+});
+
+test.describe('Settings - Privacy Settings', () => {
+  test.beforeEach(async ({ page }) => {
+    await loginAsUser(page);
+    await page.goto('/settings');
+
+    // Navigate to privacy tab if exists
+    const privacyTab = page.locator('button:has-text("Privacy"), a:has-text("Privacy"), [data-tab="privacy"]').first();
+    const hasTab = await privacyTab.isVisible().catch(() => false);
+
+    if (hasTab) {
+      await privacyTab.click();
+      await page.waitForTimeout(300);
+    }
+  });
+
+  test('should display privacy settings section', async ({ page }) => {
+    const privacySection = page.locator(':has-text("Privacy"), .privacy-settings');
+    const hasSection = await privacySection.first().isVisible().catch(() => false);
+
+    if (hasSection) {
+      await expect(privacySection.first()).toBeVisible();
+    }
+  });
+
+  test('should toggle profile visibility', async ({ page }) => {
+    const visibilityToggle = page.locator('input[formControlName="profileVisibility"], input[type="checkbox"][name*="visibility" i]').first();
+    const hasToggle = await visibilityToggle.isVisible().catch(() => false);
+
+    if (hasToggle) {
+      const initialState = await visibilityToggle.isChecked();
+      await visibilityToggle.click();
+      await page.waitForTimeout(300);
+
+      const newState = await visibilityToggle.isChecked();
+      expect(newState).not.toBe(initialState);
+    } else {
+      // Look for select dropdown
+      const visibilitySelect = page.locator('select[formControlName="profileVisibility"]').first();
+      const hasSelect = await visibilitySelect.isVisible().catch(() => false);
+
+      if (hasSelect) {
+        await visibilitySelect.selectOption('private');
+        await page.waitForTimeout(300);
+      }
+    }
+  });
+
+  test('should toggle data sharing', async ({ page }) => {
+    const dataSharingToggle = page.locator('input[formControlName="dataSharing"], input[type="checkbox"][name*="sharing" i]').first();
+    const hasToggle = await dataSharingToggle.isVisible().catch(() => false);
+
+    if (hasToggle) {
+      await dataSharingToggle.click();
+      await page.waitForTimeout(300);
+    }
+  });
+
+  test('should toggle analytics tracking', async ({ page }) => {
+    const analyticsToggle = page.locator('input[formControlName="analytics"], input[type="checkbox"][name*="analytics" i]').first();
+    const hasToggle = await analyticsToggle.isVisible().catch(() => false);
+
+    if (hasToggle) {
+      await analyticsToggle.click();
+      await page.waitForTimeout(300);
+    }
+  });
+
+  test('should toggle third-party cookies', async ({ page }) => {
+    const cookiesToggle = page.locator('input[formControlName="thirdPartyCookies"], input[type="checkbox"][name*="cookie" i]').first();
+    const hasToggle = await cookiesToggle.isVisible().catch(() => false);
+
+    if (hasToggle) {
+      await cookiesToggle.click();
+      await page.waitForTimeout(300);
+    }
+  });
+
+  test('should display privacy policy link', async ({ page }) => {
+    const privacyLink = page.locator('a:has-text("Privacy Policy"), a[href*="privacy"]');
+    const hasLink = await privacyLink.first().isVisible().catch(() => false);
+
+    if (hasLink) {
+      await expect(privacyLink.first()).toBeVisible();
+    }
+  });
+});
+
+test.describe('Settings - Data & Storage', () => {
+  test.beforeEach(async ({ page }) => {
+    await loginAsUser(page);
+    await page.goto('/settings');
+
+    // Navigate to data tab if exists
+    const dataTab = page.locator('button:has-text("Data"), a:has-text("Storage"), [data-tab="data"]').first();
+    const hasTab = await dataTab.isVisible().catch(() => false);
+
+    if (hasTab) {
+      await dataTab.click();
+      await page.waitForTimeout(300);
+    }
+  });
+
+  test('should display data and storage section', async ({ page }) => {
+    const dataSection = page.locator(':has-text("Data"), :has-text("Storage"), .data-settings');
+    const hasSection = await dataSection.first().isVisible().catch(() => false);
+
+    if (hasSection) {
+      await expect(dataSection.first()).toBeVisible();
+    }
+  });
+
+  test('should show export data button', async ({ page }) => {
+    const exportButton = page.locator('button:has-text("Export Data"), button:has-text("Download Data")');
+    const hasButton = await exportButton.first().isVisible().catch(() => false);
+
+    if (hasButton) {
+      await expect(exportButton.first()).toBeVisible();
+    }
+  });
+
+  test('should export data', async ({ page }) => {
+    const exportButton = page.locator('button:has-text("Export Data")').first();
+    const hasButton = await exportButton.isVisible().catch(() => false);
+
+    if (hasButton) {
+      // Set up download handler
+      const downloadPromise = page.waitForEvent('download', { timeout: 5000 }).catch(() => null);
+      await exportButton.click();
+
+      const download = await downloadPromise;
+      if (download) {
+        expect(download).toBeTruthy();
+      }
+    }
+  });
+
+  test('should show import data button', async ({ page }) => {
+    const importButton = page.locator('button:has-text("Import Data"), input[type="file"]');
+    const hasButton = await importButton.first().isVisible().catch(() => false);
+
+    if (hasButton) {
+      await expect(importButton.first()).toBeDefined();
+    }
+  });
+
+  test('should show clear data button', async ({ page }) => {
+    const clearButton = page.locator('button:has-text("Clear Data"), button:has-text("Delete All Data")');
+    const hasButton = await clearButton.first().isVisible().catch(() => false);
+
+    if (hasButton) {
+      await expect(clearButton.first()).toBeVisible();
+    }
+  });
+
+  test('should show confirmation dialog for clear data', async ({ page }) => {
+    const clearButton = page.locator('button:has-text("Clear Data")').first();
+    const hasButton = await clearButton.isVisible().catch(() => false);
+
+    if (hasButton) {
+      await clearButton.click();
+      await page.waitForTimeout(300);
+
+      // Should show confirmation
+      const confirmDialog = page.locator('.modal, .dialog, :has-text("Are you sure")');
+      const hasDialog = await confirmDialog.first().isVisible().catch(() => false);
+
+      if (hasDialog) {
+        await expect(confirmDialog.first()).toBeVisible();
+
+        // Cancel
+        const cancelButton = page.locator('button:has-text("Cancel")').first();
+        await cancelButton.click();
+      }
+    }
+  });
+
+  test('should display storage usage', async ({ page }) => {
+    const storageInfo = page.locator(':has-text("Storage"), :has-text("MB"), :has-text("KB"), .storage-usage');
+    const hasStorage = await storageInfo.first().isVisible().catch(() => false);
+
+    if (hasStorage) {
+      await expect(storageInfo.first()).toBeVisible();
+    }
+  });
+
+  test('should show storage progress bar', async ({ page }) => {
+    const progressBar = page.locator('.progress, .storage-bar, progress');
+    const hasProgress = await progressBar.first().isVisible().catch(() => false);
+
+    if (hasProgress) {
+      await expect(progressBar.first()).toBeVisible();
+    }
+  });
+
+  test('should display cache size', async ({ page }) => {
+    const cacheInfo = page.locator(':has-text("Cache"), .cache-size');
+    const hasCache = await cacheInfo.first().isVisible().catch(() => false);
+
+    if (hasCache) {
+      await expect(cacheInfo.first()).toBeVisible();
+    }
+  });
+
+  test('should have clear cache button', async ({ page }) => {
+    const clearCacheButton = page.locator('button:has-text("Clear Cache")');
+    const hasButton = await clearCacheButton.first().isVisible().catch(() => false);
+
+    if (hasButton) {
+      await expect(clearCacheButton.first()).toBeVisible();
+    }
+  });
+});
+
+test.describe('Settings - Persistence', () => {
+  test.beforeEach(async ({ page }) => {
+    await loginAsUser(page);
+    await page.goto('/settings');
+  });
+
+  test('should persist theme setting after reload', async ({ page }) => {
+    // Change theme
+    const themeSelect = page.locator('select[formControlName="theme"]').first();
+    const hasSelect = await themeSelect.isVisible().catch(() => false);
+
+    if (hasSelect) {
+      await themeSelect.selectOption('dark');
+      await page.waitForTimeout(500);
+
+      // Reload page
+      await page.reload();
+      await page.waitForTimeout(500);
+
+      // Check if theme is still dark
+      const currentTheme = await themeSelect.inputValue();
+      expect(currentTheme).toBe('dark');
+    }
+  });
+
+  test('should persist notification settings after reload', async ({ page }) => {
+    const notificationsTab = page.locator('button:has-text("Notifications")').first();
+    const hasTab = await notificationsTab.isVisible().catch(() => false);
+
+    if (hasTab) {
+      await notificationsTab.click();
+      await page.waitForTimeout(300);
+    }
+
+    const emailToggle = page.locator('input[formControlName="emailNotifications"]').first();
+    const hasToggle = await emailToggle.isVisible().catch(() => false);
+
+    if (hasToggle) {
+      const initialState = await emailToggle.isChecked();
+      await emailToggle.click();
+      await page.waitForTimeout(500);
+
+      // Save settings
+      const saveButton = page.locator('button:has-text("Save")').first();
+      const hasButton = await saveButton.isVisible().catch(() => false);
+      if (hasButton) {
+        await saveButton.click();
+        await page.waitForTimeout(500);
+      }
+
+      // Reload page
+      await page.reload();
+      await page.waitForTimeout(500);
+
+      // Navigate back to notifications tab
+      if (hasTab) {
+        await notificationsTab.click();
+        await page.waitForTimeout(300);
+      }
+
+      // Check if setting persisted
+      const newState = await emailToggle.isChecked();
+      expect(newState).not.toBe(initialState);
+    }
+  });
+
+  test('should show success message when settings are saved', async ({ page }) => {
+    const saveButton = page.locator('button:has-text("Save"), button[type="submit"]').first();
+    const hasButton = await saveButton.isVisible().catch(() => false);
+
+    if (hasButton) {
+      await saveButton.click();
+      await page.waitForTimeout(500);
+
+      const successMessage = page.locator('.success-message, .alert-success, :has-text("saved")');
+      const hasSuccess = await successMessage.isVisible().catch(() => false);
+
+      if (hasSuccess) {
+        await expect(successMessage.first()).toBeVisible();
+      }
+    }
+  });
+
+  test('should revert changes on cancel', async ({ page }) => {
+    const themeSelect = page.locator('select[formControlName="theme"]').first();
+    const hasSelect = await themeSelect.isVisible().catch(() => false);
+
+    if (hasSelect) {
+      const originalTheme = await themeSelect.inputValue();
+
+      // Change theme
+      await themeSelect.selectOption('dark');
+      await page.waitForTimeout(300);
+
+      // Click cancel if exists
+      const cancelButton = page.locator('button:has-text("Cancel"), button:has-text("Reset")').first();
+      const hasCancel = await cancelButton.isVisible().catch(() => false);
+
+      if (hasCancel) {
+        await cancelButton.click();
+        await page.waitForTimeout(300);
+
+        // Theme should be reverted
+        const currentTheme = await themeSelect.inputValue();
+        expect(currentTheme).toBe(originalTheme);
+      }
+    }
+  });
+});

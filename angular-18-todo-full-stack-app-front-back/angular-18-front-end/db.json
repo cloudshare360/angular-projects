@@ -84,6 +84,22 @@
         "notifications": true,
         "language": "en"
       }
+    },
+    {
+      "email": "test@example.com",
+      "fullName": "Test User",
+      "role": "user",
+      "isActive": true,
+      "emailVerified": false,
+      "createdAt": "2025-10-02T21:54:36.121Z",
+      "lastLoginAt": null,
+      "profileImage": "",
+      "settings": {
+        "theme": "light",
+        "notifications": true,
+        "language": "en"
+      },
+      "id": "Z96ULMB"
     }
   ],
   "todos": [
@@ -94,12 +110,16 @@
       "description": "Prepare the final version of the project proposal including budget analysis, timeline, and resource allocation. Review with team lead before submission.",
       "category": "work",
       "priority": "high",
-      "status": "in-progress",
-      "progress": 65,
+      "status": "completed",
+      "progress": 100,
       "dueDate": "2024-09-24T17:00:00Z",
       "createdAt": "2024-09-22T10:00:00Z",
-      "updatedAt": "2024-09-24T14:30:00Z",
-      "tags": ["urgent", "meeting", "deadline"],
+      "updatedAt": "2025-10-02T22:01:04.022Z",
+      "tags": [
+        "urgent",
+        "meeting",
+        "deadline"
+      ],
       "attachments": [
         {
           "id": "att1",
@@ -137,7 +157,7 @@
           "sent": false
         }
       ],
-      "isImportant": true,
+      "isImportant": false,
       "isArchived": false
     },
     {
@@ -152,7 +172,10 @@
       "dueDate": "2024-09-25T18:00:00Z",
       "createdAt": "2024-09-24T09:00:00Z",
       "updatedAt": "2024-09-24T09:00:00Z",
-      "tags": ["shopping", "dinner"],
+      "tags": [
+        "shopping",
+        "dinner"
+      ],
       "attachments": [],
       "subtasks": [
         {
@@ -184,7 +207,10 @@
       "dueDate": "2024-09-23T17:00:00Z",
       "createdAt": "2024-09-23T08:00:00Z",
       "updatedAt": "2024-09-23T16:00:00Z",
-      "tags": ["meeting", "notes"],
+      "tags": [
+        "meeting",
+        "notes"
+      ],
       "attachments": [],
       "subtasks": [],
       "reminders": [],
@@ -203,7 +229,11 @@
       "dueDate": "2024-09-22T16:00:00Z",
       "createdAt": "2024-09-20T14:00:00Z",
       "updatedAt": "2024-09-20T14:00:00Z",
-      "tags": ["insurance", "urgent", "phone-call"],
+      "tags": [
+        "insurance",
+        "urgent",
+        "phone-call"
+      ],
       "attachments": [],
       "subtasks": [],
       "reminders": [
@@ -229,7 +259,11 @@
       "dueDate": null,
       "createdAt": "2024-09-21T11:00:00Z",
       "updatedAt": "2024-09-24T10:00:00Z",
-      "tags": ["vacation", "research", "planning"],
+      "tags": [
+        "vacation",
+        "research",
+        "planning"
+      ],
       "attachments": [],
       "subtasks": [
         {
@@ -261,7 +295,11 @@
       "dueDate": "2024-09-25T17:00:00Z",
       "createdAt": "2024-09-23T09:00:00Z",
       "updatedAt": "2024-09-24T11:00:00Z",
-      "tags": ["report", "monthly", "data"],
+      "tags": [
+        "report",
+        "monthly",
+        "data"
+      ],
       "attachments": [],
       "subtasks": [],
       "reminders": [],
@@ -280,7 +318,11 @@
       "dueDate": "2024-09-24T18:00:00Z",
       "createdAt": "2024-09-24T08:00:00Z",
       "updatedAt": "2024-09-24T14:00:00Z",
-      "tags": ["bug", "mobile", "urgent"],
+      "tags": [
+        "bug",
+        "mobile",
+        "urgent"
+      ],
       "attachments": [],
       "subtasks": [
         {
@@ -305,6 +347,63 @@
       "reminders": [],
       "isImportant": true,
       "isArchived": false
+    },
+    {
+      "userId": "1",
+      "title": "New test todo from quick add",
+      "description": "",
+      "category": "work",
+      "priority": "high",
+      "status": "pending",
+      "progress": 0,
+      "dueDate": null,
+      "createdAt": "2025-10-02T22:00:44.659Z",
+      "updatedAt": "2025-10-02T22:00:44.660Z",
+      "tags": [],
+      "attachments": [],
+      "subtasks": [],
+      "reminders": [],
+      "isImportant": false,
+      "isArchived": false,
+      "id": "VCuNtY4"
+    },
+    {
+      "userId": "1",
+      "title": "New todo from modal",
+      "description": "This is a detailed description",
+      "category": "personal",
+      "priority": "high",
+      "status": "pending",
+      "progress": 0,
+      "dueDate": "2024-12-31T10:00",
+      "createdAt": "2025-10-02T22:00:47.049Z",
+      "updatedAt": "2025-10-02T22:00:47.049Z",
+      "tags": [],
+      "attachments": [],
+      "subtasks": [],
+      "reminders": [],
+      "isImportant": false,
+      "isArchived": false,
+      "id": "6iaix_8"
+    },
+    {
+      "userId": "1",
+      "title": "Test todo",
+      "description": "",
+      "category": "general",
+      "priority": "high",
+      "status": "pending",
+      "progress": 0,
+      "dueDate": null,
+      "createdAt": "2025-10-02T22:02:00.898Z",
+      "updatedAt": "2025-10-02T22:02:00.898Z",
+      "tags": [],
+      "attachments": [],
+      "subtasks": [],
+      "reminders": [],
+      "isImportant": false,
+      "isArchived": false,
+      "id": "0WvWa8l"
     }
   ],
   "categories": [

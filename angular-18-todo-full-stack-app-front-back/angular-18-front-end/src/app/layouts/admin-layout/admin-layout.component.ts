@@ -12,7 +12,7 @@ import { User } from '../../core/models/user.model';
     <div class="admin-layout">
       <header class="admin-header">
         <div class="header-left">
-          <div class="logo">🔐 Todo App - Admin Panel</div>
+          <div class="logo">📋 Todo App - Admin Panel</div>
         </div>
         <div class="header-right">
           <span class="admin-badge">ADMIN</span>
@@ -25,70 +25,7 @@ import { User } from '../../core/models/user.model';
       </header>
 
       <div class="admin-content">
-        <div class="admin-dashboard">
-          <h1>Admin Dashboard</h1>
-          <div class="stats-grid">
-            <div class="stat-card">
-              <div class="stat-number">1,247</div>
-              <div class="stat-label">Total Users</div>
-            </div>
-            <div class="stat-card">
-              <div class="stat-number">892</div>
-              <div class="stat-label">Active Users</div>
-            </div>
-            <div class="stat-card">
-              <div class="stat-number">15,783</div>
-              <div class="stat-label">Total Todos</div>
-            </div>
-            <div class="stat-card">
-              <div class="stat-number">47</div>
-              <div class="stat-label">System Issues</div>
-            </div>
-          </div>
-
-          <div class="admin-section">
-            <h2>System Health</h2>
-            <div class="health-status">
-              <div class="health-item">
-                <span>Server Status:</span>
-                <span class="status-good">Operational</span>
-              </div>
-              <div class="health-item">
-                <span>Database:</span>
-                <span class="status-good">Healthy</span>
-              </div>
-              <div class="health-item">
-                <span>CPU Usage:</span>
-                <span class="status-warning">45%</span>
-              </div>
-              <div class="health-item">
-                <span>Memory:</span>
-                <span class="status-warning">67%</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="admin-section">
-            <h2>Recent Activity</h2>
-            <div class="activity-list">
-              <div class="activity-item">
-                <div class="activity-user">John Doe</div>
-                <div class="activity-action">Created 3 new todos</div>
-                <div class="activity-time">2 minutes ago</div>
-              </div>
-              <div class="activity-item">
-                <div class="activity-user">Sarah Miller</div>
-                <div class="activity-action">Logged in</div>
-                <div class="activity-time">5 minutes ago</div>
-              </div>
-              <div class="activity-item">
-                <div class="activity-user">Mike Johnson</div>
-                <div class="activity-action">Completed 5 todos</div>
-                <div class="activity-time">15 minutes ago</div>
-              </div>
-            </div>
-          </div>
-        </div>
+        <router-outlet></router-outlet>
       </div>
     </div>
   `,

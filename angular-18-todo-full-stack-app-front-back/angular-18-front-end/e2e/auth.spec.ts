@@ -48,7 +48,7 @@ test.describe('Authentication', () => {
     await page.click('button[type="submit"]');
 
     // Should redirect to admin dashboard
-    await expect(page).toHaveURL('/admin');
+    await expect(page).toHaveURL(/\/admin/);
     await expect(page.locator('h1')).toHaveText('Admin Dashboard');
     await expect(page.locator('.admin-badge')).toHaveText('ADMIN');
   });
@@ -66,10 +66,7 @@ test.describe('Authentication', () => {
   });
 
   test('should validate required fields', async ({ page }) => {
-    // Try to submit empty form
-    await page.click('button[type="submit"]');
-
-    // Button should be disabled
+    // Button should be disabled with empty form
     await expect(page.locator('button[type="submit"]')).toBeDisabled();
   });
 
@@ -135,7 +132,7 @@ test.describe('Authentication', () => {
 test.describe('Authentication Guards', () => {
   test('should redirect unauthenticated user to login', async ({ page }) => {
     await page.goto('/dashboard');
-    await expect(page).toHaveURL('/auth/login');
+    await expect(page).toHaveURL(/\/auth\/login/);
   });
 
   test('should redirect non-admin user from admin routes', async ({ page }) => {
@@ -159,7 +156,7 @@ test.describe('Authentication Guards', () => {
     await page.click('button[type="submit"]');
 
     // Should be able to access admin route
-    await expect(page).toHaveURL('/admin');
+    await expect(page).toHaveURL(/\/admin/);
     await expect(page.locator('.admin-badge')).toBeVisible();
   });
 
@@ -172,10 +169,10 @@ test.describe('Authentication Guards', () => {
 
     // Logout
     await page.click('button:has-text("Logout")');
-    await expect(page).toHaveURL('/auth/login');
+    await expect(page).toHaveURL(/\/auth\/login/);
 
     // Should not be able to access protected routes
     await page.goto('/dashboard');
-    await expect(page).toHaveURL('/auth/login');
+    await expect(page).toHaveURL(/\/auth\/login/);
   });
 });

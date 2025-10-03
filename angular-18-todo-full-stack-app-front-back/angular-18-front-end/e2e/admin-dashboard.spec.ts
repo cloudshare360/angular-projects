@@ -4,11 +4,11 @@ test.describe('Admin Dashboard', () => {
   test.beforeEach(async ({ page }) => {
     // Login as admin
     await page.goto('/auth/login');
-    await page.fill('input[formControlName="email"]', 'admin@example.com');
-    await page.fill('input[formControlName="password"]', 'admin123');
+    await page.fill('input[formControlName="email"]', 'admin@todoapp.com');
+    await page.fill('input[formControlName="password"]', 'password123');
     await page.click('.role-option:has-text("Admin Login")');
     await page.click('button[type="submit"]');
-    
+
     await expect(page).toHaveURL('/admin/dashboard');
   });
 

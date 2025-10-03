@@ -1,0 +1,19 @@
+[
+  {
+    "id": "2",
+    "email": "admin@todoapp.com",
+    "password": "adminHashedPassword456",
+    "fullName": "Admin User",
+    "role": "admin",
+    "isActive": true,
+    "emailVerified": true,
+    "createdAt": "2024-09-15T08:00:00Z",
+    "lastLoginAt": "2024-09-24T14:00:00Z",
+    "profileImage": "",
+    "settings": {
+      "theme": "dark",
+      "notifications": true,
+      "language": "en"
+    }
+  }
+]

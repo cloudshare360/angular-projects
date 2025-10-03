@@ -1,0 +1,68 @@
+[
+  {
+    "id": "2",
+    "userId": "1",
+    "action": "updated_progress",
+    "entityType": "todo",
+    "entityId": "1",
+    "details": {
+      "oldProgress": 50,
+      "newProgress": 65,
+      "todoTitle": "Complete project proposal"
+    },
+    "timestamp": "2024-09-24T14:30:00Z",
+    "ipAddress": "192.168.1.100"
+  },
+  {
+    "id": "4",
+    "userId": "4",
+    "action": "completed_subtask",
+    "entityType": "todo",
+    "entityId": "7",
+    "details": {
+      "subtaskTitle": "Implement fix",
+      "todoTitle": "Fix website bug"
+    },
+    "timestamp": "2024-09-24T14:00:00Z",
+    "ipAddress": "192.168.1.110"
+  },
+  {
+    "id": "3",
+    "userId": "3",
+    "action": "login",
+    "entityType": "user",
+    "entityId": "3",
+    "details": {
+      "loginMethod": "email",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+    },
+    "timestamp": "2024-09-24T13:45:00Z",
+    "ipAddress": "192.168.1.105"
+  },
+  {
+    "id": "5",
+    "userId": "5",
+    "action": "registered",
+    "entityType": "user",
+    "entityId": "5",
+    "details": {
+      "email": "anna.brown@example.com",
+      "role": "user"
+    },
+    "timestamp": "2024-09-24T13:00:00Z",
+    "ipAddress": "192.168.1.120"
+  },
+  {
+    "id": "1",
+    "userId": "1",
+    "action": "created_todo",
+    "entityType": "todo",
+    "entityId": "2",
+    "details": {
+      "todoTitle": "Buy groceries for dinner",
+      "category": "personal"
+    },
+    "timestamp": "2024-09-24T09:00:00Z",
+    "ipAddress": "192.168.1.100"
+  }
+]

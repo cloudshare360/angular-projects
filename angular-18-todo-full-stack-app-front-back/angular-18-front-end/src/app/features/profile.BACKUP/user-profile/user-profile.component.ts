@@ -61,20 +61,20 @@ export class UserProfileComponent implements OnInit {
     const currentUser = this.authService.getCurrentUser();
     if (currentUser) {
       // Fetch full profile from backend (mock for now)
+      const username = currentUser.email.split('@')[0]; // Extract username from email
       this.user = {
-        id: currentUser.id,
-        username: currentUser.username,
-        email: currentUser.email || `${currentUser.username}@example.com`,
-        fullName: currentUser.username === 'john_user' ? 'John Doe' :
-                  currentUser.username === 'admin_sarah' ? 'Sarah Admin' : 'User',
+        id: parseInt(currentUser.id) || 1,
+        username: username,
+        email: currentUser.email,
+        fullName: currentUser.fullName || 'User',
         role: currentUser.role,
         bio: 'Todo enthusiast and productivity lover',
         phone: '+1 (555) 123-4567',
         location: 'New York, USA',
         website: 'https://example.com',
-        profilePicture: 'https://ui-avatars.com/api/?name=' + currentUser.username + '&background=4f46e5&color=fff&size=200',
-        joinedDate: '2025-09-24',
-        lastActive: new Date().toISOString()
+        profilePicture: 'https://ui-avatars.com/api/?name=' + currentUser.fullName + '&background=4f46e5&color=fff&size=200',
+        joinedDate: currentUser.createdAt || '2025-09-24',
+        lastActive: currentUser.lastLoginAt || new Date().toISOString()
       };
 
       this.editedUser = { ...this.user };

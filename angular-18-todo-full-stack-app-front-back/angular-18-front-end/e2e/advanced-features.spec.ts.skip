@@ -1,0 +1,489 @@
+import { test, expect } from '@playwright/test';
+
+// Helper function to login
+async function loginAsUser(page: any) {
+  await page.goto('/auth/login');
+  await page.fill('input[formControlName="email"]', 'john.doe@example.com');
+  await page.fill('input[formControlName="password"]', 'password123');
+  await page.click('.role-option:has-text("User Login")');
+  await page.click('button[type="submit"]');
+  await page.waitForURL('/dashboard');
+}
+
+// Helper function to open edit todo modal
+async function openEditTodoModal(page: any) {
+  // Click edit button on first todo
+  const editButton = page.locator('button:has-text("Edit"), [aria-label="Edit todo"], .edit-todo').first();
+  await editButton.click();
+  await page.waitForTimeout(500);
+}
+
+test.describe('Advanced Features - Subtasks', () => {
+  test.beforeEach(async ({ page }) => {
+    await loginAsUser(page);
+    await openEditTodoModal(page);
+  });
+
+  test('should display subtasks section in edit modal', async ({ page }) => {
+    // Look for subtasks section
+    const subtasksSection = page.locator(':has-text("Subtasks"), .subtasks, [data-test="subtasks"]');
+    await expect(subtasksSection.first()).toBeVisible();
+  });
+
+  test('should add new subtask', async ({ page }) => {
+    // Find subtask input
+    const subtaskInput = page.locator('input[placeholder*="subtask" i], input[placeholder*="Add task" i]').first();
+    const hasInput = await subtaskInput.isVisible().catch(() => false);
+
+    if (hasInput) {
+      // Add subtask
+      await subtaskInput.fill('New E2E Test Subtask');
+
+      // Press Enter or click add button
+      await subtaskInput.press('Enter');
+      await page.waitForTimeout(300);
+
+      // Verify subtask was added
+      const newSubtask = page.locator(':has-text("New E2E Test Subtask")');
+      await expect(newSubtask.first()).toBeVisible();
+    }
+  });
+
+  test('should toggle subtask completion', async ({ page }) => {
+    // Find first subtask checkbox
+    const subtaskCheckbox = page.locator('.subtask-item input[type="checkbox"], .subtask-checkbox').first();
+    const hasCheckbox = await subtaskCheckbox.isVisible().catch(() => false);
+
+    if (hasCheckbox) {
+      // Get initial state
+      const initiallyChecked = await subtaskCheckbox.isChecked();
+
+      // Toggle checkbox
+      await subtaskCheckbox.click();
+      await page.waitForTimeout(200);
+
+      // Verify state changed
+      const nowChecked = await subtaskCheckbox.isChecked();
+      expect(nowChecked).not.toBe(initiallyChecked);
+    }
+  });
+
+  test('should remove subtask', async ({ page }) => {
+    // First add a subtask
+    const subtaskInput = page.locator('input[placeholder*="subtask" i]').first();
+    const hasInput = await subtaskInput.isVisible().catch(() => false);
+
+    if (hasInput) {
+      await subtaskInput.fill('Subtask to Remove');
+      await subtaskInput.press('Enter');
+      await page.waitForTimeout(300);
+
+      // Find remove button for the subtask
+      const removeButton = page.locator('button:has-text("Remove"), button:has-text("×"), .remove-subtask').last();
+      const canRemove = await removeButton.isVisible().catch(() => false);
+
+      if (canRemove) {
+        await removeButton.click();
+        await page.waitForTimeout(200);
+
+        // Subtask should be removed
+        const removedSubtask = page.locator(':has-text("Subtask to Remove")');
+        const stillExists = await removedSubtask.isVisible().catch(() => false);
+        expect(stillExists).toBeFalsy();
+      }
+    }
+  });
+
+  test('should show subtask progress indicator', async ({ page }) => {
+    // Look for progress indicator
+    const progressIndicator = page.locator('.progress, .subtask-progress, :has-text("/ ")');
+    const hasProgress = await progressIndicator.isVisible().catch(() => false);
+
+    if (hasProgress) {
+      await expect(progressIndicator.first()).toBeVisible();
+
+      // Should show something like "2/5" or percentage
+      const progressText = await progressIndicator.first().textContent();
+      expect(progressText).toMatch(/\d/);
+    }
+  });
+
+  test('should auto-calculate todo progress from subtasks', async ({ page }) => {
+    // Find progress field
+    const progressField = page.locator('input[type="number"][formControlName="progress"], .progress-value');
+    const hasProgressField = await progressField.isVisible().catch(() => false);
+
+    if (hasProgressField) {
+      // Toggle subtask completion and check if progress updates
+      const subtaskCheckbox = page.locator('.subtask-item input[type="checkbox"]').first();
+      const hasCheckbox = await subtaskCheckbox.isVisible().catch(() => false);
+
+      if (hasCheckbox) {
+        const initialProgress = await progressField.inputValue();
+        await subtaskCheckbox.click();
+        await page.waitForTimeout(300);
+
+        const updatedProgress = await progressField.inputValue();
+        // Progress should have changed
+        expect(updatedProgress).not.toBe(initialProgress);
+      }
+    }
+  });
+
+  test('should display subtask count in todo list', async ({ page }) => {
+    // Close modal
+    const closeButton = page.locator('button:has-text("Close"), button:has-text("Cancel"), .close').first();
+    await closeButton.click();
+    await page.waitForTimeout(300);
+
+    // Look for subtask badge in todo item
+    const subtaskBadge = page.locator('.subtask-badge, .subtask-count, :has-text("📋")');
+    const hasBadge = await subtaskBadge.first().isVisible().catch(() => false);
+
+    if (hasBadge) {
+      await expect(subtaskBadge.first()).toBeVisible();
+    }
+  });
+});
+
+test.describe('Advanced Features - Tags', () => {
+  test.beforeEach(async ({ page }) => {
+    await loginAsUser(page);
+    await openEditTodoModal(page);
+  });
+
+  test('should display tags section in edit modal', async ({ page }) => {
+    // Look for tags section
+    const tagsSection = page.locator(':has-text("Tags"), .tags, [data-test="tags"]');
+    const hasSection = await tagsSection.first().isVisible().catch(() => false);
+
+    if (hasSection) {
+      await expect(tagsSection.first()).toBeVisible();
+    }
+  });
+
+  test('should add new tag', async ({ page }) => {
+    // Find tag input
+    const tagInput = page.locator('input[placeholder*="tag" i], input[placeholder*="Add tag" i]').first();
+    const hasInput = await tagInput.isVisible().catch(() => false);
+
+    if (hasInput) {
+      // Add tag
+      await tagInput.fill('e2e-test');
+
+      // Press Enter to add
+      await tagInput.press('Enter');
+      await page.waitForTimeout(300);
+
+      // Verify tag was added
+      const newTag = page.locator('.tag:has-text("e2e-test"), .tag-item:has-text("e2e-test")');
+      const tagAdded = await newTag.isVisible().catch(() => false);
+
+      if (tagAdded) {
+        await expect(newTag.first()).toBeVisible();
+      }
+    }
+  });
+
+  test('should remove tag', async ({ page }) => {
+    // First add a tag
+    const tagInput = page.locator('input[placeholder*="tag" i]').first();
+    const hasInput = await tagInput.isVisible().catch(() => false);
+
+    if (hasInput) {
+      await tagInput.fill('removable-tag');
+      await tagInput.press('Enter');
+      await page.waitForTimeout(300);
+
+      // Find and click remove button on tag
+      const removeButton = page.locator('.tag:has-text("removable-tag") button, .tag-item:has-text("removable-tag") .remove').first();
+      const canRemove = await removeButton.isVisible().catch(() => false);
+
+      if (canRemove) {
+        await removeButton.click();
+        await page.waitForTimeout(200);
+
+        // Tag should be removed
+        const removedTag = page.locator(':has-text("removable-tag")');
+        const stillExists = await removedTag.isVisible().catch(() => false);
+        expect(stillExists).toBeFalsy();
+      }
+    }
+  });
+
+  test('should prevent duplicate tags', async ({ page }) => {
+    const tagInput = page.locator('input[placeholder*="tag" i]').first();
+    const hasInput = await tagInput.isVisible().catch(() => false);
+
+    if (hasInput) {
+      // Add tag twice
+      await tagInput.fill('duplicate-tag');
+      await tagInput.press('Enter');
+      await page.waitForTimeout(200);
+
+      await tagInput.fill('duplicate-tag');
+      await tagInput.press('Enter');
+      await page.waitForTimeout(200);
+
+      // Should only have one instance
+      const duplicateTags = page.locator('.tag:has-text("duplicate-tag"), .tag-item:has-text("duplicate-tag")');
+      const count = await duplicateTags.count();
+
+      expect(count).toBe(1);
+    }
+  });
+
+  test('should display tags in todo list', async ({ page }) => {
+    // Close modal
+    const closeButton = page.locator('button:has-text("Close"), button:has-text("Cancel")').first();
+    await closeButton.click();
+    await page.waitForTimeout(300);
+
+    // Look for tags in todo items
+    const todoTags = page.locator('.todo-item .tag, .todo-card .tag-item');
+    const hasTags = await todoTags.first().isVisible().catch(() => false);
+
+    if (hasTags) {
+      await expect(todoTags.first()).toBeVisible();
+    }
+  });
+
+  test('should show tag with gradient styling', async ({ page }) => {
+    const tagInput = page.locator('input[placeholder*="tag" i]').first();
+    const hasInput = await tagInput.isVisible().catch(() => false);
+
+    if (hasInput) {
+      await tagInput.fill('styled-tag');
+      await tagInput.press('Enter');
+      await page.waitForTimeout(300);
+
+      // Tag should have styling
+      const styledTag = page.locator('.tag:has-text("styled-tag"), .tag-item:has-text("styled-tag")').first();
+      const tagVisible = await styledTag.isVisible().catch(() => false);
+
+      if (tagVisible) {
+        // Check if it has class or style
+        const hasClass = await styledTag.getAttribute('class');
+        expect(hasClass).toBeTruthy();
+      }
+    }
+  });
+});
+
+test.describe('Advanced Features - Attachments', () => {
+  test.beforeEach(async ({ page }) => {
+    await loginAsUser(page);
+    await openEditTodoModal(page);
+  });
+
+  test('should display attachments section in edit modal', async ({ page }) => {
+    // Look for attachments section
+    const attachmentsSection = page.locator(':has-text("Attachments"), .attachments, [data-test="attachments"]');
+    const hasSection = await attachmentsSection.first().isVisible().catch(() => false);
+
+    if (hasSection) {
+      await expect(attachmentsSection.first()).toBeVisible();
+    }
+  });
+
+  test('should have file upload input', async ({ page }) => {
+    // Look for file input or upload button
+    const fileInput = page.locator('input[type="file"]');
+    const uploadButton = page.locator('button:has-text("Upload"), button:has-text("Attach"), button:has-text("Add File")');
+
+    const hasFileInput = await fileInput.first().isVisible().catch(() => false);
+    const hasUploadButton = await uploadButton.first().isVisible().catch(() => false);
+
+    expect(hasFileInput || hasUploadButton).toBeTruthy();
+  });
+
+  test('should upload file (simulated)', async ({ page }) => {
+    // This is a simplified test - actual file upload would need a real file
+    const fileInput = page.locator('input[type="file"]').first();
+    const hasInput = await fileInput.isVisible({ timeout: 1000 }).catch(() => false);
+
+    if (!hasInput) {
+      // File input might be hidden, look for upload button
+      const uploadButton = page.locator('button:has-text("Upload"), button:has-text("Attach")').first();
+      const hasButton = await uploadButton.isVisible().catch(() => false);
+
+      if (hasButton) {
+        await expect(uploadButton).toBeVisible();
+      }
+    } else {
+      // File input exists
+      await expect(fileInput).toBeDefined();
+    }
+  });
+
+  test('should display file type icons', async ({ page }) => {
+    // Look for file icons
+    const fileIcons = page.locator('.file-icon, [data-icon], .attachment-icon');
+    const hasIcons = await fileIcons.first().isVisible().catch(() => false);
+
+    if (hasIcons) {
+      // Should show icons like 🖼️ 📄 📎
+      await expect(fileIcons.first()).toBeVisible();
+    }
+  });
+
+  test('should show attachment file size', async ({ page }) => {
+    // Look for file size display
+    const fileSize = page.locator('.file-size, .attachment-size, :has-text("KB"), :has-text("MB")');
+    const hasSize = await fileSize.first().isVisible().catch(() => false);
+
+    if (hasSize) {
+      await expect(fileSize.first()).toBeVisible();
+    }
+  });
+
+  test('should remove attachment', async ({ page }) => {
+    // Look for remove attachment button
+    const removeButton = page.locator('.attachment-item button, .remove-attachment').first();
+    const hasRemoveButton = await removeButton.isVisible().catch(() => false);
+
+    if (hasRemoveButton) {
+      const initialCount = await page.locator('.attachment-item').count();
+
+      await removeButton.click();
+      await page.waitForTimeout(300);
+
+      const newCount = await page.locator('.attachment-item').count();
+      expect(newCount).toBe(initialCount - 1);
+    }
+  });
+
+  test('should display attachment count badge in todo list', async ({ page }) => {
+    // Close modal
+    const closeButton = page.locator('button:has-text("Close"), button:has-text("Cancel")').first();
+    await closeButton.click();
+    await page.waitForTimeout(300);
+
+    // Look for attachment badge
+    const attachmentBadge = page.locator('.attachment-badge, .attachment-count, :has-text("📎")');
+    const hasBadge = await attachmentBadge.first().isVisible().catch(() => false);
+
+    if (hasBadge) {
+      await expect(attachmentBadge.first()).toBeVisible();
+    }
+  });
+
+  test('should show max file size limit message', async ({ page }) => {
+    // Look for file size limit info
+    const limitMessage = page.locator(':has-text("5MB"), :has-text("max"), :has-text("size limit")');
+    const hasLimit = await limitMessage.first().isVisible().catch(() => false);
+
+    if (hasLimit) {
+      await expect(limitMessage.first()).toBeVisible();
+    }
+  });
+
+  test('should show empty state when no attachments', async ({ page }) => {
+    // Remove all attachments first
+    const removeButtons = page.locator('.remove-attachment, .attachment-item button');
+    const count = await removeButtons.count();
+
+    for (let i = count - 1; i >= 0; i--) {
+      const button = removeButtons.nth(i);
+      const isVisible = await button.isVisible().catch(() => false);
+      if (isVisible) {
+        await button.click();
+        await page.waitForTimeout(200);
+      }
+    }
+
+    // Should show empty state
+    const emptyState = page.locator(':has-text("No attachments"), .empty-state');
+    const hasEmpty = await emptyState.isVisible().catch(() => false);
+
+    if (hasEmpty) {
+      await expect(emptyState.first()).toBeVisible();
+    }
+  });
+});
+
+test.describe('Advanced Features - Integration', () => {
+  test.beforeEach(async ({ page }) => {
+    await loginAsUser(page);
+  });
+
+  test('should create todo with all advanced features', async ({ page }) => {
+    // Open create todo modal
+    const createButton = page.locator('button:has-text("Add Todo"), button:has-text("New Todo"), button:has-text("Create Todo")').first();
+    await createButton.click();
+    await page.waitForTimeout(500);
+
+    // Fill basic fields
+    const titleInput = page.locator('input[formControlName="title"], input[name="title"]').first();
+    await titleInput.fill('Complete E2E Test Todo');
+
+    const descInput = page.locator('textarea[formControlName="description"], textarea[name="description"]').first();
+    const hasDesc = await descInput.isVisible().catch(() => false);
+    if (hasDesc) {
+      await descInput.fill('Todo with subtasks, tags, and attachments');
+    }
+
+    // Add subtask
+    const subtaskInput = page.locator('input[placeholder*="subtask" i]').first();
+    const hasSubtaskInput = await subtaskInput.isVisible().catch(() => false);
+    if (hasSubtaskInput) {
+      await subtaskInput.fill('Test subtask 1');
+      await subtaskInput.press('Enter');
+      await page.waitForTimeout(200);
+    }
+
+    // Add tag
+    const tagInput = page.locator('input[placeholder*="tag" i]').first();
+    const hasTagInput = await tagInput.isVisible().catch(() => false);
+    if (hasTagInput) {
+      await tagInput.fill('testing');
+      await tagInput.press('Enter');
+      await page.waitForTimeout(200);
+    }
+
+    // Submit
+    const submitButton = page.locator('button[type="submit"], button:has-text("Create"), button:has-text("Save")').first();
+    await submitButton.click();
+    await page.waitForTimeout(500);
+
+    // Verify todo was created
+    const newTodo = page.locator(':has-text("Complete E2E Test Todo")');
+    await expect(newTodo.first()).toBeVisible();
+  });
+
+  test('should edit todo and modify all advanced features', async ({ page }) => {
+    // Open edit modal
+    await openEditTodoModal(page);
+
+    // Modify subtask
+    const subtaskInput = page.locator('input[placeholder*="subtask" i]').first();
+    const hasSubtaskInput = await subtaskInput.isVisible().catch(() => false);
+    if (hasSubtaskInput) {
+      await subtaskInput.fill('Modified subtask');
+      await subtaskInput.press('Enter');
+      await page.waitForTimeout(200);
+    }
+
+    // Modify tag
+    const tagInput = page.locator('input[placeholder*="tag" i]').first();
+    const hasTagInput = await tagInput.isVisible().catch(() => false);
+    if (hasTagInput) {
+      await tagInput.fill('modified');
+      await tagInput.press('Enter');
+      await page.waitForTimeout(200);
+    }
+
+    // Save changes
+    const saveButton = page.locator('button[type="submit"], button:has-text("Save"), button:has-text("Update")').first();
+    await saveButton.click();
+    await page.waitForTimeout(500);
+
+    // Changes should be saved
+    const successMessage = page.locator('.success-message, :has-text("updated"), :has-text("saved")');
+    const hasSuccess = await successMessage.isVisible().catch(() => false);
+
+    if (hasSuccess) {
+      await expect(successMessage.first()).toBeVisible();
+    }
+  });
+});

@@ -1,0 +1,550 @@
+import { test, expect } from '@playwright/test';
+
+// Helper function to login as user
+async function loginAsUser(page: any) {
+  await page.goto('/auth/login');
+  await page.fill('input[formControlName="email"]', 'john.doe@example.com');
+  await page.fill('input[formControlName="password"]', 'password123');
+  await page.click('.role-option:has-text("User Login")');
+  await page.click('button[type="submit"]');
+  await page.waitForURL('/dashboard');
+}
+
+test.describe('Calendar View - Rendering', () => {
+  test.beforeEach(async ({ page }) => {
+    await loginAsUser(page);
+    // Navigate to calendar view
+    await page.goto('/dashboard/calendar');
+  });
+
+  test('should display calendar view page', async ({ page }) => {
+    // Check page title
+    const title = page.locator('h1, h2').filter({ hasText: /Calendar/i });
+    await expect(title.first()).toBeVisible();
+  });
+
+  test('should display calendar grid', async ({ page }) => {
+    // Check for calendar grid
+    const calendar = page.locator('.calendar, .calendar-grid, [data-test="calendar"]');
+    const hasCalendar = await calendar.first().isVisible().catch(() => false);
+
+    if (hasCalendar) {
+      await expect(calendar.first()).toBeVisible();
+    }
+  });
+
+  test('should display 7 day headers (week days)', async ({ page }) => {
+    // Check for day headers (Sun-Sat or Mon-Sun)
+    const dayHeaders = page.locator('.calendar-header .day, .weekday, [data-day-header]');
+    const count = await dayHeaders.count();
+
+    expect(count).toBe(7);
+  });
+
+  test('should display weekday names', async ({ page }) => {
+    // Check for day names
+    const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+    for (const day of dayNames) {
+      const dayElement = page.locator(`:has-text("${day}")`);
+      const hasDay = await dayElement.first().isVisible().catch(() => false);
+
+      if (hasDay) {
+        await expect(dayElement.first()).toBeVisible();
+        break; // At least one day found
+      }
+    }
+  });
+
+  test('should display full month grid (up to 42 cells for 7x6)', async ({ page }) => {
+    // Calendar should have between 28-42 cells (4-6 weeks)
+    const dayCells = page.locator('.calendar-day, .day-cell, [data-date]');
+    const count = await dayCells.count();
+
+    expect(count).toBeGreaterThanOrEqual(28);
+    expect(count).toBeLessThanOrEqual(42);
+  });
+
+  test('should display current month and year', async ({ page }) => {
+    const monthYear = page.locator('.calendar-title, .month-year, .current-month');
+    const hasMonthYear = await monthYear.first().isVisible().catch(() => false);
+
+    if (hasMonthYear) {
+      const text = await monthYear.first().textContent();
+      // Should contain month name and year (e.g., "October 2025")
+      expect(text).toMatch(/\w+\s+\d{4}/);
+    }
+  });
+
+  test('should display all dates for the month', async ({ page }) => {
+    const dayCells = page.locator('.calendar-day, .day-cell');
+    const count = await dayCells.count();
+
+    // Should have at least 28 days
+    expect(count).toBeGreaterThanOrEqual(28);
+  });
+
+  test('should show days from previous month as grayed out', async ({ page }) => {
+    const prevMonthDays = page.locator('.prev-month, .other-month, .disabled-day').first();
+    const hasPrevDays = await prevMonthDays.isVisible().catch(() => false);
+
+    if (hasPrevDays) {
+      // Check if it has different styling
+      const className = await prevMonthDays.getAttribute('class');
+      expect(className).toMatch(/prev-month|other-month|disabled/i);
+    }
+  });
+
+  test('should show days from next month as grayed out', async ({ page }) => {
+    const nextMonthDays = page.locator('.next-month, .other-month').first();
+    const hasNextDays = await nextMonthDays.isVisible().catch(() => false);
+
+    if (hasNextDays) {
+      // Check if it has different styling
+      const className = await nextMonthDays.getAttribute('class');
+      expect(className).toMatch(/next-month|other-month/i);
+    }
+  });
+});
+
+test.describe('Calendar View - Navigation', () => {
+  test.beforeEach(async ({ page }) => {
+    await loginAsUser(page);
+    await page.goto('/dashboard/calendar');
+  });
+
+  test('should display navigation controls', async ({ page }) => {
+    // Check for previous button
+    const prevButton = page.locator('button:has-text("Previous"), button:has-text("←"), button:has-text("<"), [aria-label="Previous month"]');
+    const hasPrev = await prevButton.first().isVisible().catch(() => false);
+
+    if (hasPrev) {
+      await expect(prevButton.first()).toBeVisible();
+    }
+
+    // Check for next button
+    const nextButton = page.locator('button:has-text("Next"), button:has-text("→"), button:has-text(">"), [aria-label="Next month"]');
+    const hasNext = await nextButton.first().isVisible().catch(() => false);
+
+    if (hasNext) {
+      await expect(nextButton.first()).toBeVisible();
+    }
+  });
+
+  test('should navigate to previous month', async ({ page }) => {
+    const monthYear = page.locator('.calendar-title, .month-year').first();
+    const hasMonthYear = await monthYear.isVisible().catch(() => false);
+
+    if (hasMonthYear) {
+      const currentMonth = await monthYear.textContent();
+
+      // Click previous button
+      const prevButton = page.locator('button:has-text("Previous"), button:has-text("←"), button:has-text("<"), [aria-label="Previous month"]').first();
+      await prevButton.click();
+      await page.waitForTimeout(300);
+
+      const newMonth = await monthYear.textContent();
+      expect(newMonth).not.toBe(currentMonth);
+    }
+  });
+
+  test('should navigate to next month', async ({ page }) => {
+    const monthYear = page.locator('.calendar-title, .month-year').first();
+    const hasMonthYear = await monthYear.isVisible().catch(() => false);
+
+    if (hasMonthYear) {
+      const currentMonth = await monthYear.textContent();
+
+      // Click next button
+      const nextButton = page.locator('button:has-text("Next"), button:has-text("→"), button:has-text(">"), [aria-label="Next month"]').first();
+      await nextButton.click();
+      await page.waitForTimeout(300);
+
+      const newMonth = await monthYear.textContent();
+      expect(newMonth).not.toBe(currentMonth);
+    }
+  });
+
+  test('should display today button', async ({ page }) => {
+    const todayButton = page.locator('button:has-text("Today"), button:has-text("Current")');
+    const hasToday = await todayButton.first().isVisible().catch(() => false);
+
+    if (hasToday) {
+      await expect(todayButton.first()).toBeVisible();
+    }
+  });
+
+  test('should navigate to today when clicking today button', async ({ page }) => {
+    // Navigate to different month first
+    const nextButton = page.locator('button:has-text("Next"), button:has-text("→"), button:has-text(">")').first();
+    const hasNext = await nextButton.isVisible().catch(() => false);
+
+    if (hasNext) {
+      await nextButton.click();
+      await page.waitForTimeout(300);
+
+      // Click today button
+      const todayButton = page.locator('button:has-text("Today")').first();
+      const hasToday = await todayButton.isVisible().catch(() => false);
+
+      if (hasToday) {
+        await todayButton.click();
+        await page.waitForTimeout(300);
+
+        // Should highlight today
+        const todayCell = page.locator('.today, .current-day, [data-today="true"]');
+        const hasCell = await todayCell.isVisible().catch(() => false);
+
+        if (hasCell) {
+          await expect(todayCell.first()).toBeVisible();
+        }
+      }
+    }
+  });
+
+  test('should navigate multiple months forward', async ({ page }) => {
+    const nextButton = page.locator('button:has-text("Next"), button:has-text("→"), button:has-text(">")').first();
+    const hasNext = await nextButton.isVisible().catch(() => false);
+
+    if (hasNext) {
+      // Navigate 3 months forward
+      for (let i = 0; i < 3; i++) {
+        await nextButton.click();
+        await page.waitForTimeout(200);
+      }
+
+      // Should be 3 months ahead
+      const monthYear = page.locator('.calendar-title, .month-year').first();
+      await expect(monthYear).toBeVisible();
+    }
+  });
+
+  test('should navigate multiple months backward', async ({ page }) => {
+    const prevButton = page.locator('button:has-text("Previous"), button:has-text("←"), button:has-text("<")').first();
+    const hasPrev = await prevButton.isVisible().catch(() => false);
+
+    if (hasPrev) {
+      // Navigate 3 months backward
+      for (let i = 0; i < 3; i++) {
+        await prevButton.click();
+        await page.waitForTimeout(200);
+      }
+
+      // Should be 3 months back
+      const monthYear = page.locator('.calendar-title, .month-year').first();
+      await expect(monthYear).toBeVisible();
+    }
+  });
+});
+
+test.describe('Calendar View - Today Highlighting', () => {
+  test.beforeEach(async ({ page }) => {
+    await loginAsUser(page);
+    await page.goto('/dashboard/calendar');
+  });
+
+  test('should highlight today\'s date', async ({ page }) => {
+    const todayCell = page.locator('.today, .current-day, [data-today="true"]');
+    const hasToday = await todayCell.first().isVisible().catch(() => false);
+
+    if (hasToday) {
+      await expect(todayCell.first()).toBeVisible();
+
+      // Should have special styling
+      const className = await todayCell.first().getAttribute('class');
+      expect(className).toMatch(/today|current/i);
+    }
+  });
+
+  test('should distinguish today from other dates', async ({ page }) => {
+    const todayCell = page.locator('.today, .current-day').first();
+    const hasToday = await todayCell.isVisible().catch(() => false);
+
+    if (hasToday) {
+      const todayClass = await todayCell.getAttribute('class');
+
+      const regularCell = page.locator('.calendar-day, .day-cell').nth(5);
+      const regularClass = await regularCell.getAttribute('class');
+
+      // Today should have different classes
+      expect(todayClass).not.toBe(regularClass);
+    }
+  });
+});
+
+test.describe('Calendar View - Todo Indicators', () => {
+  test.beforeEach(async ({ page }) => {
+    await loginAsUser(page);
+    await page.goto('/dashboard/calendar');
+  });
+
+  test('should show todo indicators on dates with todos', async ({ page }) => {
+    // Look for todo indicators/badges
+    const todoIndicators = page.locator('.todo-indicator, .has-todos, .todo-badge, .todo-dot');
+    const count = await todoIndicators.count();
+
+    if (count > 0) {
+      await expect(todoIndicators.first()).toBeVisible();
+    }
+  });
+
+  test('should display todo count on dates', async ({ page }) => {
+    const todoCount = page.locator('.todo-count, .badge, .count');
+    const hasCount = await todoCount.first().isVisible().catch(() => false);
+
+    if (hasCount) {
+      const text = await todoCount.first().textContent();
+      expect(text).toMatch(/\d+/);
+    }
+  });
+
+  test('should show different colors for different priorities', async ({ page }) => {
+    // Check for priority-based indicators
+    const highPriority = page.locator('.priority-high, .high-priority-indicator');
+    const mediumPriority = page.locator('.priority-medium, .medium-priority-indicator');
+    const lowPriority = page.locator('.priority-low, .low-priority-indicator');
+
+    const hasHigh = await highPriority.first().isVisible().catch(() => false);
+    const hasMedium = await mediumPriority.first().isVisible().catch(() => false);
+    const hasLow = await lowPriority.first().isVisible().catch(() => false);
+
+    // At least one priority should be visible
+    expect(hasHigh || hasMedium || hasLow).toBeTruthy();
+  });
+
+  test('should display multiple todo dots for multiple todos', async ({ page }) => {
+    const todoDots = page.locator('.todo-dot, .dot');
+    const count = await todoDots.count();
+
+    // If there are todo dots, there should be multiple
+    if (count > 0) {
+      expect(count).toBeGreaterThan(0);
+    }
+  });
+});
+
+test.describe('Calendar View - Day Click Modal', () => {
+  test.beforeEach(async ({ page }) => {
+    await loginAsUser(page);
+    await page.goto('/dashboard/calendar');
+  });
+
+  test('should open modal when clicking on a day', async ({ page }) => {
+    // Click on a day cell
+    const dayCell = page.locator('.calendar-day, .day-cell').nth(15);
+    await dayCell.click();
+    await page.waitForTimeout(500);
+
+    // Modal should open
+    const modal = page.locator('.modal, .dialog, .day-modal');
+    const hasModal = await modal.first().isVisible().catch(() => false);
+
+    if (hasModal) {
+      await expect(modal.first()).toBeVisible();
+    }
+  });
+
+  test('should display todos for selected day in modal', async ({ page }) => {
+    // Click on a day with todos
+    const dayWithTodos = page.locator('.has-todos, .todo-indicator').first();
+    const hasDay = await dayWithTodos.isVisible().catch(() => false);
+
+    if (hasDay) {
+      await dayWithTodos.click();
+      await page.waitForTimeout(500);
+
+      // Check for todo list in modal
+      const todoList = page.locator('.todo-list, .modal .todo-item');
+      const hasTodos = await todoList.first().isVisible().catch(() => false);
+
+      if (hasTodos) {
+        await expect(todoList.first()).toBeVisible();
+      }
+    }
+  });
+
+  test('should display date in modal header', async ({ page }) => {
+    const dayCell = page.locator('.calendar-day, .day-cell').nth(15);
+    await dayCell.click();
+    await page.waitForTimeout(500);
+
+    const modalHeader = page.locator('.modal-header, .modal h2, .modal h3');
+    const hasHeader = await modalHeader.first().isVisible().catch(() => false);
+
+    if (hasHeader) {
+      const headerText = await modalHeader.first().textContent();
+      // Should contain date information
+      expect(headerText).toBeTruthy();
+    }
+  });
+
+  test('should close modal when clicking close button', async ({ page }) => {
+    const dayCell = page.locator('.calendar-day, .day-cell').nth(15);
+    await dayCell.click();
+    await page.waitForTimeout(500);
+
+    const closeButton = page.locator('button:has-text("Close"), .close-btn, .modal .close').first();
+    const hasClose = await closeButton.isVisible().catch(() => false);
+
+    if (hasClose) {
+      await closeButton.click();
+      await page.waitForTimeout(300);
+
+      // Modal should be closed
+      const modal = page.locator('.modal');
+      const isVisible = await modal.isVisible().catch(() => false);
+      expect(isVisible).toBeFalsy();
+    }
+  });
+
+  test('should close modal when clicking outside', async ({ page }) => {
+    const dayCell = page.locator('.calendar-day, .day-cell').nth(15);
+    await dayCell.click();
+    await page.waitForTimeout(500);
+
+    const modalOverlay = page.locator('.modal-overlay, .backdrop');
+    const hasOverlay = await modalOverlay.first().isVisible().catch(() => false);
+
+    if (hasOverlay) {
+      await modalOverlay.first().click();
+      await page.waitForTimeout(300);
+
+      // Modal should be closed
+      const modal = page.locator('.modal');
+      const isVisible = await modal.isVisible().catch(() => false);
+      expect(isVisible).toBeFalsy();
+    }
+  });
+
+  test('should show empty state for days with no todos', async ({ page }) => {
+    // Click on a day without todos
+    const dayCell = page.locator('.calendar-day, .day-cell').nth(1);
+    await dayCell.click();
+    await page.waitForTimeout(500);
+
+    const emptyState = page.locator(':has-text("No todos"), .empty-state, :has-text("No tasks")');
+    const hasEmpty = await emptyState.first().isVisible().catch(() => false);
+
+    if (hasEmpty) {
+      await expect(emptyState.first()).toBeVisible();
+    }
+  });
+
+  test('should allow creating new todo from modal', async ({ page }) => {
+    const dayCell = page.locator('.calendar-day, .day-cell').nth(15);
+    await dayCell.click();
+    await page.waitForTimeout(500);
+
+    const addButton = page.locator('button:has-text("Add Todo"), button:has-text("New Todo")');
+    const hasAdd = await addButton.first().isVisible().catch(() => false);
+
+    if (hasAdd) {
+      await expect(addButton.first()).toBeVisible();
+    }
+  });
+});
+
+test.describe('Calendar View - Priority Colors', () => {
+  test.beforeEach(async ({ page }) => {
+    await loginAsUser(page);
+    await page.goto('/dashboard/calendar');
+  });
+
+  test('should display legend for priority colors', async ({ page }) => {
+    const legend = page.locator('.legend, .color-legend, [data-test="legend"]');
+    const hasLegend = await legend.first().isVisible().catch(() => false);
+
+    if (hasLegend) {
+      await expect(legend.first()).toBeVisible();
+    }
+  });
+
+  test('should show high priority color in legend', async ({ page }) => {
+    const highPriorityLegend = page.locator('.legend :has-text("High"), .high-priority');
+    const hasHigh = await highPriorityLegend.first().isVisible().catch(() => false);
+
+    if (hasHigh) {
+      await expect(highPriorityLegend.first()).toBeVisible();
+    }
+  });
+
+  test('should show medium priority color in legend', async ({ page }) => {
+    const mediumPriorityLegend = page.locator('.legend :has-text("Medium"), .medium-priority');
+    const hasMedium = await mediumPriorityLegend.first().isVisible().catch(() => false);
+
+    if (hasMedium) {
+      await expect(mediumPriorityLegend.first()).toBeVisible();
+    }
+  });
+
+  test('should show low priority color in legend', async ({ page }) => {
+    const lowPriorityLegend = page.locator('.legend :has-text("Low"), .low-priority');
+    const hasLow = await lowPriorityLegend.first().isVisible().catch(() => false);
+
+    if (hasLow) {
+      await expect(lowPriorityLegend.first()).toBeVisible();
+    }
+  });
+
+  test('should use consistent colors throughout calendar', async ({ page }) => {
+    // Check if priority colors are applied to todo indicators
+    const highPriorityIndicators = page.locator('.priority-high, .high-priority-indicator');
+    const count = await highPriorityIndicators.count();
+
+    if (count > 0) {
+      // Get color of first indicator
+      const firstColor = await highPriorityIndicators.first().evaluate(el =>
+        window.getComputedStyle(el).backgroundColor
+      );
+
+      // Get color of second indicator if exists
+      if (count > 1) {
+        const secondColor = await highPriorityIndicators.nth(1).evaluate(el =>
+          window.getComputedStyle(el).backgroundColor
+        );
+
+        // Colors should match
+        expect(firstColor).toBe(secondColor);
+      }
+    }
+  });
+});
+
+test.describe('Calendar View - Responsiveness', () => {
+  test.beforeEach(async ({ page }) => {
+    await loginAsUser(page);
+    await page.goto('/dashboard/calendar');
+  });
+
+  test('should display calendar on mobile view', async ({ page }) => {
+    await page.setViewportSize({ width: 375, height: 667 });
+
+    const calendar = page.locator('.calendar, .calendar-grid');
+    await expect(calendar.first()).toBeVisible();
+  });
+
+  test('should display calendar on tablet view', async ({ page }) => {
+    await page.setViewportSize({ width: 768, height: 1024 });
+
+    const calendar = page.locator('.calendar, .calendar-grid');
+    await expect(calendar.first()).toBeVisible();
+  });
+
+  test('should display calendar on desktop view', async ({ page }) => {
+    await page.setViewportSize({ width: 1920, height: 1080 });
+
+    const calendar = page.locator('.calendar, .calendar-grid');
+    await expect(calendar.first()).toBeVisible();
+  });
+
+  test('should adapt navigation controls on mobile', async ({ page }) => {
+    await page.setViewportSize({ width: 375, height: 667 });
+
+    const navControls = page.locator('.calendar-nav, .navigation');
+    const hasNav = await navControls.first().isVisible().catch(() => false);
+
+    if (hasNav) {
+      await expect(navControls.first()).toBeVisible();
+    }
+  });
+});

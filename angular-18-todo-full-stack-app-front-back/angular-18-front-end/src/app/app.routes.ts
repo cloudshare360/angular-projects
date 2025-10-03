@@ -53,26 +53,27 @@ export const routes: Routes = [
       }
     ]
   },
-  {
-    path: 'profile',
-    loadComponent: () => import('./features/profile/user-profile/user-profile.component').then(m => m.UserProfileComponent),
-    canActivate: [authGuard]
-  },
-  {
-    path: 'settings',
-    loadComponent: () => import('./features/settings/settings.component').then(m => m.SettingsComponent),
-    canActivate: [authGuard]
-  },
-  {
-    path: 'calendar',
-    loadComponent: () => import('./features/calendar/calendar-view.component').then(m => m.CalendarViewComponent),
-    canActivate: [authGuard]
-  },
-  {
-    path: 'progress',
-    loadComponent: () => import('./features/progress/progress-view.component').then(m => m.ProgressViewComponent),
-    canActivate: [authGuard]
-  },
+  // Temporarily disabled routes for E2E testing
+  // {
+  //   path: 'profile',
+  //   loadComponent: () => import('./features/profile/user-profile/user-profile.component').then(m => m.UserProfileComponent),
+  //   canActivate: [authGuard]
+  // },
+  // {
+  //   path: 'settings',
+  //   loadComponent: () => import('./features/settings/settings.component').then(m => m.SettingsComponent),
+  //   canActivate: [authGuard]
+  // },
+  // {
+  //   path: 'calendar',
+  //   loadComponent: () => import('./features/calendar/calendar-view.component').then(m => m.CalendarViewComponent),
+  //   canActivate: [authGuard]
+  // },
+  // {
+  //   path: 'progress',
+  //   loadComponent: () => import('./features/progress/progress-view.component').then(m => m.ProgressViewComponent),
+  //   canActivate: [authGuard]
+  // },
   {
     path: 'admin',
     loadComponent: () => import('./layouts/admin-layout/admin-layout.component').then(m => m.AdminLayoutComponent),

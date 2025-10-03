@@ -33,6 +33,9 @@ Front-End - Automation testing
 Front-End End to End UI Testing
 
 
+update the requirement document and project status tracking document about current status; let me know the next critical step that needs to be executed to ensure front-end is 100% work and it is completed verified by e2e testing
+
+
 
 
 
@@ -49,3 +52,6 @@ create a project status html repot; keep the data in json and render the html do
 4.3.2. update the status against each feature, task, sub task
 4.3.3 list of the no of task pending
 4.3.4 continue on the next task
+
+
+update the requirement document and project status tracking document about current status; let me know the next critical step that needs to be executed to ensure front-end is 100% work and it is completed verified by e2e testing

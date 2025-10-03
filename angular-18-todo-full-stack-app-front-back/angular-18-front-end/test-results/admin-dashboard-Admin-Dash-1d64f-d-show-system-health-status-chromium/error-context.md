@@ -1,0 +1,135 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - heading "Angular 18 Todo Application" [level=1] [ref=e5]
+    - paragraph [ref=e6]: Full Stack Todo Management System with Role-Based Access Control
+  - main [ref=e7]:
+    - generic [ref=e9]:
+      - generic [ref=e10]:
+        - generic [ref=e12]: 📋 Todo App - Admin Panel
+        - generic [ref=e13]:
+          - generic [ref=e14]: ADMIN
+          - generic [ref=e15]: 🚨 [5] Alerts
+          - generic [ref=e16]: Admin User
+          - generic [ref=e17]: AU
+          - button "Switch to User" [ref=e18] [cursor=pointer]
+          - button "Logout" [ref=e19] [cursor=pointer]
+      - generic [ref=e22]:
+        - generic [ref=e23]:
+          - heading "Admin Dashboard" [level=2] [ref=e24]
+          - button "🔄 Refresh" [ref=e25] [cursor=pointer]
+        - generic [ref=e26]:
+          - generic [ref=e27]:
+            - heading "System Overview" [level=3] [ref=e28]
+            - generic [ref=e29]:
+              - generic [ref=e30]:
+                - generic [ref=e31]: 👥
+                - generic [ref=e32]:
+                  - heading "Total Users" [level=4] [ref=e33]
+                  - generic [ref=e34]: "5"
+                  - generic [ref=e35]: 4 active
+              - generic [ref=e36]:
+                - generic [ref=e37]: 📋
+                - generic [ref=e38]:
+                  - heading "Total Todos" [level=4] [ref=e39]
+                  - generic [ref=e40]: "7"
+                  - generic [ref=e41]: 1 completed
+              - generic [ref=e42]:
+                - generic [ref=e43]: ⏳
+                - generic [ref=e44]:
+                  - heading "Pending Tasks" [level=4] [ref=e45]
+                  - generic [ref=e46]: "4"
+                  - generic [ref=e47]: 2 in progress
+              - generic [ref=e48]:
+                - generic [ref=e49]: ⚠️
+                - generic [ref=e50]:
+                  - heading "Overdue" [level=4] [ref=e51]
+                  - generic [ref=e52]: "1"
+                  - generic [ref=e53]: tasks overdue
+          - generic [ref=e54]:
+            - heading "System Health" [level=3] [ref=e55]
+            - generic [ref=e57]:
+              - generic [ref=e58]:
+                - generic [ref=e59]: ✅ Healthy
+                - generic [ref=e60]: "Uptime: 15 days, 4 hours"
+              - generic [ref=e61]:
+                - generic [ref=e62]:
+                  - generic [ref=e63]: CPU Usage
+                  - generic [ref=e66]: 45%
+                - generic [ref=e67]:
+                  - generic [ref=e68]: Memory Usage
+                  - generic [ref=e71]: 67%
+                - generic [ref=e72]:
+                  - generic [ref=e73]: Disk Usage
+                  - generic [ref=e76]: 23%
+              - generic [ref=e78]: "Last Backup: 9/23/2024, 9:00:00 PM"
+          - generic [ref=e79]:
+            - heading "Recent Activity" [level=3] [ref=e80]
+            - generic [ref=e81]:
+              - generic [ref=e82]:
+                - generic [ref=e83]: 📊
+                - generic [ref=e84]:
+                  - generic [ref=e85]: Updated task progress
+                  - generic [ref=e86]:
+                    - generic [ref=e87]: todo
+                    - text: •
+                    - generic [ref=e88]: 373 days ago
+                - generic [ref=e89]: "User ID: 1"
+              - generic [ref=e90]:
+                - generic [ref=e91]: ☑️
+                - generic [ref=e92]:
+                  - generic [ref=e93]: Completed subtask
+                  - generic [ref=e94]:
+                    - generic [ref=e95]: todo
+                    - text: •
+                    - generic [ref=e96]: 373 days ago
+                - generic [ref=e97]: "User ID: 4"
+              - generic [ref=e98]:
+                - generic [ref=e99]: 🔐
+                - generic [ref=e100]:
+                  - generic [ref=e101]: User logged in
+                  - generic [ref=e102]:
+                    - generic [ref=e103]: user
+                    - text: •
+                    - generic [ref=e104]: 373 days ago
+                - generic [ref=e105]: "User ID: 3"
+              - generic [ref=e106]:
+                - generic [ref=e107]: 👤
+                - generic [ref=e108]:
+                  - generic [ref=e109]: New user registered
+                  - generic [ref=e110]:
+                    - generic [ref=e111]: user
+                    - text: •
+                    - generic [ref=e112]: 373 days ago
+                - generic [ref=e113]: "User ID: 5"
+              - generic [ref=e114]:
+                - generic [ref=e115]: ✨
+                - generic [ref=e116]:
+                  - generic [ref=e117]: Created a new todo
+                  - generic [ref=e118]:
+                    - generic [ref=e119]: todo
+                    - text: •
+                    - generic [ref=e120]: 373 days ago
+                - generic [ref=e121]: "User ID: 1"
+          - generic [ref=e122]:
+            - heading "Quick Actions" [level=3] [ref=e123]
+            - generic [ref=e124]:
+              - button "👥 Manage Users 5 users" [ref=e125] [cursor=pointer]:
+                - generic [ref=e126] [cursor=pointer]: 👥
+                - generic [ref=e127] [cursor=pointer]: Manage Users
+                - generic [ref=e128] [cursor=pointer]: 5 users
+              - button "📊 System Logs 5 logs" [ref=e129] [cursor=pointer]:
+                - generic [ref=e130] [cursor=pointer]: 📊
+                - generic [ref=e131] [cursor=pointer]: System Logs
+                - generic [ref=e132] [cursor=pointer]: 5 logs
+              - button "📈 Analytics View Reports" [ref=e133] [cursor=pointer]:
+                - generic [ref=e134] [cursor=pointer]: 📈
+                - generic [ref=e135] [cursor=pointer]: Analytics
+                - generic [ref=e136] [cursor=pointer]: View Reports
+              - button "⚙️ Settings Configure" [ref=e137] [cursor=pointer]:
+                - generic [ref=e138] [cursor=pointer]: ⚙️
+                - generic [ref=e139] [cursor=pointer]: Settings
+                - generic [ref=e140] [cursor=pointer]: Configure
+```
