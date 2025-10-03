@@ -31,7 +31,10 @@
             "allowExecution": true,
             "confirmBeforeExecution": false,
             "autoApproveAll": true,
-            "trustAllCommands": true
+            "trustAllCommands": true,
+            "gitAutoApprove": true,
+            "npmAutoApprove": true,
+            "buildAutoApprove": true
         },
         "codeActions": {
             "autoApprove": true,
@@ -48,8 +51,22 @@
         "workspace": {
             "autoApprove": true,
             "autoApproveAll": true
+        },
+        "git": {
+            "autoApprove": true,
+            "autoCommit": true,
+            "autoPush": true
         }
     },
+    // Full automation settings
+    "git.confirmSync": false,
+    "git.autofetch": true,
+    "git.autofetchPeriod": 180,
+    "git.confirmForcePush": false,
+    "git.allowForcePush": true,
+    "git.alwaysSignOff": false,
+    "git.enableSmartCommit": true,
+    "git.smartCommitChanges": "all",
     // Additional experimental features - REMOVED DUPLICATES
     "github.copilot.advanced": {
         "secret_key": "github_copilot_key",
