@@ -1,0 +1,71 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - main [ref=e3]:
+    - generic [ref=e4]:
+      - generic [ref=e5]:
+        - img [ref=e6]
+        - heading "Hello, Angular Todo Application" [level=1] [ref=e10]
+        - paragraph [ref=e11]: Congratulations! Your app is running. 🎉
+      - separator "Divider" [ref=e12]
+      - generic [ref=e13]:
+        - generic [ref=e14]:
+          - link "Explore the Docs" [ref=e15] [cursor=pointer]:
+            - /url: https://angular.dev
+            - generic [ref=e16] [cursor=pointer]: Explore the Docs
+            - img [ref=e17] [cursor=pointer]
+          - link "Learn with Tutorials" [ref=e19] [cursor=pointer]:
+            - /url: https://angular.dev/tutorials
+            - generic [ref=e20] [cursor=pointer]: Learn with Tutorials
+            - img [ref=e21] [cursor=pointer]
+          - link "CLI Docs" [ref=e23] [cursor=pointer]:
+            - /url: https://angular.dev/tools/cli
+            - generic [ref=e24] [cursor=pointer]: CLI Docs
+            - img [ref=e25] [cursor=pointer]
+          - link "Angular Language Service" [ref=e27] [cursor=pointer]:
+            - /url: https://angular.dev/tools/language-service
+            - generic [ref=e28] [cursor=pointer]: Angular Language Service
+            - img [ref=e29] [cursor=pointer]
+          - link "Angular DevTools" [ref=e31] [cursor=pointer]:
+            - /url: https://angular.dev/tools/devtools
+            - generic [ref=e32] [cursor=pointer]: Angular DevTools
+            - img [ref=e33] [cursor=pointer]
+        - generic [ref=e35]:
+          - link "Github" [ref=e36] [cursor=pointer]:
+            - /url: https://github.com/angular/angular
+            - img [ref=e37] [cursor=pointer]
+          - link "Twitter" [ref=e39] [cursor=pointer]:
+            - /url: https://twitter.com/angular
+            - img [ref=e40] [cursor=pointer]
+          - link "Youtube" [ref=e42] [cursor=pointer]:
+            - /url: https://www.youtube.com/channel/UCbn1OgGei-DV7aSRo_HaAiw
+            - img [ref=e43] [cursor=pointer]
+  - generic [ref=e47]:
+    - generic [ref=e48]:
+      - heading "Create Account" [level=1] [ref=e49]
+      - paragraph [ref=e50]: Join us today and start managing your todos!
+    - generic [ref=e51]:
+      - generic [ref=e52]:
+        - generic [ref=e53]:
+          - generic [ref=e54]: First Name
+          - textbox "First Name" [ref=e55]: Test
+        - generic [ref=e56]:
+          - generic [ref=e57]: Last Name
+          - textbox "Last Name" [ref=e58]: User
+      - generic [ref=e59]:
+        - generic [ref=e60]: Username
+        - textbox "Username" [ref=e61]: testuser1759503116321
+      - generic [ref=e62]:
+        - generic [ref=e63]: Email
+        - textbox "Email" [ref=e64]: test1759503116321@example.com
+      - generic [ref=e65]:
+        - generic [ref=e66]: Password
+        - textbox "Password" [ref=e67]: testpass123
+      - button "Create Account" [ref=e69] [cursor=pointer]
+      - paragraph [ref=e71]:
+        - text: Already have an account?
+        - link "Sign in here" [ref=e72] [cursor=pointer]:
+          - /url: /auth/login
+    - generic [ref=e73]: Too many registration attempts from this IP. Please try again in 1 hour.
+```

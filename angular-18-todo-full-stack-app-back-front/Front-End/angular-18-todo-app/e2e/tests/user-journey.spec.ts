@@ -11,7 +11,7 @@ test.describe('Complete User Journey - Sequential Flow', () => {
     let registerPage: RegisterPage;
     let dashboardPage: DashboardPage;
 
-    // Generate unique test user for this test run
+    // Generate unique test user for this test run to avoid conflicts
     const timestamp = Date.now();
     const testUser = {
         username: `testuser_${timestamp}`,
@@ -21,10 +21,23 @@ test.describe('Complete User Journey - Sequential Flow', () => {
         lastName: 'User'
     };
 
+    // Shared authentication state to avoid multiple logins
+    let isAuthenticated = false;
+    let authToken = '';
+
     test.beforeEach(async ({ page }) => {
         loginPage = new LoginPage(page);
         registerPage = new RegisterPage(page);
         dashboardPage = new DashboardPage(page);
+        
+        // Add delay between test cases for stability
+        await page.waitForTimeout(3000);
+    });
+
+    test.afterEach(async ({ page }) => {
+        // Add delay after each test case completion
+        console.log('⏳ Test case completed, waiting 5 seconds before next test...');
+        await page.waitForTimeout(5000);
     });
 
     test('1️⃣ Step 1: New User Registration', async ({ page }) => {
@@ -34,9 +47,9 @@ test.describe('Complete User Journey - Sequential Flow', () => {
         await page.goto('/auth/register');
         await expect(page).toHaveURL(/.*\/auth\/register/);
 
-        // Wait for page to be fully loaded
+        // Wait for page to be fully loaded with user viewing time
         await page.waitForLoadState('networkidle');
-        await page.waitForTimeout(2000); // User viewing time
+        await page.waitForTimeout(2000);
 
         // Verify registration form is visible
         await expect(registerPage.usernameInput).toBeVisible();
@@ -47,25 +60,25 @@ test.describe('Complete User Journey - Sequential Flow', () => {
 
         console.log('📝 Filling registration form...');
 
-        // Fill registration form with delays to simulate real user
+        // Fill registration form with realistic delays
         await registerPage.usernameInput.fill(testUser.username);
-        await page.waitForTimeout(500);
+        await page.waitForTimeout(800);
 
         await registerPage.emailInput.fill(testUser.email);
-        await page.waitForTimeout(500);
+        await page.waitForTimeout(800);
 
         await registerPage.passwordInput.fill(testUser.password);
-        await page.waitForTimeout(500);
+        await page.waitForTimeout(800);
 
-        // Check if confirmPassword field exists
+        // Handle confirm password field if exists
         const confirmPasswordExists = await registerPage.confirmPasswordInput.isVisible().catch(() => false);
         if (confirmPasswordExists) {
             await registerPage.confirmPasswordInput.fill(testUser.password);
-            await page.waitForTimeout(500);
+            await page.waitForTimeout(800);
         }
 
         await registerPage.firstNameInput.fill(testUser.firstName);
-        await page.waitForTimeout(500);
+        await page.waitForTimeout(800);
 
         await registerPage.lastNameInput.fill(testUser.lastName);
         await page.waitForTimeout(1000);
@@ -74,14 +87,15 @@ test.describe('Complete User Journey - Sequential Flow', () => {
         console.log('✅ Submitting registration...');
         await registerPage.registerButton.click();
 
-        // Wait for registration to complete (either redirect or success message)
-        await page.waitForTimeout(3000);
+        // Wait for registration processing
+        await page.waitForTimeout(4000);
 
-        // Check if redirected to dashboard or login
+                // Check registration result
         const currentUrl = page.url();
         if (currentUrl.includes('/dashboard')) {
             console.log('✅ Registration successful - redirected to dashboard');
             await expect(page).toHaveURL(/.*\/dashboard/);
+            isAuthenticated = true; // Mark as authenticated to skip login
         } else if (currentUrl.includes('/login')) {
             console.log('✅ Registration successful - redirected to login');
             await expect(page).toHaveURL(/.*\/login/);
@@ -90,6 +104,30 @@ test.describe('Complete User Journey - Sequential Flow', () => {
         }
 
         console.log('🎉 Step 1 Complete: User registration finished');
+    });
+
+    test('2️⃣ Step 2: User Login (if not already authenticated)', async ({ page }) => {
+        console.log('🚀 Starting Step 2: User Login');
+
+        // Skip login if already authenticated from registration
+        if (isAuthenticated) {
+            console.log('⏭️ User already authenticated from registration, skipping login step');
+            await page.goto('/dashboard');
+            await expect(page).toHaveURL(/.*\/dashboard/);
+            console.log('🎉 Step 2 Complete: Already authenticated, verified dashboard access');
+            return;
+        }
+
+        // Navigate to login page
+        await page.goto('/auth/login');
+        await expect(page).toHaveURL(/.*\/auth\/login/);
+
+        // Wait for page to be fully loaded with user viewing time
+        await page.waitForLoadState('networkidle');
+        await page.waitForTimeout(2000);
+
+        // Verify login form is visible
+        await expect(loginPage.emailInput).toBeVisible();
     });
 
     test('2️⃣ Step 2: User Login', async ({ page }) => {

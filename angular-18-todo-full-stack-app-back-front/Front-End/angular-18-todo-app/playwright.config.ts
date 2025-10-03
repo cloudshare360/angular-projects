@@ -1,6 +1,14 @@
 import { defineConfig, devices } from '@playwright/test';
 
 /**
+ * CRITICAL: Before running E2E tests, verify all services are running:
+ * 
+ * 1. MongoDB (port 27017): netstat -ln | grep :27017
+ * 2. Express.js Backend (port 3000): curl -s http://localhost:3000/health
+ * 3. Angular Frontend (port 4200): curl -s -I http://localhost:4200
+ * 
+ * If services are not running, execute: ./start-dev.sh
+ * 
  * @see https://playwright.dev/docs/test-configuration
  */
 export default defineConfig({
@@ -30,15 +38,21 @@ export default defineConfig({
         baseURL: 'http://localhost:4200',
         /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
         trace: 'on-first-retry',
-        /* Take screenshot when test fails */
+        /* Browser settings for user observation with improved delays */
+        headless: false, // Always show browser for user journey testing
+        /* Screenshot and video settings */
         screenshot: 'only-on-failure',
-        /* Record video when test fails */
         video: 'retain-on-failure',
-        /* Global timeout for each action */
-        actionTimeout: 10000,
-        /* Global timeout for navigation */
-        navigationTimeout: 30000,
+        /* Additional timeouts for stability */
+        actionTimeout: 10000, // 10 seconds for actions
+        navigationTimeout: 15000, // 15 seconds for navigation
     },
+
+    /* Global timeout for each test - increased to accommodate delays */
+    timeout: 120000, // 2 minutes per test (was 60 seconds)
+
+    /* Test inter-execution delays */
+    globalTimeout: 1800000, // 30 minutes total for all tests
 
     /* Configure projects for major browsers */
     projects: [
@@ -48,9 +62,9 @@ export default defineConfig({
                 ...devices['Desktop Chrome'],
                 // Enable headed mode for user observation
                 headless: false,
-                // Slow down for better user experience
+                // Slow down for better user experience and observation
                 launchOptions: {
-                    slowMo: 500, // 500ms delay between actions
+                    slowMo: 1000, // 1 second delay between actions for better observation
                 },
                 viewport: { width: 1280, height: 720 },
             },

@@ -225,6 +225,69 @@ import { User, TodoList, Todo, CreateListRequest, CreateTodoRequest } from '../.
       gap: 2rem;
     }
 
+    /* Responsive Design for Mobile and Tablet */
+    @media (max-width: 768px) {
+      .main-content {
+        padding: 1rem;
+      }
+
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+      }
+
+      .nav-user {
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+
+      .welcome-text {
+        font-size: 0.9rem;
+      }
+
+      .stat-card {
+        padding: 1.5rem;
+      }
+
+      .stat-number {
+        font-size: 2rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .main-content {
+        padding: 0.5rem;
+      }
+
+      .navbar {
+        padding: 1rem;
+        flex-direction: column;
+        text-align: center;
+        gap: 1rem;
+      }
+
+      .nav-brand h1 {
+        font-size: 1.5rem;
+      }
+
+      .stat-card {
+        padding: 1rem;
+      }
+
+      .stat-number {
+        font-size: 1.5rem;
+      }
+
+      .actions-section, .recent-todos, .lists-overview {
+        padding: 1rem;
+      }
+
+      .btn {
+        padding: 10px 16px;
+        font-size: 0.9rem;
+      }
+    }
+
     .stats-section {
       grid-column: 1 / -1;
       display: grid;

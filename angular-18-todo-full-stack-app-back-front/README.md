@@ -187,6 +187,27 @@ npm start
 
 ## 🧪 Testing
 
+### ⚠️ CRITICAL: Pre-Testing Service Validation
+
+**MANDATORY STEP:** Before running ANY E2E tests, validate all services are running:
+
+```bash
+# Validate all services before E2E testing
+./validate-services-before-e2e.sh
+```
+
+Expected output:
+- ✅ MongoDB: Running (port 27017)
+- ✅ Express.js Backend: Running & Healthy (port 3000)
+- ✅ Angular Frontend: Running & Accessible (port 4200)
+
+If services are not running:
+```bash
+./start-dev.sh
+# Wait 30-60 seconds, then re-validate
+./validate-services-before-e2e.sh
+```
+
 ### API Testing
 ```bash
 # Test all endpoints
@@ -200,9 +221,12 @@ cd curl-scripts
 ### Frontend Testing
 ```bash
 cd Front-End/angular-18-todo-app
-npm test              # Unit tests
-npm run e2e           # End-to-end tests
-npm run build         # Production build
+npm test                    # Unit tests
+npm run test:e2e           # E2E tests (includes automatic service validation)
+npm run test:e2e:headed    # E2E tests with UI (includes automatic service validation)
+npm run test:e2e:force     # Force run E2E tests without validation (NOT RECOMMENDED)
+npm run validate:services  # Manual service validation only
+npm run build              # Production build
 ```
 
 ## 📚 API Documentation

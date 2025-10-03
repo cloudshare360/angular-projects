@@ -133,6 +133,57 @@ import { RegisterRequest } from '../../../shared/interfaces/models';
       width: 100%;
     }
 
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .auth-container {
+        padding: 10px;
+      }
+
+      .auth-card {
+        padding: 30px 20px;
+        max-width: 100%;
+        margin: 0 10px;
+      }
+
+      .form-row {
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+
+      .auth-header h1 {
+        font-size: 24px;
+      }
+
+      .form-control {
+        padding: 10px;
+        font-size: 14px;
+      }
+
+      .btn {
+        padding: 10px;
+        font-size: 14px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .auth-card {
+        padding: 20px 15px;
+      }
+
+      .auth-header h1 {
+        font-size: 20px;
+      }
+
+      .auth-header p {
+        font-size: 14px;
+      }
+
+      .form-control {
+        padding: 8px;
+        font-size: 14px;
+      }
+    }
+
     .auth-header {
       text-align: center;
       margin-bottom: 30px;
