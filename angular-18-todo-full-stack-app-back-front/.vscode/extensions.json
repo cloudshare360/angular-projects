@@ -1,0 +1,52 @@
+{
+  "recommendations": [
+    // GitHub Copilot Extensions
+    "github.copilot",
+    "github.copilot-chat",
+    "github.copilot-labs",
+    
+    // Angular Development
+    "angular.ng-template",
+    "ms-vscode.vscode-typescript-next",
+    "johnpapa.angular2",
+    "cyrilletuzi.angular-schematics",
+    
+    // TypeScript & JavaScript
+    "ms-vscode.vscode-typescript-next",
+    "bradlc.vscode-tailwindcss",
+    
+    // HTML & CSS
+    "ecmel.vscode-html-css",
+    "formulahendry.auto-rename-tag",
+    "pranaygp.vscode-css-peek",
+    
+    // Git & Version Control
+    "eamodio.gitlens",
+    "github.vscode-pull-request-github",
+    
+    // Productivity & Code Quality
+    "esbenp.prettier-vscode",
+    "ms-vscode.vscode-eslint",
+    "streetsidesoftware.code-spell-checker",
+    "visualstudioexptteam.vscodeintellicode",
+    
+    // MongoDB & Database
+    "mongodb.mongodb-vscode",
+    
+    // REST API Testing
+    "humao.rest-client",
+    "rangav.vscode-thunder-client",
+    
+    // Docker Support
+    "ms-azuretools.vscode-docker",
+    
+    // Markdown & Documentation
+    "yzhang.markdown-all-in-one",
+    "davidanson.vscode-markdownlint",
+    
+    // Utilities
+    "ms-vscode.hexeditor",
+    "alefragnani.bookmarks",
+    "gruntfuggly.todo-tree"
+  ]
+}

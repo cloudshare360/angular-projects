@@ -1,0 +1,108 @@
+{
+  "github.copilot.enable": {
+    "*": true,
+    "yaml": true,
+    "plaintext": false,
+    "markdown": true,
+    "typescript": true,
+    "javascript": true,
+    "json": true,
+    "html": true,
+    "scss": true,
+    "css": true
+  },
+  "github.copilot.inlineSuggest.enable": true,
+  "github.copilot.autocomplete.enable": true,
+  "github.copilot.chat.enable": true,
+  "github.copilot.acceptSuggestionOnTab": true,
+  "github.copilot.editor.enableAutoCompletions": true,
+  "github.copilot.advanced": {
+    "secret_key": "github_copilot_key",
+    "length": 500,
+    "temperature": 0.1,
+    "top_p": 1,
+    "stop": ["<|endoftext|>"],
+    "indentationMode": {
+      "python": "tabs",
+      "javascript": "spaces",
+      "typescript": "spaces"
+    }
+  },
+  
+  // Angular/TypeScript specific settings
+  "typescript.suggest.autoImports": true,
+  "typescript.updateImportsOnFileMove.enabled": "always",
+  "typescript.preferences.importModuleSpecifier": "relative",
+  
+  // Angular Language Service
+  "angular.log": "verbose",
+  "angular.enable-strict-mode-prompt": true,
+  
+  // File associations for better Copilot suggestions
+  "files.associations": {
+    "*.component.ts": "typescript",
+    "*.service.ts": "typescript",
+    "*.module.ts": "typescript",
+    "*.guard.ts": "typescript",
+    "*.pipe.ts": "typescript",
+    "*.directive.ts": "typescript"
+  },
+  
+  // Auto-save for better Copilot context
+  "files.autoSave": "afterDelay",
+  "files.autoSaveDelay": 1000,
+  
+  // Format on save for cleaner suggestions
+  "editor.formatOnSave": true,
+  "editor.formatOnPaste": true,
+  "editor.formatOnType": true,
+  
+  // Copilot Labs settings (if available)
+  "github.copilot.advanced.debug.overrideEngine": "copilot-codex",
+  "github.copilot.advanced.debug.testOverrideProxyUrl": "",
+  "github.copilot.advanced.debug.overrideProxyUrl": "",
+  
+  // IntelliSense and autocomplete
+  "editor.suggestSelection": "first",
+  "editor.quickSuggestions": {
+    "other": true,
+    "comments": false,
+    "strings": true
+  },
+  "editor.acceptSuggestionOnCommitCharacter": true,
+  "editor.acceptSuggestionOnEnter": "on",
+  "editor.wordBasedSuggestions": "off",
+  
+  // Terminal settings for better command suggestions
+  "terminal.integrated.commandsToSkipShell": [
+    "language-julia.interrupt"
+  ],
+  
+  // Git settings for better commit message suggestions
+  "git.enableCommitSigning": false,
+  "git.suggestSmartCommit": true,
+  
+  // Workspace specific settings for MEAN stack
+  "emmet.includeLanguages": {
+    "typescript": "html",
+    "javascript": "html"
+  },
+  
+  // Exclude files from Copilot context (performance)
+  "files.exclude": {
+    "**/node_modules": true,
+    "**/dist": true,
+    "**/.git": true,
+    "**/.DS_Store": true,
+    "**/coverage": true,
+    "**/.nyc_output": true
+  },
+  
+  // Search exclude for better performance
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/dist": true,
+    "**/coverage": true,
+    "**/.git": true
+  }
+}

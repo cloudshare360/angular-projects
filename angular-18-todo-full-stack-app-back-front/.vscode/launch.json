@@ -1,0 +1,73 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Launch Angular App",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/Front-End/angular-18-todo-app/node_modules/@angular/cli/bin/ng",
+      "args": ["serve", "--proxy-config", "proxy.conf.json"],
+      "cwd": "${workspaceFolder}/Front-End/angular-18-todo-app",
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "env": {
+        "NODE_ENV": "development"
+      }
+    },
+    {
+      "name": "Launch Express API",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/Back-End/express-rest-todo-api/src/app.js",
+      "cwd": "${workspaceFolder}/Back-End/express-rest-todo-api",
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "restart": true,
+      "runtimeExecutable": "node",
+      "skipFiles": [
+        "<node_internals>/**"
+      ]
+    },
+    {
+      "name": "Debug Angular Tests",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/Front-End/angular-18-todo-app/node_modules/@angular/cli/bin/ng",
+      "args": ["test", "--watch=false", "--browsers=ChromeHeadless"],
+      "cwd": "${workspaceFolder}/Front-End/angular-18-todo-app",
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen"
+    },
+    {
+      "name": "Debug Express API Tests",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/Back-End/express-rest-todo-api/node_modules/.bin/jest",
+      "args": ["--runInBand", "--detectOpenHandles"],
+      "cwd": "${workspaceFolder}/Back-End/express-rest-todo-api",
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "env": {
+        "NODE_ENV": "test"
+      }
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Launch Full Stack",
+      "configurations": [
+        "Launch Express API",
+        "Launch Angular App"
+      ],
+      "stopAll": true,
+      "presentation": {
+        "hidden": false,
+        "group": "fullstack",
+        "order": 1
+      }
+    }
+  ]
+}
