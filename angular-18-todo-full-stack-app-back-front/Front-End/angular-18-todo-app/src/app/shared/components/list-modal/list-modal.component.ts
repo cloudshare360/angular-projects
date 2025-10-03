@@ -101,51 +101,74 @@ export interface ListModalData {
     .list-modal {
       width: 500px;
       max-width: 95vw;
-      min-height: 400px;
+      min-height: 450px;
+      padding: 20px;
+      box-sizing: border-box;
     }
 
     .dialog-content {
-      padding: 0 !important;
+      padding: 20px !important;
       margin: 0;
       overflow: visible;
+      min-height: 350px;
     }
 
     .list-form {
       display: flex;
       flex-direction: column;
-      gap: 24px;
-      padding: 16px 0;
+      gap: 20px;
+      padding: 0;
       margin: 0;
     }
 
     .form-field-container {
       width: 100%;
-      margin-bottom: 8px;
+      margin-bottom: 16px;
+      position: relative;
     }
 
     .full-width {
       width: 100%;
     }
 
-    /* Fix Material form field overlapping */
+    /* Fix Material form field overlapping and spacing */
     ::ng-deep .mat-mdc-form-field {
       width: 100%;
-      margin-bottom: 16px;
+      margin-bottom: 20px;
+      display: block;
     }
 
     ::ng-deep .mat-mdc-form-field-wrapper {
       width: 100%;
-      padding-bottom: 1.25em;
+      padding-bottom: 1.5em;
     }
 
     ::ng-deep .mat-mdc-form-field-subscript-wrapper {
       position: relative;
       top: 0;
-      padding-top: 4px;
+      padding-top: 8px;
+      min-height: 20px;
     }
 
     ::ng-deep .mat-mdc-form-field-error-wrapper {
-      padding-top: 4px;
+      padding-top: 8px;
+      position: relative;
+    }
+
+    ::ng-deep .mat-mdc-form-field-outline {
+      top: 0;
+    }
+
+    ::ng-deep .mat-mdc-form-field-infix {
+      padding-top: 16px;
+      padding-bottom: 16px;
+    }    ::ng-deep .mat-mdc-form-field-outline {
+      top: 0;
+    }
+
+    ::ng-deep .mat-mdc-form-field-infix {
+      padding-top: 16px;
+      padding-bottom: 16px;
     }
 
     .color-section {
@@ -306,10 +329,26 @@ export interface ListModalData {
       background: rgba(0, 0, 0, 0.32);
     }
 
+    ::ng-deep .custom-backdrop {
+      background: rgba(0, 0, 0, 0.4);
+    }
+
+    ::ng-deep .custom-dialog-container {
+      position: relative;
+      overflow: visible;
+    }
+
     /* Fix any Material theme conflicts */
     ::ng-deep .mat-mdc-dialog-container {
       --mdc-dialog-container-color: white;
       --mdc-dialog-supporting-text-color: #333;
+      padding: 0;
+      overflow: visible;
+    }
+
+    ::ng-deep .mat-mdc-dialog-surface {
+      overflow: visible;
+      padding: 0;
     }
   `]
 })

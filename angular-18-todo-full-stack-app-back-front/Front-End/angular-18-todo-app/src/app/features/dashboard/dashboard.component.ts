@@ -765,7 +765,10 @@ export class DashboardComponent implements OnInit {
       data: dialogData,
       disableClose: false,
       autoFocus: true,
-      restoreFocus: true
+      restoreFocus: true,
+      panelClass: 'custom-dialog-container',
+      hasBackdrop: true,
+      backdropClass: 'custom-backdrop'
     });
 
     dialogRef.afterClosed().subscribe(result => {

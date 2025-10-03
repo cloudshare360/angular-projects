@@ -9,7 +9,15 @@
 }
 
 .mat-mdc-form-field-wrapper {
-    padding-bottom: 1.25em !important;
+    padding-bottom: 1.5em !important;
+}
+
+// Fix form field subscript spacing
+.mat-mdc-form-field-subscript-wrapper {
+    position: relative !important;
+    top: 0 !important;
+    padding-top: 8px !important;
+    min-height: 20px !important;
 }
 
 // Fix dialog overlay issues
@@ -22,14 +30,46 @@
     background: rgba(0, 0, 0, 0.32) !important;
 }
 
-// Global responsive utilities
-.full-width {
-    width: 100% !important;
+.custom-backdrop {
+    background: rgba(0, 0, 0, 0.4) !important;
+}
+
+// Fix dialog container styling
+.custom-dialog-container {
+    position: relative !important;
+    overflow: visible !important;
+}
+
+.mat-mdc-dialog-container {
+    --mdc-dialog-container-color: white !important;
+    --mdc-dialog-supporting-text-color: #333 !important;
+    padding: 0 !important;
+    overflow: visible !important;
+}
+
+.mat-mdc-dialog-surface {
+    overflow: visible !important;
+    padding: 0 !important;
 }
 
 // Fix Material Design spacing issues
 .mat-mdc-dialog-content {
     overflow: visible !important;
+    padding: 20px !important;
+}
+
+// Fix datepicker overlay z-index
+.cdk-overlay-pane {
+    z-index: 1002 !important;
+}
+
+.mat-datepicker-popup {
+    z-index: 1002 !important;
+}
+
+// Global responsive utilities
+.full-width {
+    width: 100% !important;
 }
 
 // Better button styling
@@ -39,4 +79,20 @@
 
 .mat-mdc-raised-button:hover {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3) !important;
+}
+
+// Fix form field outline positioning
+.mat-mdc-form-field-outline {
+    top: 0 !important;
+}
+
+// Better form field infix padding
+.mat-mdc-form-field-infix {
+    padding-top: 16px !important;
+    padding-bottom: 16px !important;
+}
+
+// Fix datepicker input styling
+.mat-mdc-form-field input[matDatepicker] {
+    cursor: pointer !important;
 }

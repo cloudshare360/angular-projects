@@ -39,6 +39,11 @@ export class ApiService {
     });
   }
 
+  // Set auth token for immediate use
+  setAuthToken(token: string): void {
+    localStorage.setItem('auth_token', token);
+  }
+
   private handleError(error: any): Observable<never> {
     console.error('API Error:', error);
     return throwError(() => error);

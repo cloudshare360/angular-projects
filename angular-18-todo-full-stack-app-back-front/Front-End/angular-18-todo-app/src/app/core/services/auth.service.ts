@@ -26,19 +26,54 @@ export class AuthService {
   private initializeAuth(): void {
     if (isPlatformBrowser(this.platformId)) {
       const token = localStorage.getItem('auth_token');
+      const refreshToken = localStorage.getItem('refresh_token');
+      
       if (token) {
+        // Set token in API service first
+        this.apiService.setAuthToken(token);
+        
+        // Validate token with backend
         this.apiService.getUserProfile().subscribe({
           next: (response) => {
             if (response.success && response.data) {
+              console.log('✅ Token validation successful, user authenticated');
               this.setCurrentUser(response.data);
             } else {
-              this.logout();
+              console.warn('⚠️ Token validation failed, logging out');
+              this.performLogout();
             }
           },
-          error: () => this.logout()
+          error: (error) => {
+            console.error('❌ Token validation error:', error);
+            // Try refresh token if available
+            if (refreshToken) {
+              this.handleRefreshToken(refreshToken);
+            } else {
+              this.performLogout();
+            }
+          }
         });
       }
     }
+  }
+
+  private handleRefreshToken(refreshToken: string): void {
+    this.apiService.refreshToken().subscribe({
+      next: (response) => {
+        if (response.success && response.token && response.user) {
+          console.log('✅ Token refresh successful');
+          this.storeTokens(response.token, response.refreshToken);
+          this.setCurrentUser(response.user);
+        } else {
+          console.warn('⚠️ Token refresh failed');
+          this.performLogout();
+        }
+      },
+      error: (error) => {
+        console.error('❌ Token refresh error:', error);
+        this.performLogout();
+      }
+    });
   }
 
   login(credentials: LoginRequest): Observable<AuthResponse> {
