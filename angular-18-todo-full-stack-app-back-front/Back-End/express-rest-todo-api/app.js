@@ -2,6 +2,7 @@ const express = require('express');
 const path = require('path');
 const morgan = require('morgan');
 const compression = require('compression');
+require('dotenv').config();
 
 // Import middleware
 const { 

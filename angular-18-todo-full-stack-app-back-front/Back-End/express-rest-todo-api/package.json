@@ -2,7 +2,7 @@
   "name": "express-rest-todo-api",
   "version": "1.0.0",
   "description": "Express.js REST API for Angular Todo Application with JWT authentication and MongoDB",
-  "main": "src/app.js",
+  "main": "app.js",
   "scripts": {
     "start": "node src/app.js",
     "dev": "nodemon src/app.js",
