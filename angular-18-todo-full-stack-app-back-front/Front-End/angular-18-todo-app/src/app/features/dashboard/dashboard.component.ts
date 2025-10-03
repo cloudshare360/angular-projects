@@ -2,8 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 import { AuthService } from '../../core/services/auth.service';
 import { ApiService } from '../../core/services/api.service';
 import { TodoModalComponent, TodoModalData } from '../../shared/components/todo-modal/todo-modal.component';
@@ -14,7 +16,15 @@ import { User, TodoList, Todo, CreateListRequest, CreateTodoRequest } from '../.
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule],
+  imports: [
+    CommonModule,
+    RouterModule,
+    FormsModule,
+    MatDialogModule,
+    MatSnackBarModule,
+    MatButtonModule,
+    MatIconModule
+  ],
   template: `
     <div class="dashboard-container">
       <nav class="navbar">
@@ -627,28 +637,54 @@ export class DashboardComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.authService.currentUser$.subscribe(user => {
-      this.currentUser = user;
-    });
+    console.log('🚀 Dashboard component initializing...');
 
-    this.loadDashboardData();
+    this.authService.currentUser$.subscribe(user => {
+      console.log('👤 Current user updated:', user);
+      this.currentUser = user;
+
+      // Check if user is authenticated
+      const token = localStorage.getItem('auth_token');
+      console.log('🔐 Auth token present:', !!token);
+
+      if (user && token) {
+        console.log('✅ User authenticated, loading dashboard data...');
+        this.loadDashboardData();
+      } else {
+        console.warn('❌ User not authenticated or token missing');
+      }
+    });
   }
 
   private loadDashboardData(): void {
+    console.log('🔄 Loading dashboard data...');
+
     // Load lists
     this.apiService.getLists().subscribe({
       next: (response) => {
+        console.log('📋 Lists API response:', response);
         if (response.success && response.data) {
           this.todoLists = response.data;
           this.totalLists = this.todoLists.length;
+          console.log(`✅ Loaded ${this.totalLists} lists:`, this.todoLists);
+        } else {
+          console.warn('⚠️ Lists API returned unsuccessful response:', response);
+          this.todoLists = [];
+          this.totalLists = 0;
         }
       },
-      error: (error) => console.error('Error loading lists:', error)
+      error: (error) => {
+        console.error('❌ Error loading lists:', error);
+        this.showSnackBar('Error loading lists. Please check your connection.');
+        this.todoLists = [];
+        this.totalLists = 0;
+      }
     });
 
     // Load recent todos
     this.apiService.getTodos().subscribe({
       next: (response) => {
+        console.log('📝 Todos API response:', response);
         if (response.success && response.data) {
           this.recentTodos = response.data
             .sort((a, b) => {
@@ -660,9 +696,21 @@ export class DashboardComponent implements OnInit {
 
           this.totalTodos = response.data.length;
           this.completedTodos = response.data.filter(todo => todo.isCompleted).length;
+          console.log(`✅ Loaded ${this.totalTodos} todos (${this.completedTodos} completed):`, this.recentTodos);
+        } else {
+          console.warn('⚠️ Todos API returned unsuccessful response:', response);
+          this.recentTodos = [];
+          this.totalTodos = 0;
+          this.completedTodos = 0;
         }
       },
-      error: (error) => console.error('Error loading todos:', error)
+      error: (error) => {
+        console.error('❌ Error loading todos:', error);
+        this.showSnackBar('Error loading todos. Please check your connection.');
+        this.recentTodos = [];
+        this.totalTodos = 0;
+        this.completedTodos = 0;
+      }
     });
   }
 
@@ -705,27 +753,40 @@ export class DashboardComponent implements OnInit {
   }
 
   createNewList(): void {
+    console.log('🆕 Creating new list...');
     const dialogData: ListModalData = {
       mode: 'create'
     };
 
     const dialogRef = this.dialog.open(ListModalComponent, {
-      width: '450px',
-      data: dialogData
+      width: '500px',
+      maxWidth: '95vw',
+      maxHeight: '90vh',
+      data: dialogData,
+      disableClose: false,
+      autoFocus: true,
+      restoreFocus: true
     });
 
     dialogRef.afterClosed().subscribe(result => {
+      console.log('📋 List modal closed with result:', result);
       if (result && result.action === 'create') {
+        console.log('💾 Creating list with data:', result.data);
         this.apiService.createList(result.data).subscribe({
           next: (response) => {
+            console.log('✅ List creation response:', response);
             if (response.success) {
               this.showSnackBar('List created successfully');
+              console.log('🔄 Reloading dashboard data after list creation...');
               this.loadDashboardData();
+            } else {
+              console.error('❌ List creation failed:', response);
+              this.showSnackBar('Failed to create list. Please try again.');
             }
           },
           error: (error) => {
-            console.error('Error creating list:', error);
-            this.showSnackBar('Error creating list');
+            console.error('❌ Error creating list:', error);
+            this.showSnackBar('Error creating list. Please check your connection.');
           }
         });
       }

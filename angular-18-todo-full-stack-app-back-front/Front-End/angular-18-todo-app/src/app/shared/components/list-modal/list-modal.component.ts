@@ -34,24 +34,28 @@ export interface ListModalData {
         {{ data.mode === 'create' ? 'Create New List' : 'Edit List' }}
       </h2>
       
-      <mat-dialog-content>
+      <mat-dialog-content class="dialog-content">
         <form [formGroup]="listForm" class="list-form">
-          <mat-form-field appearance="outline" class="full-width">
-            <mat-label>List Name</mat-label>
-            <input matInput formControlName="name" placeholder="Enter list name..." required>
-            <mat-error *ngIf="listForm.get('name')?.hasError('required')">
-              List name is required
-            </mat-error>
-            <mat-error *ngIf="listForm.get('name')?.hasError('minlength')">
-              List name must be at least 2 characters long
-            </mat-error>
-          </mat-form-field>
+          <div class="form-field-container">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>List Name</mat-label>
+              <input matInput formControlName="name" placeholder="Enter list name..." required>
+              <mat-error *ngIf="listForm.get('name')?.hasError('required')">
+                List name is required
+              </mat-error>
+              <mat-error *ngIf="listForm.get('name')?.hasError('minlength')">
+                List name must be at least 2 characters long
+              </mat-error>
+            </mat-form-field>
+          </div>
 
-          <mat-form-field appearance="outline" class="full-width">
-            <mat-label>Description</mat-label>
-            <textarea matInput formControlName="description" 
-                     placeholder="Add list description..." rows="3"></textarea>
-          </mat-form-field>
+          <div class="form-field-container">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Description</mat-label>
+              <textarea matInput formControlName="description" 
+                       placeholder="Add list description..." rows="3"></textarea>
+            </mat-form-field>
+          </div>
 
           <div class="color-section">
             <label class="color-label">List Color</label>
@@ -82,12 +86,12 @@ export interface ListModalData {
         </form>
       </mat-dialog-content>
 
-      <mat-dialog-actions align="end">
-        <button mat-button (click)="onCancel()">Cancel</button>
-        <button mat-raised-button color="primary" 
+      <mat-dialog-actions align="end" class="dialog-actions">
+        <button mat-button type="button" (click)="onCancel()">Cancel</button>
+        <button mat-raised-button color="primary" type="button"
                 (click)="onSave()" 
                 [disabled]="listForm.invalid || isLoading">
-          <mat-icon *ngIf="isLoading">refresh</mat-icon>
+          <mat-icon *ngIf="isLoading" class="loading-icon">refresh</mat-icon>
           {{ data.mode === 'create' ? 'Create List' : 'Update List' }}
         </button>
       </mat-dialog-actions>
@@ -95,117 +99,217 @@ export interface ListModalData {
   `,
     styles: [`
     .list-modal {
-      width: 450px;
-      max-width: 90vw;
+      width: 500px;
+      max-width: 95vw;
+      min-height: 400px;
+    }
+
+    .dialog-content {
+      padding: 0 !important;
+      margin: 0;
+      overflow: visible;
     }
 
     .list-form {
       display: flex;
       flex-direction: column;
-      gap: 20px;
-      margin: 16px 0;
+      gap: 24px;
+      padding: 16px 0;
+      margin: 0;
+    }
+
+    .form-field-container {
+      width: 100%;
+      margin-bottom: 8px;
     }
 
     .full-width {
       width: 100%;
     }
 
+    /* Fix Material form field overlapping */
+    ::ng-deep .mat-mdc-form-field {
+      width: 100%;
+      margin-bottom: 16px;
+    }
+
+    ::ng-deep .mat-mdc-form-field-wrapper {
+      width: 100%;
+      padding-bottom: 1.25em;
+    }
+
+    ::ng-deep .mat-mdc-form-field-subscript-wrapper {
+      position: relative;
+      top: 0;
+      padding-top: 4px;
+    }
+
+    ::ng-deep .mat-mdc-form-field-error-wrapper {
+      padding-top: 4px;
+    }
+
     .color-section {
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 16px;
+      padding: 8px 0;
     }
 
     .color-label {
       font-weight: 500;
       color: #666;
       font-size: 14px;
+      margin-bottom: 8px;
     }
 
     .color-options {
       display: flex;
-      gap: 8px;
+      gap: 12px;
       flex-wrap: wrap;
+      justify-content: flex-start;
     }
 
     .color-option {
-      width: 32px;
-      height: 32px;
+      width: 36px;
+      height: 36px;
       border-radius: 50%;
       cursor: pointer;
       border: 3px solid transparent;
-      transition: all 0.2s ease;
+      transition: all 0.3s ease;
       position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .color-option:hover {
       transform: scale(1.1);
-      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
     }
 
     .color-option.selected {
-      border-color: #333;
-      transform: scale(1.15);
+      border-color: #1976d2;
+      transform: scale(1.2);
+      box-shadow: 0 4px 16px rgba(25, 118, 210, 0.4);
     }
 
     .color-option.selected::after {
       content: '✓';
       position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
       color: white;
       font-weight: bold;
-      font-size: 12px;
-      text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
+      font-size: 14px;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
     }
 
     .toggle-section {
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 12px;
+      padding: 8px 0;
     }
 
     .toggle-label {
       display: flex;
       align-items: center;
       gap: 8px;
+      font-size: 14px;
     }
 
     .toggle-description {
       font-size: 12px;
       color: #666;
-      margin-left: 16px;
+      margin-left: 24px;
+      margin-top: 4px;
+    }
+
+    ::ng-deep .mat-mdc-slide-toggle {
+      margin: 8px 0;
     }
 
     mat-dialog-title {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 12px;
       color: #333;
+      margin-bottom: 16px;
+      font-size: 20px;
+      font-weight: 500;
     }
 
-    mat-dialog-actions {
-      padding: 16px 24px;
+    .dialog-actions {
+      padding: 16px 0 8px 0 !important;
+      margin-top: 16px;
+      border-top: 1px solid #e0e0e0;
     }
 
     button[mat-raised-button] {
       min-width: 120px;
+      height: 40px;
     }
 
-    .mat-mdc-form-field-error {
+    button[mat-button] {
+      min-width: 80px;
+      height: 40px;
+    }
+
+    .loading-icon {
+      animation: spin 1s linear infinite;
+      margin-right: 8px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    ::ng-deep .mat-mdc-form-field-error {
       font-size: 12px;
+      line-height: 1.2;
+      margin-top: 4px;
     }
 
+    /* Responsive design */
     @media (max-width: 600px) {
       .list-modal {
         width: 100%;
+        max-width: 100vw;
         height: 100%;
+        max-height: 100vh;
+      }
+
+      .dialog-content {
+        padding: 16px !important;
       }
 
       .color-options {
         justify-content: center;
+        gap: 8px;
       }
+
+      .color-option {
+        width: 32px;
+        height: 32px;
+      }
+
+      .list-form {
+        gap: 20px;
+      }
+    }
+
+    /* Prevent dialog backdrop issues */
+    ::ng-deep .cdk-overlay-container {
+      z-index: 1000;
+    }
+
+    ::ng-deep .cdk-overlay-backdrop {
+      background: rgba(0, 0, 0, 0.32);
+    }
+
+    /* Fix any Material theme conflicts */
+    ::ng-deep .mat-mdc-dialog-container {
+      --mdc-dialog-container-color: white;
+      --mdc-dialog-supporting-text-color: #333;
     }
   `]
 })

@@ -1,1 +1,42 @@
 /* You can add global styles to this file, and also import other style files */
+
+// Import Angular Material theme
+@import '@angular/material/prebuilt-themes/indigo-pink.css';
+
+// Global styles for better form field behavior
+.mat-mdc-form-field {
+    margin-bottom: 16px !important;
+}
+
+.mat-mdc-form-field-wrapper {
+    padding-bottom: 1.25em !important;
+}
+
+// Fix dialog overlay issues
+.cdk-overlay-container {
+    z-index: 1000 !important;
+}
+
+// Prevent scrolling issues in dialogs
+.cdk-overlay-backdrop {
+    background: rgba(0, 0, 0, 0.32) !important;
+}
+
+// Global responsive utilities
+.full-width {
+    width: 100% !important;
+}
+
+// Fix Material Design spacing issues
+.mat-mdc-dialog-content {
+    overflow: visible !important;
+}
+
+// Better button styling
+.mat-mdc-raised-button {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2) !important;
+}
+
+.mat-mdc-raised-button:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3) !important;
+}
