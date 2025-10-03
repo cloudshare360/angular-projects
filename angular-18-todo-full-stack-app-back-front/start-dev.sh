@@ -1,7 +1,8 @@
 #!/bin/bash
 
 # Development startup script for Angular Todo Application
-# This script starts both the Express API backend and Angular frontend simultaneously
+# PROPER STARTUP SEQUENCE: Database → Backend → Frontend
+# This script ensures services start in the correct order for E2E testing compatibility
 
 set -e
 
@@ -10,6 +11,7 @@ RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
+PURPLE='\033[0;35m'
 NC='\033[0m' # No Color
 
 # Function to print colored output
@@ -29,6 +31,10 @@ print_error() {
     echo -e "${RED}[ERROR]${NC} $1"
 }
 
+print_phase() {
+    echo -e "${PURPLE}[PHASE]${NC} $1"
+}
+
 # Function to check if a port is available
 check_port() {
     local port=$1
@@ -39,9 +45,32 @@ check_port() {
     fi
 }
 
+# Function to wait for service to be ready
+wait_for_service() {
+    local service_name=$1
+    local health_check=$2
+    local timeout=${3:-60}
+    local counter=0
+    
+    print_status "Waiting for $service_name to be ready..."
+    
+    while [ $counter -lt $timeout ]; do
+        if eval "$health_check" > /dev/null 2>&1; then
+            print_success "✅ $service_name is ready!"
+            return 0
+        fi
+        sleep 2
+        counter=$((counter + 2))
+        print_status "Waiting for $service_name... (${counter}/${timeout}s)"
+    done
+    
+    print_warning "⚠️ $service_name took longer than expected to start"
+    return 1
+}
+
 # Function to cleanup background processes on script exit
 cleanup() {
-    print_status "Cleaning up background processes..."
+    print_status "🧹 Cleaning up background processes..."
     if [ ! -z "$BACKEND_PID" ]; then
         kill $BACKEND_PID 2>/dev/null || true
         print_status "Backend process stopped"
@@ -163,44 +192,45 @@ fi
 
 print_success "✓ Ports are available"
 
-# Start MongoDB if not running
-print_status "Starting MongoDB..."
+# ========================================
+# PHASE 1: DATABASE LAYER STARTUP
+# ========================================
+print_phase "🗄️ PHASE 1: Starting Database Layer (MongoDB + MongoDB Express)"
+
 cd data-base/mongodb
 if [ -f "docker-compose.yml" ]; then
     # Check if containers are already running
-    if ! $DOCKER_COMPOSE_CMD ps | grep -q "mongodb.*Up"; then
+    if ! $DOCKER_COMPOSE_CMD ps | grep -q "angular-todo-mongodb.*Up"; then
         print_status "Starting MongoDB containers..."
         $DOCKER_COMPOSE_CMD up -d
         print_success "✓ MongoDB containers started"
         
         # Wait for MongoDB to be ready
-        print_status "Waiting for MongoDB to be ready..."
-        sleep 5
+        wait_for_service "MongoDB" "$DOCKER_CMD exec angular-todo-mongodb mongosh --quiet --eval 'db.adminCommand(\"ping\")'" 60
         
-        # Check MongoDB connection
-        timeout=30
-        counter=0
-        while [ $counter -lt $timeout ]; do
-            if $DOCKER_COMPOSE_CMD exec -T mongodb mongosh --quiet --eval "db.runCommand('ping')" > /dev/null 2>&1; then
-                print_success "✓ MongoDB is ready and accepting connections"
-                break
-            fi
-            sleep 2
-            counter=$((counter + 2))
-            print_status "Waiting for MongoDB... ($counter/${timeout}s)"
-        done
+        # Wait for MongoDB Express UI (optional)
+        wait_for_service "MongoDB Express UI" "curl -s http://localhost:8081" 30
         
-        if [ $counter -ge $timeout ]; then
-            print_warning "MongoDB took longer than expected to start, but continuing..."
-        fi
     else
         print_success "✓ MongoDB is already running"
+        # Still verify connection
+        wait_for_service "MongoDB" "$DOCKER_CMD exec angular-todo-mongodb mongosh --quiet --eval 'db.adminCommand(\"ping\")'" 30
     fi
 else
     print_error "MongoDB docker-compose.yml not found in data-base/mongodb/"
     exit 1
 fi
 cd ../..
+
+print_success "🎉 PHASE 1 COMPLETE: Database layer is ready"
+print_status "📊 Database services available:"
+print_status "   • MongoDB: localhost:27017"
+print_status "   • MongoDB Express UI: http://localhost:8081"
+
+# ========================================
+# PHASE 2: BACKEND API STARTUP
+# ========================================
+print_phase "🚀 PHASE 2: Starting Backend API (Express.js)"
 
 # Install backend dependencies if needed
 print_status "Checking backend dependencies..."
@@ -229,35 +259,158 @@ if [ ! -f ".env" ]; then
     exit 1
 fi
 
-# Start backend server
-print_status "Starting Express API backend on port 3000..."
-npm run dev > ../../logs/backend.log 2>&1 &
+# Start backend API server
+print_status "Starting Express.js API server..."
+npm start &
 BACKEND_PID=$!
 cd ../..
-print_success "✓ Backend server started (PID: $BACKEND_PID)"
 
 # Wait for backend to be ready
-print_status "Waiting for backend API to be ready..."
-sleep 3
-timeout=30
-counter=0
-while [ $counter -lt $timeout ]; do
-    if curl -s http://localhost:3000/health > /dev/null 2>&1 || curl -s http://localhost:3000 > /dev/null 2>&1; then
-        print_success "✓ Backend API is ready and responding"
-        break
-    fi
-    sleep 2
-    counter=$((counter + 2))
-    print_status "Waiting for backend API... ($counter/${timeout}s)"
-done
+wait_for_service "Express.js API" "curl -s http://localhost:3000/health" 60
 
-if [ $counter -ge $timeout ]; then
-    print_warning "Backend API took longer than expected to start, but continuing..."
-    print_status "Check logs/backend.log if you encounter issues"
-fi
+print_success "🎉 PHASE 2 COMPLETE: Backend API is ready"
+print_status "📊 Backend services available:"
+print_status "   • API Server: http://localhost:3000"
+print_status "   • API Documentation: http://localhost:3000/api-docs"
+print_status "   • Health Check: http://localhost:3000/health"
+
+# ========================================
+# PHASE 3: FRONTEND APPLICATION STARTUP  
+# ========================================
+print_phase "🎨 PHASE 3: Starting Frontend Application (Angular 18)"
 
 # Install frontend dependencies if needed
 print_status "Checking frontend dependencies..."
+cd Front-End/angular-18-todo-app
+if [ ! -d "node_modules" ]; then
+    print_status "Installing frontend dependencies..."
+    npm install
+    print_success "✓ Frontend dependencies installed"
+else
+    print_success "✓ Frontend dependencies already installed"
+fi
+
+# Check if Angular CLI is available
+if ! command -v ng &> /dev/null; then
+    if [ -f "node_modules/.bin/ng" ]; then
+        print_status "Using local Angular CLI"
+        NG_CMD="./node_modules/.bin/ng"
+    else
+        print_error "Angular CLI not found. Installing locally..."
+        npm install @angular/cli
+        NG_CMD="./node_modules/.bin/ng"
+    fi
+else
+    NG_CMD="ng"
+    print_success "✓ Angular CLI is available"
+fi
+
+# Start Angular development server
+print_status "Starting Angular development server..."
+print_status "This may take 15-30 seconds for initial compilation..."
+$NG_CMD serve --proxy-config proxy.conf.json --host 0.0.0.0 &
+FRONTEND_PID=$!
+cd ../..
+
+# Wait for frontend to be ready (Angular takes longer to compile)
+wait_for_service "Angular Application" "curl -s http://localhost:4200" 120
+
+print_success "🎉 PHASE 3 COMPLETE: Frontend application is ready"
+print_status "📊 Frontend services available:"
+print_status "   • Angular Application: http://localhost:4200"
+print_status "   • Development Server: Live reload enabled"
+
+# ========================================
+# FINAL HEALTH CHECK & SUMMARY
+# ========================================
+print_phase "✅ FINAL HEALTH CHECK: Verifying all services"
+
+# Comprehensive health check
+all_healthy=true
+
+# Check MongoDB
+if $DOCKER_CMD exec angular-todo-mongodb mongosh --quiet --eval 'db.adminCommand("ping")' > /dev/null 2>&1; then
+    print_success "✅ MongoDB: Healthy"
+else
+    print_error "❌ MongoDB: Not responding"
+    all_healthy=false
+fi
+
+# Check MongoDB Express
+if curl -s http://localhost:8081 > /dev/null 2>&1; then
+    print_success "✅ MongoDB Express: Healthy"
+else
+    print_warning "⚠️ MongoDB Express: Not responding (optional service)"
+fi
+
+# Check Backend API
+if curl -s http://localhost:3000/health > /dev/null 2>&1; then
+    print_success "✅ Express.js API: Healthy"
+else
+    print_error "❌ Express.js API: Not responding"
+    all_healthy=false
+fi
+
+# Check Frontend
+if curl -s http://localhost:4200 > /dev/null 2>&1; then
+    print_success "✅ Angular Application: Healthy"
+else
+    print_error "❌ Angular Application: Not responding"
+    all_healthy=false
+fi
+
+# ========================================
+# E2E TESTING READINESS CHECK
+# ========================================
+if [ "$all_healthy" = true ]; then
+    print_success "🎉 ALL SERVICES ARE HEALTHY AND READY!"
+    print_status ""
+    print_status "🚀 APPLICATION STACK STATUS:"
+    print_status "   ✅ Database Layer:    MongoDB + MongoDB Express"
+    print_status "   ✅ Backend Layer:     Express.js API"
+    print_status "   ✅ Frontend Layer:    Angular 18 Application"
+    print_status ""
+    print_status "🌐 ACCESS POINTS:"
+    print_status "   📱 Application:      http://localhost:4200"
+    print_status "   🔌 API:              http://localhost:3000"
+    print_status "   📊 API Docs:         http://localhost:3000/api-docs"
+    print_status "   🗄️ Database UI:      http://localhost:8081"
+    print_status ""
+    print_status "🧪 E2E TESTING READY:"
+    print_status "   All services are running in the correct sequence"
+    print_status "   Ready for Playwright E2E testing execution"
+    print_status ""
+    print_status "🎯 NEXT STEPS:"
+    print_status "   • Test the application at http://localhost:4200"
+    print_status "   • Run E2E tests: cd Front-End/angular-18-todo-app && npm run test:e2e"
+    print_status "   • Run comprehensive tests: ./run-e2e-tests.sh"
+    print_status ""
+    print_success "🎊 DEVELOPMENT ENVIRONMENT IS READY FOR USE!"
+else
+    print_error "❌ SOME SERVICES ARE NOT HEALTHY"
+    print_status "Please check the error messages above and try again."
+    print_status "You may need to:"
+    print_status "   • Check Docker containers: docker ps"
+    print_status "   • Check process logs: pm2 logs or check terminal output"
+    print_status "   • Restart individual services manually"
+    exit 1
+fi
+
+# Keep services running
+print_status ""
+print_status "🔄 SERVICES ARE RUNNING IN BACKGROUND"
+print_status "📝 Process IDs:"
+print_status "   • Backend PID: $BACKEND_PID"
+print_status "   • Frontend PID: $FRONTEND_PID"
+print_status ""
+print_status "🛑 TO STOP ALL SERVICES:"
+print_status "   • Press Ctrl+C to stop this script"
+print_status "   • Or run: ./stop-dev.sh"
+print_status ""
+print_status "⏳ Keeping services running... Press Ctrl+C to stop all services"
+
+# Wait for user interrupt
+wait
 cd Front-End/angular-18-todo-app
 if [ ! -d "node_modules" ]; then
     print_status "Installing frontend dependencies..."

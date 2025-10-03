@@ -139,21 +139,139 @@ Priority: CRITICAL | Dependencies: Phase 4
 - [ ] **Update**: `project-status-tracker.md` with completion status
 - [ ] **Create**: Deployment guide and user manual
 
-## 🛠️ Quick Command References
+## 🛠️ Application Startup Sequence & Commands
 
-### Database Commands
+### 🚀 **CRITICAL**: Proper Service Startup Order
+
+The application components **MUST** be started in the following sequence to ensure proper functionality and E2E testing:
+
+#### **1. Database Layer (MongoDB + MongoDB Express)**
 ```bash
-# Start MongoDB
-cd data-base/mongodb && docker-compose up -d
+# Navigate to database directory
+cd data-base/mongodb
 
-# Check MongoDB status
+# Start MongoDB and MongoDB Express using Docker Compose
+docker-compose up -d
+
+# Verify database services are running
 docker ps | grep mongo
 
-# Access MongoDB shell
-docker exec -it mongodb_container mongo
+# Check MongoDB connectivity
+docker exec -it angular-todo-mongodb mongosh --eval "db.adminCommand('ping')"
+
+# Access MongoDB Express UI (optional)
+# http://localhost:8081 (admin/admin123)
 ```
 
-### Backend Commands
+#### **2. Backend API (Express.js)**
+```bash
+# Navigate to backend directory
+cd Back-End/express-rest-todo-api
+
+# Install dependencies (if needed)
+npm install
+
+# Start Express.js API server
+npm start
+
+# Verify backend API is running
+curl http://localhost:3000/health
+
+# Check API documentation (optional)
+# http://localhost:3000/api-docs
+```
+
+#### **3. Frontend Application (Angular 18)**
+```bash
+# Navigate to frontend directory
+cd Front-End/angular-18-todo-app
+
+# Install dependencies (if needed)
+npm install
+
+# Start Angular development server
+ng serve --proxy-config proxy.conf.json
+
+# Verify frontend is accessible
+curl http://localhost:4200
+
+# Application should be available at:
+# http://localhost:4200
+```
+
+### 🔍 Service Health Checks
+
+#### **Database Health Check**
+```bash
+# Check MongoDB container status
+docker ps --filter "name=angular-todo-mongodb"
+
+# Test MongoDB connection
+docker exec angular-todo-mongodb mongosh --eval "db.runCommand({ ping: 1 })"
+
+# Check MongoDB Express UI
+curl -s http://localhost:8081
+```
+
+#### **Backend Health Check**
+```bash
+# Test API health endpoint
+curl -f http://localhost:3000/health
+
+# Test API connectivity
+curl -s http://localhost:3000/api/auth/health 2>/dev/null || echo "Backend not ready"
+```
+
+#### **Frontend Health Check**
+```bash
+# Test Angular application
+curl -s -o /dev/null -w "%{http_code}" http://localhost:4200
+
+# Verify Angular development server
+ps aux | grep "ng serve" | grep -v grep
+```
+
+### 🧪 **Before Running Playwright E2E Tests**
+
+**MANDATORY SEQUENCE** for E2E testing:
+
+```bash
+# 1. Start Database (wait 10-15 seconds for initialization)
+cd data-base/mongodb && docker-compose up -d && sleep 15
+
+# 2. Start Backend API (wait 5-10 seconds for startup)
+cd ../../Back-End/express-rest-todo-api && npm start &
+sleep 10
+
+# 3. Start Frontend (wait 15-20 seconds for compilation)
+cd ../../Front-End/angular-18-todo-app && ng serve --proxy-config proxy.conf.json &
+sleep 20
+
+# 4. Verify all services are running
+curl http://localhost:3000/health && curl -s http://localhost:4200 > /dev/null && echo "All services ready"
+
+# 5. Run Playwright E2E tests
+npm run test:e2e
+```
+
+### 🛠️ **Quick Command References**
+
+#### **Database Commands**
+```bash
+# Start MongoDB services
+cd data-base/mongodb && docker-compose up -d
+
+# Stop MongoDB services
+cd data-base/mongodb && docker-compose down
+
+# View MongoDB logs
+docker logs angular-todo-mongodb
+
+# Access MongoDB shell
+docker exec -it angular-todo-mongodb mongosh
+```
+
+#### **Backend Commands**
 ```bash
 # Start Express API
 cd Back-End/express-rest-todo-api && npm start
@@ -162,24 +280,30 @@ cd Back-End/express-rest-todo-api && npm start
 cd curl-scripts && ./run-all-tests.sh
 
 # Check API health
-curl http://localhost:3000/api/health
+curl http://localhost:3000/health
+
+# View API documentation
+open http://localhost:3000/api-docs
 ```
 
-### Frontend Commands
+#### **Frontend Commands**
 ```bash
 # Start Angular dev server
-cd Front-End/angular-18-todo-app && ng serve
+cd Front-End/angular-18-todo-app && ng serve --proxy-config proxy.conf.json
 
 # Run Angular tests
-ng test
+cd Front-End/angular-18-todo-app && ng test
 
 # Build for production
-ng build --prod
+cd Front-End/angular-18-todo-app && ng build
+
+# Run E2E tests (requires all services running)
+cd Front-End/angular-18-todo-app && npm run test:e2e
 ```
 
-### Full Stack Commands
+#### **Full Stack Commands**
 ```bash
-# Start all services
+# Start all services in proper sequence
 ./start-dev.sh
 
 # Stop all services
@@ -187,37 +311,54 @@ ng build --prod
 
 # Test API endpoints
 ./test-api.sh
+
+# Run comprehensive E2E tests
+./run-e2e-tests.sh
 ```
 
 ## 📊 Success Criteria Checklist
 
-### Database Layer ✅
-- [ ] MongoDB container running
-- [ ] MongoDB UI accessible
-- [ ] All schemas created
-- [ ] Seed data loaded
+### **Phase 1: Database Layer** ✅
+- [ ] MongoDB container running (`docker ps | grep angular-todo-mongodb`)
+- [ ] MongoDB Express UI accessible (`http://localhost:8081`)
+- [ ] Database connectivity verified (`docker exec angular-todo-mongodb mongosh --eval "db.adminCommand('ping')"`)
+- [ ] All schemas created (User, List, Todo models)
+- [ ] Seed data loaded successfully
 - [ ] CRUD operations working
 
-### Backend Layer ✅
-- [ ] Express server running
-- [ ] All endpoints responding
-- [ ] Authentication working
+### **Phase 2: Backend Layer** ✅
+- [ ] Express server running on port 3000
+- [ ] Health endpoint responding (`curl http://localhost:3000/health`)
+- [ ] All API endpoints responding correctly
+- [ ] Authentication working (JWT tokens)
 - [ ] Data validation active
 - [ ] Error handling implemented
+- [ ] Swagger documentation accessible (`http://localhost:3000/api-docs`)
 
-### Frontend Layer ✅
-- [ ] Angular app loading
+### **Phase 3: Frontend Layer** ✅
+- [ ] Angular app loading on port 4200
 - [ ] All routes accessible
-- [ ] API integration working
+- [ ] API integration working (proxy configuration)
 - [ ] User interface responsive
 - [ ] Authentication flow complete
+- [ ] Component interactions functional
 
-### Integration Layer ✅
+### **Phase 4: Integration & E2E Testing** ✅
+- [ ] All services running in proper sequence (DB → Backend → Frontend)
 - [ ] End-to-end user flows working
+- [ ] Playwright E2E tests passing
 - [ ] Data persistence verified
 - [ ] Error handling graceful
 - [ ] Performance acceptable
 - [ ] Security measures active
+- [ ] Cross-browser compatibility verified
+
+### **Service Startup Verification Checklist**
+- [ ] **Step 1**: Database services running (`docker ps | grep mongo`)
+- [ ] **Step 2**: Backend API responding (`curl http://localhost:3000/health`)
+- [ ] **Step 3**: Frontend accessible (`curl -s http://localhost:4200`)
+- [ ] **Step 4**: All health checks passing
+- [ ] **Step 5**: Ready for E2E testing
 
 ## 🔄 Iterative Improvement Process
 
@@ -400,25 +541,58 @@ When new requirements are added, update these testing components:
 - [x] **JUnit Reports**: CI/CD integration ready
 - [x] **Test Summary**: Markdown reports with metrics
 
-### 🚀 Usage Instructions
+### 🚀 **E2E Testing with Proper Service Startup**
 
-#### Quick Start
+#### **Pre-requisites for E2E Testing**
+Before running Playwright E2E tests, ensure all services are running in the correct sequence:
+
 ```bash
-# Run all E2E tests
+# 1. Database Layer (FIRST)
+cd data-base/mongodb
+docker-compose up -d
+sleep 15  # Wait for MongoDB initialization
+
+# 2. Backend API (SECOND)
+cd ../../Back-End/express-rest-todo-api
+npm start &
+BACKEND_PID=$!
+sleep 10  # Wait for Express.js startup
+
+# 3. Frontend Application (THIRD)
+cd ../../Front-End/angular-18-todo-app
+ng serve --proxy-config proxy.conf.json &
+FRONTEND_PID=$!
+sleep 20  # Wait for Angular compilation
+
+# 4. Verify all services
+curl -f http://localhost:3000/health && \
+curl -s http://localhost:4200 > /dev/null && \
+echo "✅ All services ready for E2E testing"
+```
+
+#### **Automated E2E Test Execution**
+```bash
+# Method 1: Use the comprehensive test runner
 ./run-e2e-tests.sh
 
-# Run specific test suite
-./run-e2e-tests.sh auth
-
-# Run with visible browser
-./run-e2e-tests.sh headed
-
-# Interactive UI mode
-./run-e2e-tests.sh ui
-
-# View wireframes
-./html-wireframes/serve-wireframes.sh
+# Method 2: Manual service management + testing
+# (After starting services as shown above)
+cd Front-End/angular-18-todo-app
+npm run test:e2e          # Run all E2E tests
+npm run test:e2e:ui       # Interactive UI mode
+npm run test:e2e:headed   # Visible browser mode
+npm run test:e2e:debug    # Debug mode
+npm run test:e2e:report   # View HTML reports
 ```
+
+#### **Service Dependencies for E2E Tests**
+| Service | Port | Health Check | Dependency |
+|---------|------|-------------|------------|
+| MongoDB | 27017 | `docker exec angular-todo-mongodb mongosh --eval "db.adminCommand('ping')"` | None |
+| MongoDB Express | 8081 | `curl http://localhost:8081` | MongoDB |
+| Express API | 3000 | `curl http://localhost:3000/health` | MongoDB |
+| Angular App | 4200 | `curl http://localhost:4200` | Express API |
+| E2E Tests | - | All above services | All services |
 
 #### Test Coverage
 - ✅ **Authentication Flows**: Registration, login, validation

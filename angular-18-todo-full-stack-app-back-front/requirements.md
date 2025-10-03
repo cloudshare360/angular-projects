@@ -7,6 +7,127 @@
 - RESTful API integration
 - **NEW**: Comprehensive E2E testing with Playwright
 - **NEW**: Interactive HTML wireframes for UI/UX documentation
+- **CRITICAL**: Proper service startup sequence for development and testing
+
+## 🚀 **Application Startup Sequence (MANDATORY)**
+
+The application stack **MUST** be started in the following order for proper functionality and E2E testing:
+
+### **Phase 1: Database Layer (FIRST)**
+```bash
+# Navigate to database directory
+cd data-base/mongodb
+
+# Start MongoDB and MongoDB Express using Docker Compose
+docker-compose up -d
+
+# Verify services are running
+docker ps | grep angular-todo-mongodb
+```
+
+**Services Started:**
+- MongoDB Database (port 27017)
+- MongoDB Express UI (port 8081)
+
+**Health Check:**
+```bash
+docker exec angular-todo-mongodb mongosh --eval "db.adminCommand('ping')"
+```
+
+### **Phase 2: Backend API (SECOND)**
+```bash
+# Navigate to backend directory
+cd Back-End/express-rest-todo-api
+
+# Install dependencies (if needed)
+npm install
+
+# Start Express.js API server
+npm start
+```
+
+**Services Started:**
+- Express.js API Server (port 3000)
+- REST API endpoints
+- JWT Authentication
+- MongoDB connection
+
+**Health Check:**
+```bash
+curl http://localhost:3000/health
+```
+
+### **Phase 3: Frontend Application (THIRD)**
+```bash
+# Navigate to frontend directory
+cd Front-End/angular-18-todo-app
+
+# Install dependencies (if needed)
+npm install
+
+# Start Angular development server
+ng serve --proxy-config proxy.conf.json
+```
+
+**Services Started:**
+- Angular 18 Development Server (port 4200)
+- Live reload functionality
+- Proxy configuration for API calls
+
+**Health Check:**
+```bash
+curl http://localhost:4200
+```
+
+### **Phase 4: E2E Testing (FINAL)**
+```bash
+# Verify all services are running
+curl http://localhost:3000/health && curl -s http://localhost:4200 > /dev/null
+
+# Run Playwright E2E tests
+cd Front-End/angular-18-todo-app
+npm run test:e2e
+
+# Or use comprehensive test runner
+./run-e2e-tests.sh
+```
+
+## **Service Dependencies**
+
+| Service | Port | Depends On | Required For |
+|---------|------|------------|--------------|
+| MongoDB | 27017 | None | Backend API |
+| MongoDB Express | 8081 | MongoDB | Database Management |
+| Express.js API | 3000 | MongoDB | Frontend |
+| Angular App | 4200 | Express.js API | E2E Testing |
+| Playwright Tests | - | All Above | Quality Assurance |
+
+## **Automated Startup Scripts**
+
+### **Option 1: Individual Service Management**
+```bash
+# Start all services in sequence
+./start-dev.sh
+
+# Stop all services
+./stop-dev.sh
+```
+
+### **Option 2: E2E Testing with Automatic Setup**
+```bash
+# Comprehensive E2E testing with automatic service management
+./run-e2e-tests.sh
+
+# Run specific test suites
+./run-e2e-tests.sh auth
+./run-e2e-tests.sh dashboard
+./run-e2e-tests.sh workflows
+
+# Interactive testing modes
+./run-e2e-tests.sh ui        # Interactive UI mode
+./run-e2e-tests.sh headed    # Visible browser mode
+./run-e2e-tests.sh debug     # Debug mode
+```
 
 ## Features Required
 Todo App has following domain objects / actors
