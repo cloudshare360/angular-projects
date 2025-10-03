@@ -138,11 +138,13 @@ app.get('/health', (req, res) => {
 // API routes
 app.use('/api', apiRoutes);
 
-// Welcome route
+// Root endpoint  
 app.get('/', (req, res) => {
   res.json({
     message: 'Angular Todo REST API',
     version: '1.0.0',
+    status: 'running',
+    timestamp: new Date().toISOString(),
     endpoints: {
       health: '/health',
       documentation: '/api-docs',

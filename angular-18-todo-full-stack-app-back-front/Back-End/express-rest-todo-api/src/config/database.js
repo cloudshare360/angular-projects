@@ -6,16 +6,10 @@ const logger = require('../utils/logger');
  */
 const dbConfig = {
   // MongoDB connection URI
-  uri: process.env.MONGODB_URI || 'mongodb://localhost:27017/todoapp',
+  uri: process.env.MONGODB_URI || 'mongodb://admin:todopassword123@localhost:27017/tododb?authSource=admin',
   
   // Mongoose connection options
   options: {
-    // Use new URL parser
-    useNewUrlParser: true,
-    
-    // Use new Server Discovery and Monitoring engine
-    useUnifiedTopology: true,
-    
     // Buffer commands when disconnected
     bufferCommands: true,
     

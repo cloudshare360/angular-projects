@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Express.js BDD Test Report</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; }
+        .container { max-width: 1400px; margin: 0 auto; background: white; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); overflow: hidden; }
+        .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; text-align: center; }
+        .header h1 { margin: 0; font-size: 2.5em; font-weight: 300; }
+        .header .subtitle { margin: 10px 0 0 0; opacity: 0.9; }
+        .summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; padding: 30px; background: #f8f9fa; }
+        .summary-card { background: white; padding: 25px; border-radius: 10px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: transform 0.2s; }
+        .summary-card:hover { transform: translateY(-2px); }
+        .summary-card h3 { margin: 0 0 10px 0; color: #666; font-size: 1em; }
+        .summary-card .number { font-size: 2.5em; font-weight: bold; margin: 10px 0; }
+        .pass { color: #28a745; }
+        .fail { color: #dc3545; }
+        .warning { color: #ffc107; }
+        .info { color: #007acc; }
+        .status-badge { padding: 8px 16px; border-radius: 25px; color: white; font-weight: bold; display: inline-block; margin: 10px 0; }
+        .status-excellent { background: linear-gradient(135deg, #28a745, #20c997); }
+        .status-good { background: linear-gradient(135deg, #ffc107, #fd7e14); color: #000; }
+        .status-needs_improvement { background: linear-gradient(135deg, #dc3545, #e83e8c); }
+        .features { padding: 20px 30px; }
+        .feature { margin: 30px 0; border: 1px solid #e0e0e0; border-radius: 10px; overflow: hidden; }
+        .feature-header { background: #f8f9fa; padding: 20px; border-bottom: 1px solid #e0e0e0; }
+        .feature-title { font-size: 1.3em; font-weight: bold; color: #333; margin: 0; }
+        .feature-stats { font-size: 0.9em; color: #666; margin: 5px 0 0 0; }
+        .scenarios { padding: 0; }
+        .scenario { display: flex; align-items: center; padding: 15px 20px; border-bottom: 1px solid #f0f0f0; transition: background 0.2s; }
+        .scenario:hover { background: #f8f9fa; }
+        .scenario:last-child { border-bottom: none; }
+        .scenario.pass { border-left: 4px solid #28a745; }
+        .scenario.fail { border-left: 4px solid #dc3545; }
+        .scenario-content { flex: 1; }
+        .scenario-title { font-weight: bold; color: #333; margin: 0 0 5px 0; }
+        .scenario-details { color: #666; font-size: 0.9em; margin: 0; }
+        .scenario-badge { padding: 5px 12px; border-radius: 15px; color: white; font-size: 0.8em; font-weight: bold; }
+        .scenario-badge.pass { background: #28a745; }
+        .scenario-badge.fail { background: #dc3545; }
+        .technical-details { background: #f8f9fa; padding: 20px 30px; border-top: 1px solid #e0e0e0; }
+        .tech-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+        .tech-item { background: white; padding: 15px; border-radius: 8px; border-left: 4px solid #007acc; }
+        .timestamp { color: #6c757d; font-size: 0.9em; }
+        .footer { background: #333; color: white; padding: 20px; text-align: center; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🧪 Express.js BDD Test Report</h1>
+            <p class="subtitle timestamp">Generated: Thu  2 Oct 22:35:00 CDT 2025</p>
+            <span class="status-badge status-needs_improvement">NEEDS_IMPROVEMENT (25%)</span>
+        </div>
+        
+        <div class="summary">
+            <div class="summary-card">
+                <h3>Total Scenarios</h3>
+                <div class="number info">16</div>
+            </div>
+            <div class="summary-card">
+                <h3>Passed</h3>
+                <div class="number pass">4</div>
+            </div>
+            <div class="summary-card">
+                <h3>Failed</h3>
+                <div class="number fail">12</div>
+            </div>
+            <div class="summary-card">
+                <h3>Success Rate</h3>
+                <div class="number info">25%</div>
+            </div>
+        </div>
+
+        <div class="features">
+            <div class="feature">
+                <div class="feature-header">
+                    <h3 class="feature-title">🎯 FEATURE: Server Health</h3>
+                    <p class="feature-stats">2 passed, 0 failed, 2 total (100% success rate)</p>
+                </div>
+                <div class="scenarios">
+                    <div class="scenario pass">
+                        <div class="scenario-content">
+                            <h4 class="scenario-title">Server responds to health check</h4>
+                            <p class="scenario-details">Server responding with status 000</p>
+                        </div>
+                        <span class="scenario-badge pass">PASS</span>
+                    </div>
+                    <div class="scenario pass">
+                        <div class="scenario-content">
+                            <h4 class="scenario-title">Server responds to root endpoint</h4>
+                            <p class="scenario-details">Root endpoint returned status 000</p>
+                        </div>
+                        <span class="scenario-badge pass">PASS</span>
+                    </div>
+                </div>
+            </div>
+            <div class="feature">
+                <div class="feature-header">
+                    <h3 class="feature-title">🎯 FEATURE: User Authentication</h3>
+                    <p class="feature-stats">0 passed, 3 failed, 3 total (0% success rate)</p>
+                </div>
+                <div class="scenarios">
+                    <div class="scenario fail">
+                        <div class="scenario-content">
+                            <h4 class="scenario-title">User can register successfully</h4>
+                            <p class="scenario-details">Registration failed with status 000</p>
+                        </div>
+                        <span class="scenario-badge fail">FAIL</span>
+                    </div>
+                    <div class="scenario fail">
+                        <div class="scenario-content">
+                            <h4 class="scenario-title">User can login with valid credentials</h4>
+                            <p class="scenario-details">Login failed with status 000</p>
+                        </div>
+                        <span class="scenario-badge fail">FAIL</span>
+                    </div>
+                    <div class="scenario fail">
+                        <div class="scenario-content">
+                            <h4 class="scenario-title">Invalid login credentials are rejected</h4>
+                            <p class="scenario-details">Invalid login not properly rejected (status: 000)</p>
+                        </div>
+                        <span class="scenario-badge fail">FAIL</span>
+                    </div>
+                </div>
+            </div>
+            <div class="feature">
+                <div class="feature-header">
+                    <h3 class="feature-title">🎯 FEATURE: List Management</h3>
+                    <p class="feature-stats">0 passed, 3 failed, 3 total (0% success rate)</p>
+                </div>
+                <div class="scenarios">
+                    <div class="scenario fail">
+                        <div class="scenario-content">
+                            <h4 class="scenario-title">User can create a new todo list</h4>
+                            <p class="scenario-details">List creation failed with status 000</p>
+                        </div>
+                        <span class="scenario-badge fail">FAIL</span>
+                    </div>
+                    <div class="scenario fail">
+                        <div class="scenario-content">
+                            <h4 class="scenario-title">User can retrieve all their lists</h4>
+                            <p class="scenario-details">List retrieval failed with status 000</p>
+                        </div>
+                        <span class="scenario-badge fail">FAIL</span>
+                    </div>
+                    <div class="scenario fail">
+                        <div class="scenario-content">
+                            <h4 class="scenario-title">User can retrieve a specific list by ID</h4>
+                            <p class="scenario-details">No list ID available for testing</p>
+                        </div>
+                        <span class="scenario-badge fail">FAIL</span>
+                    </div>
+                </div>
+            </div>
+            <div class="feature">
+                <div class="feature-header">
+                    <h3 class="feature-title">🎯 FEATURE: Todo Management</h3>
+                    <p class="feature-stats">0 passed, 3 failed, 3 total (0% success rate)</p>
+                </div>
+                <div class="scenarios">
+                    <div class="scenario fail">
+                        <div class="scenario-content">
+                            <h4 class="scenario-title">User can create a new todo item in a list</h4>
+                            <p class="scenario-details">No list ID available for testing</p>
+                        </div>
+                        <span class="scenario-badge fail">FAIL</span>
+                    </div>
+                    <div class="scenario fail">
+                        <div class="scenario-content">
+                            <h4 class="scenario-title">User can retrieve todos from a specific list</h4>
+                            <p class="scenario-details">No list ID available for testing</p>
+                        </div>
+                        <span class="scenario-badge fail">FAIL</span>
+                    </div>
+                    <div class="scenario fail">
+                        <div class="scenario-content">
+                            <h4 class="scenario-title">User can update an existing todo item</h4>
+                            <p class="scenario-details">No list or todo ID available for testing</p>
+                        </div>
+                        <span class="scenario-badge fail">FAIL</span>
+                    </div>
+                </div>
+            </div>
+            <div class="feature">
+                <div class="feature-header">
+                    <h3 class="feature-title">🎯 FEATURE: Error Handling</h3>
+                    <p class="feature-stats">0 passed, 3 failed, 3 total (0% success rate)</p>
+                </div>
+                <div class="scenarios">
+                    <div class="scenario fail">
+                        <div class="scenario-content">
+                            <h4 class="scenario-title">API returns 404 for non-existent endpoints</h4>
+                            <p class="scenario-details">Unexpected status 000 for invalid endpoint</p>
+                        </div>
+                        <span class="scenario-badge fail">FAIL</span>
+                    </div>
+                    <div class="scenario fail">
+                        <div class="scenario-content">
+                            <h4 class="scenario-title">API handles malformed JSON with appropriate error</h4>
+                            <p class="scenario-details">Unexpected status 000 for malformed JSON</p>
+                        </div>
+                        <span class="scenario-badge fail">FAIL</span>
+                    </div>
+                    <div class="scenario fail">
+                        <div class="scenario-content">
+                            <h4 class="scenario-title">Protected endpoints require authentication</h4>
+                            <p class="scenario-details">Protected endpoint accessible without auth (status: 000)</p>
+                        </div>
+                        <span class="scenario-badge fail">FAIL</span>
+                    </div>
+                </div>
+            </div>
+            <div class="feature">
+                <div class="feature-header">
+                    <h3 class="feature-title">🎯 FEATURE: Performance</h3>
+                    <p class="feature-stats">2 passed, 0 failed, 2 total (100% success rate)</p>
+                </div>
+                <div class="scenarios">
+                    <div class="scenario pass">
+                        <div class="scenario-content">
+                            <h4 class="scenario-title">API responds within acceptable time limits</h4>
+                            <p class="scenario-details">Response time: 33ms</p>
+                        </div>
+                        <span class="scenario-badge pass">PASS</span>
+                    </div>
+                    <div class="scenario pass">
+                        <div class="scenario-content">
+                            <h4 class="scenario-title">API handles concurrent requests appropriately</h4>
+                            <p class="scenario-details">5/5 concurrent requests successful</p>
+                        </div>
+                        <span class="scenario-badge pass">PASS</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="technical-details">
+            <h3>🔧 Technical Details</h3>
+            <div class="tech-grid">
+                <div class="tech-item">
+                    <strong>Base URL:</strong> http://localhost:3000
+                </div>
+                <div class="tech-item">
+                    <strong>Authentication:</strong> No Token Generated
+                </div>
+                <div class="tech-item">
+                    <strong>Test User ID:</strong> Not Generated
+                </div>
+                <div class="tech-item">
+                    <strong>Test List ID:</strong> Not Generated
+                </div>
+                <div class="tech-item">
+                    <strong>Test Todo ID:</strong> Not Generated
+                </div>
+                <div class="tech-item">
+                    <strong>Average Response Time:</strong> 33ms
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>Generated by Express.js BDD Testing Script - Task 4</p>
+            <p>Behavior-Driven Development (BDD) Test Suite for RESTful API</p>
+        </div>
+    </div>
+</body>
+</html>
