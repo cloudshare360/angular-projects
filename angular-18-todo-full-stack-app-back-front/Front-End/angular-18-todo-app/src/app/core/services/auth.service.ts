@@ -1,4 +1,5 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { Router } from '@angular/router';
 import { ApiService } from './api.service';
@@ -16,24 +17,27 @@ export class AuthService {
 
   constructor(
     private apiService: ApiService,
-    private router: Router
+    private router: Router,
+    @Inject(PLATFORM_ID) private platformId: Object
   ) {
     this.initializeAuth();
   }
 
   private initializeAuth(): void {
-    const token = localStorage.getItem('auth_token');
-    if (token) {
-      this.apiService.getUserProfile().subscribe({
-        next: (response) => {
-          if (response.success && response.data) {
-            this.setCurrentUser(response.data);
-          } else {
-            this.logout();
-          }
-        },
-        error: () => this.logout()
-      });
+    if (isPlatformBrowser(this.platformId)) {
+      const token = localStorage.getItem('auth_token');
+      if (token) {
+        this.apiService.getUserProfile().subscribe({
+          next: (response) => {
+            if (response.success && response.data) {
+              this.setCurrentUser(response.data);
+            } else {
+              this.logout();
+            }
+          },
+          error: () => this.logout()
+        });
+      }
     }
   }
 
@@ -69,8 +73,10 @@ export class AuthService {
   }
 
   private performLogout(): void {
-    localStorage.removeItem('auth_token');
-    localStorage.removeItem('refresh_token');
+    if (isPlatformBrowser(this.platformId)) {
+      localStorage.removeItem('auth_token');
+      localStorage.removeItem('refresh_token');
+    }
     this.currentUserSubject.next(null);
     this.isAuthenticatedSubject.next(false);
     this.router.navigate(['/auth/login']);
@@ -97,9 +103,11 @@ export class AuthService {
   }
 
   private storeTokens(token: string, refreshToken?: string): void {
-    localStorage.setItem('auth_token', token);
-    if (refreshToken) {
-      localStorage.setItem('refresh_token', refreshToken);
+    if (isPlatformBrowser(this.platformId)) {
+      localStorage.setItem('auth_token', token);
+      if (refreshToken) {
+        localStorage.setItem('refresh_token', refreshToken);
+      }
     }
   }
 
@@ -117,7 +125,10 @@ export class AuthService {
   }
 
   getToken(): string | null {
-    return localStorage.getItem('auth_token');
+    if (isPlatformBrowser(this.platformId)) {
+      return localStorage.getItem('auth_token');
+    }
+    return null;
   }
 
   updateUserProfile(userData: Partial<User>): Observable<any> {

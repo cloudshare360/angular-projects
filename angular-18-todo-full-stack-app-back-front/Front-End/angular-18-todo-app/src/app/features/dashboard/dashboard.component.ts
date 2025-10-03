@@ -1,14 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../core/services/auth.service';
 import { ApiService } from '../../core/services/api.service';
-import { User, TodoList, Todo } from '../../shared/interfaces/models';
+import { User, TodoList, Todo, CreateListRequest, CreateTodoRequest } from '../../shared/interfaces/models';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, FormsModule],
   template: `
     <div class="dashboard">
       <nav class="navbar">
@@ -81,7 +82,7 @@ import { User, TodoList, Todo } from '../../shared/interfaces/models';
                 <div class="todo-actions">
                   <button 
                     class="btn-icon" 
-                    (click)="toggleTodo(todo._id)"
+                    (click)="toggleTodo(todo.id)"
                     [title]="todo.isCompleted ? 'Mark as incomplete' : 'Mark as complete'"
                   >
                     {{ todo.isCompleted ? '✓' : '○' }}
@@ -107,15 +108,15 @@ import { User, TodoList, Todo } from '../../shared/interfaces/models';
               <div 
                 class="list-card" 
                 *ngFor="let list of todoLists"
-                (click)="openList(list._id)"
+                (click)="openList(list.id)"
               >
                 <div class="list-header">
                   <div class="list-color" [style.background-color]="list.color"></div>
-                  <div class="list-title">{{ list.title }}</div>
+                  <div class="list-title">{{ list.name }}</div>
                 </div>
                 <div class="list-stats">
                   <span class="todo-count">
-                    {{ list.completedCount }}/{{ list.todoCount }} completed
+                    {{ list.completedTodoCount || 0 }}/{{ list.todoCount || 0 }} completed
                   </span>
                 </div>
                 <div class="progress-bar">
@@ -470,7 +471,11 @@ export class DashboardComponent implements OnInit {
       next: (response) => {
         if (response.success && response.data) {
           this.recentTodos = response.data
-            .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
+            .sort((a, b) => {
+              const dateA = a.updatedAt ? new Date(a.updatedAt).getTime() : 0;
+              const dateB = b.updatedAt ? new Date(b.updatedAt).getTime() : 0;
+              return dateB - dateA;
+            })
             .slice(0, 5);
           
           this.totalTodos = response.data.length;
@@ -510,12 +515,13 @@ export class DashboardComponent implements OnInit {
     });
   }
 
-  formatDate(date: Date): string {
+  formatDate(date: string): string {
     return new Date(date).toLocaleDateString();
   }
 
   getCompletionPercentage(list: TodoList): number {
-    if (list.todoCount === 0) return 0;
-    return (list.completedCount / list.todoCount) * 100;
+    if (!list.todoCount || list.todoCount === 0) return 0;
+    const completed = list.completedTodoCount || 0;
+    return (completed / list.todoCount) * 100;
   }
 }

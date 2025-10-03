@@ -39,12 +39,22 @@ export class ApiService {
 
   // Authentication endpoints
   login(credentials: LoginRequest): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.baseUrl}/auth/login`, credentials)
+    // Convert email to usernameOrEmail as expected by API
+    const loginData = {
+      usernameOrEmail: credentials.email,
+      password: credentials.password
+    };
+    return this.http.post<AuthResponse>(`${this.baseUrl}/auth/login`, loginData)
       .pipe(catchError(this.handleError));
   }
 
   register(userData: RegisterRequest): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.baseUrl}/auth/register`, userData)
+    // Ensure confirmPassword is included as required by API
+    const registrationData = {
+      ...userData,
+      confirmPassword: userData.password // API requires password confirmation
+    };
+    return this.http.post<AuthResponse>(`${this.baseUrl}/auth/register`, registrationData)
       .pipe(catchError(this.handleError));
   }
 
@@ -88,7 +98,8 @@ export class ApiService {
   changePassword(currentPassword: string, newPassword: string): Observable<ApiResponse> {
     return this.http.put<ApiResponse>(`${this.baseUrl}/users/change-password`, {
       currentPassword,
-      newPassword
+      newPassword,
+      confirmNewPassword: newPassword // API requires password confirmation
     }, {
       headers: this.getAuthHeaders()
     }).pipe(catchError(this.handleError));

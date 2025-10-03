@@ -1,49 +1,45 @@
 // Shared interfaces between Angular frontend and Express backend
 
 export interface User {
-  _id: string;
+  id: string; // API returns 'id' not '_id'
   username: string;
   email: string;
   firstName: string;
   lastName: string;
-  preferences: {
-    theme: 'light' | 'dark';
-    defaultView: 'list' | 'grid' | 'calendar';
-    itemsPerPage: number;
-  };
-  createdAt: Date;
-  updatedAt: Date;
+  fullName: string; // API includes fullName
+  avatar?: string | null; // API includes avatar field
+  isActive: boolean; // API includes isActive
+  createdAt: string; // API returns ISO string
+  lastLogin?: string; // API includes lastLogin
 }
 
 export interface TodoList {
-  _id: string;
-  title: string;
+  id: string; // API returns 'id' not '_id'
+  name: string; // API uses 'name' not 'title'
   description?: string;
-  color: string;
-  isDefault: boolean;
-  isShared: boolean;
-  sharedWith: string[];
-  owner: string;
-  todoCount: number;
-  completedCount: number;
-  createdAt: Date;
-  updatedAt: Date;
+  color?: string;
+  isPublic?: boolean; // API uses 'isPublic' not 'isShared'
+  userId: string; // API uses 'userId' not 'owner'
+  todoCount?: number;
+  completedTodoCount?: number;
+  createdAt: string;
+  updatedAt?: string;
 }
 
 export interface Todo {
-  _id: string;
+  id: string; // API returns 'id' not '_id'
   title: string;
   description?: string;
-  isCompleted: boolean;
-  priority: 'low' | 'medium' | 'high';
-  dueDate?: Date;
-  tags: string[];
-  list: string;
-  owner: string;
-  order: number;
-  completedAt?: Date;
-  createdAt: Date;
-  updatedAt: Date;
+  isCompleted?: boolean;
+  priority?: 'low' | 'medium' | 'high';
+  dueDate?: string; // API returns ISO string
+  tags?: string[];
+  listId: string; // API uses 'listId' not 'list'
+  userId: string; // API uses 'userId' not 'owner'
+  order?: number;
+  completedAt?: string;
+  createdAt: string;
+  updatedAt?: string;
 }
 
 export interface AuthResponse {
@@ -77,31 +73,31 @@ export interface RegisterRequest {
 export interface CreateTodoRequest {
   title: string;
   description?: string;
-  priority: 'low' | 'medium' | 'high';
-  dueDate?: Date;
+  priority?: 'low' | 'medium' | 'high';
+  dueDate?: string;
   tags?: string[];
-  list: string;
+  listId: string; // API expects 'listId' not 'list'
 }
 
 export interface UpdateTodoRequest {
   title?: string;
   description?: string;
   priority?: 'low' | 'medium' | 'high';
-  dueDate?: Date;
+  dueDate?: string;
   tags?: string[];
   isCompleted?: boolean;
 }
 
 export interface CreateListRequest {
-  title: string;
+  name: string; // API expects 'name' not 'title'
   description?: string;
   color?: string;
-  isDefault?: boolean;
+  isPublic?: boolean; // API uses 'isPublic'
 }
 
 export interface UpdateListRequest {
-  title?: string;
+  name?: string; // API expects 'name' not 'title'
   description?: string;
   color?: string;
-  isDefault?: boolean;
+  isPublic?: boolean;
 }
