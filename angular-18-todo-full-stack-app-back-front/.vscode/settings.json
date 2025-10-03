@@ -16,6 +16,32 @@
   "github.copilot.chat.enable": true,
   "github.copilot.acceptSuggestionOnTab": true,
   "github.copilot.editor.enableAutoCompletions": true,
+  
+  // Agent mode and terminal auto-approval settings
+  "github.copilot.chat.experimental.agent": true,
+  "github.copilot.chat.allowAgentMode": true,
+  "github.copilot.chat.experimental.codeActions": true,
+  "github.copilot.chat.experimental.terminal": true,
+  
+  // Terminal tools configuration
+  "chat.tools": {
+    "terminal": {
+      "autoApprove": true,
+      "allowExecution": true,
+      "confirmBeforeExecution": false
+    },
+    "codeActions": {
+      "autoApprove": true
+    },
+    "fileOperations": {
+      "autoApprove": true
+    }
+  },
+  
+  // Additional experimental features
+  "github.copilot.chat.experimental.codeGeneration": true,
+  "github.copilot.chat.experimental.contextualActions": true,
+  
   "github.copilot.advanced": {
     "secret_key": "github_copilot_key",
     "length": 500,

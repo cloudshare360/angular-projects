@@ -10,6 +10,8 @@ This workspace has been configured with optimal settings for GitHub Copilot and 
 - ✅ **Chat assistance** for code explanations and debugging
 - ✅ **Context-aware suggestions** for Angular components and services
 - ✅ **Smart imports** and auto-formatting
+- ✅ **Agent Mode** with terminal auto-approval for autonomous development
+- ✅ **Experimental Features** for advanced AI-driven coding assistance
 
 ### Language Support:
 - **TypeScript/JavaScript**: Full Copilot support
@@ -45,6 +47,26 @@ This workspace has been configured with optimal settings for GitHub Copilot and 
 - **REST client for API testing**
 - **Git integration**
 - **Code formatting and linting**
+
+## 🤖 Agent Mode Features
+
+### Auto-Approval Settings:
+- ✅ **Terminal Commands**: Automatically execute terminal commands without confirmation
+- ✅ **Code Actions**: Auto-apply code fixes and refactoring
+- ✅ **File Operations**: Allow file creation, modification, and deletion
+- ✅ **Experimental Features**: Enable cutting-edge AI capabilities
+
+### Agent Mode Commands:
+- **"@github Start agent mode"** - Enable autonomous development mode
+- **"@github Execute plan [description]"** - AI-driven task execution
+- **"@github Auto-implement [feature]"** - Automatic feature implementation
+- **"@github Debug and fix"** - Autonomous error detection and resolution
+
+### Safety Features:
+- Workspace-scoped permissions
+- Project-specific tool access
+- Automatic backup creation
+- Rollback capabilities
 
 ## 🚀 Quick Start Commands
 
