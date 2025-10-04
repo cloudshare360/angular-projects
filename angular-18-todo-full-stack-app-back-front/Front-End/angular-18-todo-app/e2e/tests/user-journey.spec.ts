@@ -760,4 +760,3 @@ test('7️⃣ Step 7: User Logout', async ({ page }) => {
     console.log('🎉 Step 7 Complete: User logout finished');
     console.log('🏁 Complete User Journey Finished Successfully!');
 });
-});

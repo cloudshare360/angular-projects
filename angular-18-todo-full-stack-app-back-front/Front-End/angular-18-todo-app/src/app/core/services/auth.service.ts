@@ -27,11 +27,11 @@ export class AuthService {
     if (isPlatformBrowser(this.platformId)) {
       const token = localStorage.getItem('auth_token');
       const refreshToken = localStorage.getItem('refresh_token');
-      
+
       if (token) {
         // Set token in API service first
         this.apiService.setAuthToken(token);
-        
+
         // Validate token with backend
         this.apiService.getUserProfile().subscribe({
           next: (response) => {
@@ -80,9 +80,20 @@ export class AuthService {
     return this.apiService.login(credentials).pipe(
       tap((response) => {
         if (response.success && response.token && response.user) {
+          console.log('✅ Login successful, storing tokens and user data');
           this.storeTokens(response.token, response.refreshToken);
           this.setCurrentUser(response.user);
-          this.router.navigate(['/dashboard']);
+          console.log('✅ Navigating to dashboard...');
+          // Use setTimeout to ensure the navigation happens after the auth state is updated
+          setTimeout(() => {
+            this.router.navigate(['/dashboard']).then((success) => {
+              console.log('✅ Navigation to dashboard:', success ? 'SUCCESS' : 'FAILED');
+            }).catch((error) => {
+              console.error('❌ Navigation error:', error);
+            });
+          }, 100);
+        } else {
+          console.warn('⚠️ Login response missing required data:', response);
         }
       })
     );
@@ -92,9 +103,20 @@ export class AuthService {
     return this.apiService.register(userData).pipe(
       tap((response) => {
         if (response.success && response.token && response.user) {
+          console.log('✅ Registration successful, storing tokens and user data');
           this.storeTokens(response.token, response.refreshToken);
           this.setCurrentUser(response.user);
-          this.router.navigate(['/dashboard']);
+          console.log('✅ Navigating to dashboard...');
+          // Use setTimeout to ensure the navigation happens after the auth state is updated
+          setTimeout(() => {
+            this.router.navigate(['/dashboard']).then((success) => {
+              console.log('✅ Navigation to dashboard:', success ? 'SUCCESS' : 'FAILED');
+            }).catch((error) => {
+              console.error('❌ Navigation error:', error);
+            });
+          }, 100);
+        } else {
+          console.warn('⚠️ Registration response missing required data:', response);
         }
       })
     );

@@ -16,7 +16,7 @@ import { LoginRequest } from '../../../shared/interfaces/models';
           <h1>Welcome Back</h1>
           <p>Please sign in to your account.</p>
         </div>
-        
+
         <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="auth-form">
           <div class="form-group">
             <label for="usernameOrEmail">Email</label>
@@ -48,9 +48,9 @@ import { LoginRequest } from '../../../shared/interfaces/models';
           </div>
 
           <div class="form-actions">
-            <button 
-              type="submit" 
-              class="btn btn-primary" 
+            <button
+              type="submit"
+              class="btn btn-primary"
               [disabled]="loginForm.invalid || isLoading"
             >
               {{ isLoading ? 'Signing In...' : 'Sign In' }}
@@ -261,15 +261,19 @@ export class LoginComponent {
           this.isLoading = false;
           if (response.success) {
             // Login successful - auth service will handle redirect
-            console.log('Login successful, redirecting to dashboard');
+            console.log('✅ Login successful, auth service will handle navigation');
+            // Clear any error message and let auth service handle the redirect
+            this.errorMessage = '';
           } else {
-            this.errorMessage = response.message || 'Login failed. Please try again.';
+            console.warn('⚠️ Login failed:', response.message);
+            this.errorMessage = response.message || 'Login failed. Please check your credentials.';
           }
         },
         error: (error) => {
           this.isLoading = false;
-          console.error('Login error:', error);
-          this.errorMessage = error.error?.message || 'An error occurred. Please try again.';
+          console.error('❌ Login error:', error);
+          const errorMsg = error.error?.message || error.message || 'An error occurred. Please try again.';
+          this.errorMessage = errorMsg;
         }
       });
     } else {

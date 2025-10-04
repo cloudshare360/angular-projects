@@ -100,6 +100,38 @@
         "language": "en"
       },
       "id": "Z96ULMB"
+    },
+    {
+      "email": "john.smith@example.com",
+      "fullName": "John Smith",
+      "role": "user",
+      "isActive": true,
+      "emailVerified": false,
+      "createdAt": "2025-10-04T21:21:37.959Z",
+      "lastLoginAt": null,
+      "profileImage": "",
+      "settings": {
+        "theme": "light",
+        "notifications": true,
+        "language": "en"
+      },
+      "id": "i5zkX-q"
+    },
+    {
+      "email": "sri@gmail.com",
+      "fullName": "sri",
+      "role": "admin",
+      "isActive": true,
+      "emailVerified": false,
+      "createdAt": "2025-10-04T21:24:50.502Z",
+      "lastLoginAt": null,
+      "profileImage": "",
+      "settings": {
+        "theme": "light",
+        "notifications": true,
+        "language": "en"
+      },
+      "id": "J_3c3O_"
     }
   ],
   "todos": [
@@ -404,6 +436,25 @@
       "isImportant": false,
       "isArchived": false,
       "id": "0WvWa8l"
+    },
+    {
+      "userId": "1",
+      "title": "Hello Sri",
+      "description": "Hello Description",
+      "category": "general",
+      "priority": "medium",
+      "status": "pending",
+      "progress": 0,
+      "dueDate": "2025-10-04T16:22",
+      "createdAt": "2025-10-04T21:23:07.565Z",
+      "updatedAt": "2025-10-04T21:23:07.565Z",
+      "tags": [],
+      "attachments": [],
+      "subtasks": [],
+      "reminders": [],
+      "isImportant": false,
+      "isArchived": false,
+      "id": "JRWgTW2"
     }
   ],
   "categories": [
